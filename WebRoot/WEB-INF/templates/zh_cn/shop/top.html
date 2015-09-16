@@ -1,0 +1,172 @@
+<link href="$!webPath/resources/style/common/css/Pop-up-box.css" type="text/css" rel="stylesheet" />
+<script src="$!webPath/resources/style/weixin/default/js/jquery.cookie.js"></script>
+<script src="$!webPath/resources/js/tanchu.js"></script>
+<script type="text/javascript">
+jQuery( document ).ready(function(){
+	jQuery.ajax({
+		url:'$!webPath/city.htm',
+		success: function(html){
+			jQuery('#bigpobbox').html(html);
+		},
+		dataType: 'html',
+		contentType: "application/x-www-form-urlencoded; charset=utf-8"		
+	});
+	tanchucontent();
+});
+</script>
+<div class="top">
+  <div class="page">
+    <div class="pageright" id="site-nav">
+      <ul class="quick-menu">
+        <li class="mytaobao menu-item menupx">
+          <div class="menu"> <a class="menu-hd" href="$!webPath/buyer/order.htm" rel="nofollow">买家中心<b></b></a>
+            <div class="menu-bd">
+              <div class="menu-bd-panel">
+                <div><a href="$!webPath/buyer/order.htm" rel="nofollow">已买到的宝贝</a><!-- <a href="$!webPath/buyer/index.htm?type=4"  rel="nofollow">店铺动态</a><a href="$!webPath/buyer/index.htm?type=2"  rel="nofollow">好友动态</a> --></div>
+              </div>
+            </div>
+          </div>
+        </li>
+        
+        #if($!user.store)
+		<li class="mytaobao menu-item menupx">
+          <div class="menu"> <a class="menu-hd" href="$!webPath/seller/index.htm" rel="nofollow">卖家中心<b></b></a>
+            <div class="menu-bd">
+              <div class="menu-bd-panel">
+                <div> 
+                	 <a href="$!webPath/seller/order.htm"  rel="nofollow">已卖出的宝贝</a>
+                	 <a href="$!webPath/seller/goods.htm" rel="nofollow">出售中的宝贝</a>
+               		 <a href="$!webPath/store_$!{user.store.id}.htm" rel="nofollow">我的店铺</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+         #end
+        
+        <script>
+		/* var goods_count=$!cart.size();
+		 var total_price=0;
+		 #set($total_price=0)
+		 #foreach($gc in $cart)
+		  #if($!gc.goods.group_buy==2)
+		    #set($total_price=$!{gc.goods.group_goods.gg_price}*$!{gc.count}+$total_price)
+		  #else
+		    #set($total_price=$!{gc.goods.store_price}*$!{gc.count}+$total_price)
+		  #end
+		 #end*/
+		 /*
+		function cart_remove(id,store_id){
+           jQuery.post("$!store_second_url/remove_goods_cart.htm",{"id":id,"store_id":store_id},function(data){
+           jQuery("div[class=table] tr[id="+id+"]").remove();
+		   jQuery(".shopping[id="+id+"]").remove();
+		   jQuery(".shopp_ingtop[id="+id+"]").remove();
+           jQuery("#cart_goods_count_top").html(data.count);
+           jQuery("#cart_goods_price_top").html(data.total_price);
+		   jQuery("#top_total_price_"+store_id).html(data.total_price);
+           if(store_id!=""){
+              jQuery("#total_price_"+store_id).html(data.sc_total_price);
+           }
+		   if( jQuery("form[id=cart_"+store_id+"]").find("tr[goods_list^=goods_info]").length==0){
+		  	 jQuery("form[id=cart_"+store_id+"]").remove();
+		   }
+           if(jQuery("tr[goods_list^=goods_info]").length==0){
+              jQuery(".car_nogoods").show();
+           }
+         },"json");
+       }*/
+	   // jQuery(document).ready(function(){
+	    /*
+		   jQuery("#cart_goods_top_menu").mouseover(function(){
+			  jQuery.ajax({type:'POST',url:'$!store_second_url/cart_menu_detail.htm',data:'',
+						   beforeSend:function(){
+							     jQuery("#cart_goods_top_info").empty().html('<div class="menu-bd-panel"><div style="text-align:center;"><img src="$!webPath/resources/style/common/images/loader.gif" /></div></div>');
+							     jQuery("#cart_goods_top_info").show();
+							   },
+						  success:function(data){
+							     jQuery("#cart_goods_top_info").empty();
+								 jQuery("#cart_goods_top_info").html(data);
+							   }
+						});
+		   });
+		   jQuery("#cart_menu").mouseleave(function(){
+			  jQuery("#cart_goods_top_info").hide();
+		   });
+		   */
+			/*
+		   jQuery("#showCity").click(function(){
+			   var winResult=window.showModalDialog("$!webPath/city.htm",'城市','dialogWidth:400px;dialogHeight:300px;dialogLeft:200px;dialogTop:150px;center:yes;help:yes;resizable:yes;status:yes');
+			   if (winResult==2){ //返回值 .可以修改.如果有值
+				   window.location.reload(); 
+				}
+			});
+			*/
+		//});
+	   </script>
+         
+        #if($!CommUtil.indexOf("$!user.userRole","ADMIN")>=0)
+		<li class="menupx"><a href="$!webPath/admin/index.htm" target="_blank">管理后台</a></li>
+		#end
+        #set($navs=$!navTools.queryNav(-1,-1))
+		#if($!navs.size()>0)
+        <li class="menupx"><a href="$!webPath/articlelist_help.htm">帮助中心</a></li>
+		#else
+        <li class="menupx" style="background:none;"><a href="$!webPath/articlelist_help.htm">帮助中心</a></li>
+        #end
+		#if($!navs.size()>0)
+		<li class="mytaobao menu-item menupx" style="background:none;">
+          <div class="menu"> <a class="menu-hd" href="$!webPath/buyer/index.htm" rel="nofollow">更多链接<b></b></a>
+            <div class="menu-bd" style="height:auto;">
+              <div class="menu-bd-panel">
+                <div>
+                #foreach($nav in $navs)
+                #set($map=$!navTools.genericURL("$!webPath","$!nav.id"))
+                 #set($url=$!map.get("url"))
+                <a href="$!url"  #if($!new_win==1)target="_blank"#end  rel="nofollow">$!nav.title</a>
+                #end
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+		#end
+      </ul>
+    </div>
+    <div class="pageleft"> 
+    #if($!user)<span>$!CommUtil.substring("$!{user.userName}",12)&nbsp;&nbsp;您好,欢迎来到$!CommUtil.substring("$!{config.websiteName}",30)！</span><a href="$!webPath/iskyshop_logout.htm" class="lightblue">[退出]</a> #else<span>&nbsp;&nbsp;亲，欢迎来到$!{config.websiteName}！</span><span class="pxlr"><a href="$!webPath/user/login.htm?url=$!current_url" class="lightblue">登录</a></span><span class="pxlr">或</span><span class="pxlr"><a href="$!webPath/register.htm" class="lightblue">注册</a></span><span class="pxlr">或</span><span class="pxlr"><a href="$!webPath/register_seller.htm">免费开店</a></span>#end
+  <script>
+    //收藏本站
+/**
+ * @author:lihao
+ * @param sURL网址
+ * @param sTitle网站标题
+ * */
+function AddFavorite(sURL, sTitle){
+console.log(sTitle)
+   var flag=false;
+	try{
+       window.external.AddFavorite(sURL, sTitle);
+    }catch (e){
+        try{
+            window.sidebar.addPanel(sTitle, sURL, "");
+        }catch (e){
+			if(isFirefox=navigator.userAgent.indexOf("Firefox")>0){  
+				  flag=true;
+			 } else{
+				alert("加入收藏失败，请使用Ctrl+D进行添加");
+			 } 
+            
+        }
+    }
+	return flag;
+}
+    
+    </script>
+    <a href="$!webPath/index.htm" onclick="return AddFavorite('$!webPath/index.htm','中化化肥官方商城');"  title="中化化肥官方商城" rel="sidebar"><b></b>
+收藏本站</a>
+    </div>    
+    </div>
+  </div>
+</div>  
+  </div>
+</div>

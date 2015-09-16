@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP - 卖家中心</title>
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css">
+
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/style/weixin/default/js/bootstrap.min.js"></script>
+<script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
+<script>
+jQuery(document).ready(function() {
+   var begin_count =6;
+   jQuery("#loading_more").click(function(){
+	 var keyword = jQuery("#keyword").val();  
+	 var queryType = jQuery("#queryType").val(); 
+	 var storeId = $!{storeId};
+	 var sort=jQuery("#sort").val();
+	  jQuery.post("$!webPath/weixin/search_goods_ajax.htm",
+		  {
+		  "begin_count":begin_count,
+		  "queryType":queryType,
+		  "keyword":keyword,
+		  "storeId":storeId,
+		  "sort":sort
+		  },
+		  function(data){
+			  if(data){
+				  jQuery("div.goods_list").append(data)
+				  begin_count = begin_count +6;
+				  } else{
+				 	 jQuery(".index_load").hide();
+					 jQuery("#no_more").show();
+				  } 
+			  },
+		  "text");	  
+		  });
+//排序	  
+	jQuery(".sort .sort_sp a").click(function(){
+	var sort
+	if(jQuery(this).find("b s").attr("class")=="sort_sp_up"){
+	jQuery(this).find("b s").attr("class","sort_sp_down");
+	sort="desc";
+	}else{
+	jQuery(this).find("b s").attr("class","sort_sp_up");
+	sort="asc";
+	}
+	jQuery("#sort").val(sort)
+	var queryType =jQuery(this).attr("queryType");
+	var keyword = jQuery("#keyword").val();  
+	var storeId = $!{storeId};
+	jQuery("#queryType").val(queryType)
+    jQuery.post("$!webPath/weixin/search_goods_ajax.htm",
+		  {
+		  "begin_count":0,
+		  "queryType":queryType,
+		  "keyword":keyword,
+		  "sort":sort,
+		  "storeId":storeId
+		  },
+		  function(data){
+			  if(data){
+			      jQuery("div.goods_list").empty()
+				  jQuery("div.goods_list").append(data)
+				  begin_count = 6;
+				  jQuery(".index_load").show();
+				  jQuery("#no_more").hide();
+				  } else{
+				 	 jQuery(".index_load").hide();
+					 jQuery("#no_more").show();
+				  } 
+			  },
+		  "text");		  	  
+})
+//图片懒加载
+$("img").lazyload({
+    placeholder : "$!imageWebServer/resources/style/common/images/loader.gif", //加载图片前的占位图片
+    effect      : "fadeIn" //加载图片使用的效果(淡入)
+});
+});
+//搜索框特殊字符验证
+function input_search_special(element){
+   	var value=jQuery(element).val()
+	var vkeyWords=/[`~!@#$^&*()+=|\\\[\]\{\}:;'%\,.<>\/\?]/;
+	if(vkeyWords.test(value)){
+	    var value2
+	    if(value.length>1)
+			value2=value.substring(0, (value.length-1));
+		else
+			value2="";
+		if(vkeyWords.test(value2))
+			jQuery(element).val("");
+		else
+			jQuery(element).val(value.substring(0, (value.length-1)));
+			
+	}
+}
+</script>
+</head>
+<body>
+<div class="page_bottom">
+<!--<hgroup>
+  <h3 class="goods_car"><a href="javascript:history.go(-1);"><em></em></a><span><b>搜索结果</b></span></h3>
+</hgroup>
+--><div class="mall_back"><a href="javascript:history.go(-1);" style="color: #666">&lt;</a></div>
+<!-- ---------搜索框start---------- -->
+<form class="header-search-form" id="search_form" name="search_form" method="post" action="$!webPath/weixin/search_goods_list.htm?storeId=$!{storeId}">
+	<div class="header-search-box">
+		<div class="header-search-input">
+			<input type="text" value="$!keyword" autocomplete="off" cleardefault="no" name="keyword" maxlength="20" id="keyword" class="hilight1" onchange="input_search_special(this)" onkeyup="input_search_special(this)">
+		</div>
+		<input id="queryType" name="queryType" type="hidden" value="$!queryType"/>
+		<input id="sort" name="sort" type="hidden" value="$!sort"/>
+		<button type="submit" class="header-icon-search" id="layout_search_submit" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);"  ><span>搜索</span></button>
+	</div>
+</form>
+<!-- ---------搜索框end---------- --> 
+<div class="sort"> 
+<span Style="display: none" class="sort_sp"><a href="javascript:void(0);" queryType="goods_collect"><b>人气<s class="sort_sp_up"></s></b></a></span> <span Style="display: none" class="sort_sp"><a href="javascript:void(0);" queryType="goods_salenum"><b>销量<s class="sort_sp_up"></s></b></a></span> <span class="sort_sp"><a href="javascript:void(0);" queryType="goods_current_price"><b>价格<s class="sort_sp_up"></s></b></a></span> <span Style="display: none" class="sort_sp"><a href="javascript:void(0);" queryType="store_credit"><b>信誉<s class="sort_sp_up"></s></b></a></span> 
+</div>
+<div class="goods_list container">
+ #foreach($goods in $objs)
+  <dl class="clearfix">
+    #if($!goods.goods_main_photo)                       
+    #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+    #else
+    #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}.jpg")
+    #end
+    <dt class="pimg">
+    <a class="p_img" href="$!webPath/weixin/goods.htm?goods_id=$!goods.id"><img src="$!img" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); " /></a>
+    </dt>
+    <dd>
+      
+        <div class="baby_name"><a href="$!webPath/weixin/goods.htm?goods_id=$!goods.id">$!goods.goods_name</a></div>
+        <div class="price">	#if ($!goods.goods_promotion)
+        		¥<strong>$!{goods.goods_current_price}</strong><del>¥$!{goods.goods_price}</del>
+ 			#else
+	 			#if($!{goods.goods_price}==$!{goods.goods_current_price})
+	 			¥<strong>$!{goods.goods_price}</strong>  
+	 			#else
+			    ¥<strong>$!{goods.goods_current_price}</strong><del>¥$!{goods.goods_price}</del>
+				#end
+ 			#end </div>
+        <div class="goods_address"><span>$!goods.goods_store.area.parent.parent.areaName</span><br/>销量：<b style="color:#e10000">$!goods.goods_salenum</b></div>
+       
+    </dd>
+  </dl>
+  #end
+   </div>
+#if($!objs)
+	#if($!objs.size()>0)
+	<div class="index_load"><a href="javascript:void(0);" id="loading_more">加载更多</a></div>
+	<div class="index_load" id="no_more" style="display:none"><a href="javascript:void(0);" style="color:#F00">没有更多数据了</a></div>
+	#else
+	<span class="goods_none"><img src="$!webPath/resources/style/weixin/default/images/no_date.png" width="80"  height="62"/><p>亲！没有您要找的宝贝呢。</p></span>
+	#end
+#else
+	<span class="goods_none"><img src="$!webPath/resources/style/weixin/default/images/no_date.png" width="80"  height="62"/><p>亲！没有您要找的宝贝呢。</p></span>
+#end
+ </div>
+ $!httpInclude.include("/weixin/platform/nav_bottom.htm?op=buy")
+</body>
+</html>

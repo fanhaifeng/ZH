@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link href="$!webPath/resources/style/system/manage/$!{config.websiteCss}/template.css"  rel="stylesheet" type="text/css"/>
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
+<script>
+jQuery.validator.addMethod("checkNumber",function(value,element){
+	
+  var integration_rate_for_order=jQuery("#integration_rate_for_order").val();
+  if(integration_rate_for_order<1 && integration_rate_for_order>0){
+     return true;
+	 
+  }else return false;
+});
+jQuery(document).ready(function(){
+jQuery("#theForm").validate({
+	ignore: "",						  
+    rules:{
+	  integration_from_register:{required :true,number:true,digits:true},
+	  integration_from_invite:{required :true,number:true,digits:true},
+	  integration_from_order:{required :true,number:true,digits:true},
+	  integration_rate_for_money:{required :true,number:true},
+	  integration_rate_for_order:{required :true,number:true,checkNumber:true}
+	},
+	messages:{
+		integration_from_register:{required:"注册农豆不能为空",number:"注册农豆只能为数字",digits:"只能输入正整数"},
+		integration_from_invite:{required:"邀请用户农豆不能为空",number:"邀请用户农豆只能为数字",digits:"只能输入正整数"},
+		integration_from_order:{required:"不能为空",number:"只能为数字",digits:"只能输入正整数"},
+		integration_rate_for_money:{required:"不能为空",number:"只能为数字"},
+		integration_rate_for_order:{required:"不能为空",number:"只能为数字",checkNumber:"请输入0~1之间的数字"}
+	}
+  });	
+});
+
+function saveForm(){
+	jQuery("#theForm").submit();
+}
+</script>
+</head>
+<body>
+<form action="$!webPath/admin/integrals_set_save.htm" method="post"  name="theForm" id="theForm">
+  <div class="cont">
+  <h1 class="seth1">农豆设置
+    <input name="id" id="id" type="hidden" value="$!id"/>
+  </h1>
+  <div class="settab">
+  <span class="tab-one" style="margin-left:25px;"></span> 
+  <span class="tabs"> <a href="javascript:void(0);" class="this">基本设置</a> </span> 
+  <span class="tab-two"></span>
+</div>
+  <div class="setcont">
+    <ul class="set1">
+      <li>注册农豆：</li>
+      <li><span class="webname">
+        <input name="integration_from_register" type="text" id="integration_from_register" value="$!integration_from_register" size="40" autocomplete="off" />
+      </span><span id="nothis"><strong class="q"></strong><strong class="w">用户注册时，可获得的农豆个数（单位：个）</strong><strong class="c"></strong></span></li>
+    </ul>
+    <ul class="set1">
+      <li>邀请用户农豆：</li>
+      <li><span class="webname">
+        <input name="integration_from_invite" type="text" id="integration_from_invite" value="$!integration_from_invite" size="40" autocomplete="off" />
+      </span><span id="nothis"><strong class="q"></strong><strong class="w">邀请用户在此商城注册或开店可获得的农豆数（单位：个）</strong><strong class="c"></strong></span></li>
+    </ul>
+ 	<ul class="set1">
+      <li>订单金额折合农豆比例：</li>
+      <li><span class="webname">
+        <input name="integration_from_order" type="text" id="integration_from_order" value="$!integration_from_order" size="40" autocomplete="off" />
+      </span><span id="nothis"><strong class="q"></strong><strong class="w">填写整数n，代表用户的该笔订单可获得n*订单金额的农豆数量（单位：倍）</strong><strong class="c"></strong></span></li>
+    </ul>
+    <ul class="set1">
+      <li>农豆兑换钱比例：</li>
+      <li><span class="webname">
+        <input name="integration_rate_for_money" type="text" id="integration_rate_for_money" value="$!integration_rate_for_money" size="40" autocomplete="off" />
+      </span><span id="nothis"><strong class="q"></strong><strong class="w">填写数字n，代表你拥有的农豆数可折合成钱的比例（单位：元/个）</strong><strong class="c"></strong></span></li>
+    </ul>
+    <ul class="set1">
+      <li>订单使用农豆比例：</li>
+      <li><span class="webname">
+        <input name="integration_rate_for_order" type="text" id="integration_rate_for_order" value="$!integration_rate_for_order" size="40" autocomplete="off" />
+      </span><span id="nothis"><strong class="q"></strong><strong class="w">填写0~1之间的数字,代表该笔订单可使用的农豆百分比</strong><strong class="c"></strong></span></li>
+    </ul> 
+  </div>
+  <div class="submit">
+    <input name="" type="button" value="提交" onclick="saveForm();"/>
+  </div>
+</div>
+</form>
+</body>
+</html>

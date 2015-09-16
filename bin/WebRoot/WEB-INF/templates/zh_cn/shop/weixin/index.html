@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP-店铺 - 首页</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/jquery-1.11.3.min.js"></script>
+
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/bootstrap.min.js"></script>
+</head>
+<body class="bodybg">
+<div class="goods_list_con">
+<header>
+<div class="mall_back"><!--<a href="javascript:history.go(-1);">&lt;</a>--></div>
+<!-- ---------搜索框start---------- -->
+<form class="header-search-form" id="search_form" name="search_form" method="post" action="$!webPath/weixin/search_goods_list.htm?storeId=$!{store.id}">
+ <div class="header-search-box">
+ <div class="header-search-input">
+ <input type="text" value="$!keyword" autocomplete="off" cleardefault="no" name="keyword" maxlength="20" id="keyword" class="hilight1">
+ </div>
+ <button type="submit" class="header-icon-search" id="layout_search_submit" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);"  ><span>搜索</span></button>
+ </div>
+ </form>
+<!-- ---------搜索框end---------- -->
+ 
+</header>
+<div class="container store_info">
+<div class="row">
+<div class="col-xs-12 col-sm-6">
+ <div class="con">
+ <i class="icon-store"><img src="$!webPath/resources/style/weixin/default/images/icon_stroe.png" /></i>
+ <div class="p_info">
+ <div class="stroe_name" >$!store.store_name</div>
+ <div class="gz">$!store.favorite_count人关注</div>
+ </div>
+ </div>
+</div>
+<div class="col-xs-12 col-sm-6">
+#if(!$!user)
+  <a class="on_save pull-right" href="$!webPath/weixin/login.htm">+关注</a>
+#else
+  <a class="on_save pull-right" id="top_sc" href="javascript:void(0);">+关注</a>
+#end
+
+</div>
+
+</div>
+
+
+</div>
+<div class="container all_msg">
+<div class="row">
+<div class="col-xs-4 col-sm-4 well item">
+<a href="$!webPath/weixin/goods_all_list.htm?storeId=$!store_id&type=all&key=shop">
+<span class="num">$!{store_goods_num}</span>
+<span class="txt">全部商品</span>
+</a>
+</div>
+<div class="col-xs-4 col-sm-4 well item">
+<a href="$!webPath/weixin/goods_all_list.htm?storeId=$!store_id&type=new&key=shop">
+<span class="num">$!{store_goodsnew_num}</span>
+<span class="txt">上新</span>
+</a>
+</div>
+<div class="col-xs-4 col-sm-4 well item">
+<a href="$!webPath/weixin/goods_all_list.htm?storeId=$!store_id&type=promote&key=shop">
+<span class="num">$!{store_goodsp}</span>
+<span class="txt">促销</span>
+</a>
+</div>
+<!--<div class="col-xs-3 col-sm-3 well item">
+<span class="num">2</span>
+<span class="txt">店铺动态</span>
+</div>
+--></div>
+</div>
+<div class="banner scroll-wrapper mt10" id="idContainer2" ontouchstart="touchStart(event)" ontouchmove="touchMove(event);" ontouchend="touchEnd(event);">
+		#if($store.slides.size()>0)
+        	<ul class='scroller' style='position:relative;left:0px;width:600%' id='idSlider2'>
+            	#foreach($slide in $store.slides)
+            	<li style='width:-100.0%'>
+	            	<a href="$!slide.url" target="_blank">
+	            		<img src="$!webPath/$!slide.acc.path/$!slide.acc.name"/>
+	            	</a>
+            	</li>
+            	#end
+        	</ul>
+        #else
+        	<ul class="scroller" style="position:relative;left:0px;width:600%" id="idSlider2">
+				<li style="width:-100.0%"> <a href='#'> <img src="$!webPath/resources/style/weixin/default/images/test/1.jpg" /> </a> </li>
+				<li style="width:-100.0%"> <a href='#'> <img src="$!webPath/resources/style/weixin/default/images/test/2.jpg" /> </a> </li>
+			</ul>
+        #end 
+        <ul class="new-banner-num new-tbl-type" id="idNum">
+		</ul>
+</div>
+ 
+  <!-- <div class="index_box_menu">
+  <a  href="$!webPath/weixin/goods_recommend_list.htm" class="menu_a"><b></b><i>推荐</i></a>
+    <a  href="$!webPath/weixin/goods_list.htm?queryType=addTime" class="menu_b"><b></b><i>新品</i></a>
+   <a  href="$!webPath/weixin/goods_list.htm?queryType=goods_salenum" class="menu_c"><b></b><i>热卖</i></a>
+    <a  href="$!webPath/weixin/classes_first_list.htm" class="menu_d"><b></b><i>类目</i></a>
+    <a  href="$!webPath/weixin/platform/index.htm" class="menu_e"><b></b><i>商城</i></a>
+     </div> -->
+  <div class="container-fluid floor_con">
+   <div class="col-xs-12 col-md-12 cate-title">
+	<h1 class="pull-left">热卖宝贝 </h1>
+	<a class="pull-right" href="$!webPath/weixin/goods_list.htm?queryType=goods_salenum">显示全部></a>
+	</div>
+ 
+    #foreach($goods in $hot_goods_list)
+      #set($class="hot_big")
+      #if($!velocityCount==2||$!velocityCount==3)
+        #set($class="hot_small_left")
+      #end
+      #if($!velocityCount==4||$!velocityCount==5)
+        #set($class="hot_small_botm_left")
+      #end
+      #if($!velocityCount==$!hot_goods_list.size())
+        #set($class="hot_small_botm_right")
+      #end
+       #if($!goods.goods_main_photo)
+          #set($bigimg="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}")              
+          #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+        #else
+          #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+          #set($bigimg="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+        #end
+       
+      <div  class="col-xs-6 col-md-3  $!class">
+      <div class="well"> 
+      <a class="p_img" href="$!webPath/weixin/goods.htm?goods_id=$!goods.id">
+      <img #if($!velocityCount==1)src="$!bigimg" #else  src="$!img" #end> 
+      </a> 
+   <span class="p_name"><a href="$!webPath/weixin/goods.htm?goods_id=$!goods.id">$!{goods.goods_name}</a></span>
+<span class="p_price">
+ #if($!{goods.goods_current_price})  
+        #if($!{goods.goods_current_price} >= 0)  
+              ¥$!{goods.goods_current_price}
+       #end
+ #else  
+             价格：待定  
+ #end 
+
+</span> 
+     </div>
+   </div>
+    #end
+     
+  </div>
+ 
+<!--<div class="container-fluid floor_con">
+<div class="col-xs-12 col-md-12 cate-title">
+	<h1 class="pull-left">新品上市 </h1>
+	 <a class="pull-right" href="$!webPath/weixin/goods_list.htm?queryType=goods_salenum">显示全部></a> 
+	</div>
+  
+    
+      #foreach($goods in $new_goods_list)
+        #if($!goods.goods_main_photo)              
+          #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+        #else
+          #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+        #end
+      <div class="col-xs-6 col-md-3 ">
+      <div class="well">
+       <a href="$!webPath/weixin/goods.htm?goods_id=$!goods.id"><img src="$!img" width="100%" height="100%"></a> 
+<span class="p_name">$!goods.goods_name</span>
+<span class="p_price">价格：¥$!{goods.store_price}</span> 
+      </div>
+      </div>
+      #end
+     
+ 
+</div>
+<div class="container-fluid floor_con">
+  <section class="indexlist_box">
+   <div class="col-xs-12 col-md-12 cate-title">
+	<h1 class="pull-left">推荐商品</h1>
+	 <a class="pull-right" href="$!webPath/weixin/goods_list.htm?queryType=goods_salenum">显示全部></a> 
+	</div>
+   
+      #foreach($goods in $recommend_goods_list)
+        #if($!goods.goods_main_photo)              
+          #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+        #else
+          #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+        #end
+      <div class="col-xs-6 col-md-3 ">
+      <div class="well">
+      <a href="$!webPath/weixin/goods.htm?goods_id=$!goods.id"><img src="$!img" width="100%" height="100%"></a> 
+    
+        <span class="p_name">$!goods.goods_name</span>
+<span class="p_price">价格：¥$!{goods.store_price}</span> 
+        </div>
+      </div>
+     #end
+    
+  </section>
+</div>
+$!httpInclude.include("/weixin/footer.htm")
+--></div>
+  $!httpInclude.include("/weixin/platform/nav_bottom.htm")
+
+<input type="hidden" value="$store.slides.size()" id="activity"/>
+<input type="hidden" value="15" id="crazy"/>
+<script><!--
+//活动轮播图
+var picCount = $("#idSlider2").find("li").size();
+	$(".pic-num1").css("width",(picCount*30)+"px");
+	var forEach = function(array, callback){
+		for (var i = 0, len = array.length; i < len; i++) { callback.call(this, array[i], i); }
+	}
+	var st = createPicMove("idContainer2", "idSlider2", picCount);	//图片数量更改后需更改此数值
+	var nums = [];
+	//插入数字
+	for(var i = 0, n = st._count - 1; i <= n;i++){
+		var li = document.createElement("li");
+		nums[i] = document.getElementById("idNum").appendChild(li);
+	}
+	//设置按钮样式
+	st.onStart = function(){
+		//forEach(nums, function(o, i){ o.className = ""})
+		forEach(nums, function(o, i){ o.className = st.Index == i ? "new-tbl-cell on" : "new-tbl-cell"; })
+	}
+	// 重新设置浮动
+	$("#idSlider2").css("position","relative");
+	
+	var _initX = 0;
+	var _finishX = 0;
+	var _startX = 0;
+	var _startY = 0;
+	function touchStart(event) {
+		_startX = event.touches[0].clientX;
+		_startY = event.touches[0].clientY;
+		_initX = _startX;
+	}
+	function touchMove(event) {
+		var touches = event.touches;
+		var _endX = event.touches[0].clientX;
+		var _endY = event.touches[0].clientY;
+		if(Math.abs(_endY-_startY)>Math.abs(_endX-_startX)){
+			return;		
+		}
+		event.preventDefault();
+		_finishX = _endX;
+		var _absX = Math.abs(_endX-_startX);
+		var lastX = $('#idSlider2').css('left').replace('px','');
+		if(_startX>_endX){
+			st.Stop();
+			$('#idSlider2').css('left',(parseInt(lastX)-_absX)+'px');
+		}else{
+			st.Stop();
+			$('#idSlider2').css('left',(parseInt(lastX)+_absX)+'px');
+		} 
+		_startX = _endX;
+	}
+	//触屏  离开屏幕事件
+	function touchEnd(event) {
+		if(_finishX==0){
+			return;
+		}
+		if(_initX>_finishX){
+			bindEvent(_initX,_finishX);
+		}else if(_initX<_finishX){
+			bindEvent(_initX,_finishX);
+		}
+		_initX = 0;
+		_finishX = 0;
+	}
+
+    /**
+     *  绑定触屏触发事件
+     * @param start
+     * @param end
+     */
+    function bindEvent(start,end){
+         if (start >= end) {
+                   st.Next();
+                } else {
+                    st.Previous();
+                }
+    }
+	st.Run();
+	var resetScrollEle = function(){
+		$("#shelper").css("width",$("#newkeyword").width()+"px");
+		var slider2Li = $("#idSlider2 li");
+		slider2Li.css("width",$(".scroll-wrapper").width()+"px");
+		$("#shelper").css("width",$("#newkeyword").width()+"px");
+	}
+	
+	window.addEventListener("resize",function(){
+		st.Change = st._slider.offsetWidth/st._count;
+		st.Next();
+		resetScrollEle();
+	});
+	window.addEventListener("orientationchange",function(){
+		st.Change = st._slider.offsetWidth/st._count;
+		st.Next();
+		resetScrollEle();
+	})
+	resetScrollEle();
+	/* 解决自动跳转问题
+		$(function(){
+    	//根据cookie判断用户是否已经主动取消，主动取消了则不再出现提醒
+    	var cookieName="ucTip";
+    	var cancel = false;
+        var start = document.cookie.indexOf(cookieName+"=");
+        if (start !=-1) {
+            start = start+cookieName.length+1;
+            var end = document.cookie.indexOf(";",start);
+            if (end==-1) {end = document.cookie.length;}
+            var ucTip = document.cookie.substring(start,end);
+    		if(ucTip=='1'){
+    			cancel = true; 
+    		}
+    	}
+    	if(!cancel){
+    		//外层div元素
+    		var ucElement = $('<div>').attr('id','ucTip').css({"position":"fixed","bottom":"30%","z-index":"10001","border":"0","display":"none"});
+    		//frame元素，目前UC只支持该接入类型
+    		var ucFrame = $('<iframe>').css({"height":"160px","width":"320px","border":"0px"}).attr('src','../app.uc.cn/appstore/AppCenter/frame@uc_param_str=nieidnutssvebipfcp&api_ver=2.0&id=445&bg=#ffffff');
+    		ucElement.append(ucFrame);
+    		//将元素添加到页面
+    		$('body').append(ucElement);
+    		//回调方法
+    		window.addEventListener("message",function(event){
+    			var dt = event.data.type;
+    			var dm = event.data.message;
+    			//判断出现的情况
+    			if(dm!='not android uc' && dm!='not exist' && dm!='browser version error' && dm!='already exist' && dm!=undefined){
+    				$('#ucTip').show();
+    			}
+    			//判断隐藏的情况
+    			if (dm == 'success' || dm=='cancle' || dm=='close'){
+        			$('#ucTip').hide();
+    				//如果用户主动取消，则记录到cookie，30天内不再提醒
+    				if(dm=='cancle'){
+    					var expires = new Date();
+    					expires.setTime(expires.getTime() + 30*24*60*60*1000);
+    					document.cookie=cookieName+'=1;expires='+expires.toGMTString()+';path=/;domain=.jd.com';
+    					document.cookie=cookieName+'=1;expires='+expires.toGMTString()+';path=/;domain=.360buy.com';
+    				}
+        		}
+    		},false);
+    	}
+    });
+		function clickResponse(obj){
+		$('[res]').removeClass('on');
+		$(obj).addClass('on');
+		setTimeout(function(){
+			$(obj).removeClass('on');
+		},700);
+	}
+	 */
+		function createPicMove(a, b, c) {
+		    var g = function(j) {
+		        return "string" == typeof j ? document.getElementById(j) : j
+		    };
+		    var d = function(j, l) {
+		        for (var k in l) {
+		            j[k] = l[k]
+		        }
+		        return j
+		    };
+		    var f = function(j) {
+		        return j.currentStyle || document.defaultView.getComputedStyle(j, null)
+		    };
+		    var i = function(l, j) {
+		        var k = Array.prototype.slice.call(arguments).slice(2);
+		        return function() {
+		            return j.apply(l, k.concat(Array.prototype.slice.call(arguments)))
+		        }
+		    };
+		    var e = {
+		        Quart: {
+		            easeOut: function(k, j, m, l) {
+		                return - m * ((k = k / l - 1) * k * k * k - 1) + j
+		            }
+		        },
+		        Back: {
+		            easeOut: function(k, j, n, m, l) {
+		                if (l == undefined) {
+		                    l = 1.70158
+		                }
+		                return n * ((k = k / m - 1) * k * ((l + 1) * k + l) + 1) + j
+		            }
+		        },
+		        Bounce: {
+		            easeOut: function(k, j, m, l) {
+		                if ((k /= l) < (1 / 2.75)) {
+		                    return m * (7.5625 * k * k) + j
+		                } else {
+		                    if (k < (2 / 2.75)) {
+		                        return m * (7.5625 * (k -= (1.5 / 2.75)) * k + 0.75) + j
+		                    } else {
+		                        if (k < (2.5 / 2.75)) {
+		                            return m * (7.5625 * (k -= (2.25 / 2.75)) * k + 0.9375) + j
+		                        } else {
+		                            return m * (7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375) + j
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		    };
+		    var h = function(k, n, m, l) {
+		        this._slider = g(n);
+		        this._container = g(k);
+		        this._timer = null;
+		        this._count = Math.abs(m);
+		        this._target = 0;
+		        this._t = this._b = this._c = 0;
+		        this.Index = 0;
+		        this.SetOptions(l);
+		        this.Auto = !!this.options.Auto;
+		        this.Duration = Math.abs(this.options.Duration);
+		        this.Time = Math.abs(this.options.Time);
+		        this.Pause = Math.abs(this.options.Pause);
+		        this.Tween = this.options.Tween;
+		        this.onStart = this.options.onStart;
+		        this.onFinish = this.options.onFinish;
+		        var j = !!this.options.Vertical;
+		        this._css = j ? "top": "left";
+		        var o = f(this._container).position;
+		        o == "relative" || o == "absolute" || (this._container.style.position = "relative");
+		        this._container.style.overflow = "hidden";
+		        this._slider.style.position = "absolute";
+		        this.Change = this.options.Change ? this.options.Change: this._slider[j ? "offsetHeight": "offsetWidth"] / this._count
+		    };
+		    h.prototype = {
+		        SetOptions: function(j) {
+		            this.options = {
+		                Vertical: true,
+		                Auto: true,
+		                Change: 0,
+		                Duration: 50,
+		                Time: 10,
+		                Pause: 4000,
+		                onStart: function() {},
+		                onFinish: function() {},
+		                Tween: e.Quart.easeOut
+		            };
+		            d(this.options, j || {})
+		        },
+		        Run: function(j) {
+		            j == undefined && (j = this.Index);
+		            j < 0 && (j = this._count - 1) || j >= this._count && (j = 0);
+		            this._target = -Math.abs(this.Change) * (this.Index = j);
+		            this._t = 0;
+		            this._b = parseInt(f(this._slider)[this.options.Vertical ? "top": "left"]);
+		            this._c = this._target - this._b;
+		            this.onStart();
+		            this.Move()
+		        },
+		        Move: function() {
+		            clearTimeout(this._timer);
+		            if (this._c && this._t < this.Duration) {
+		                this.MoveTo(Math.round(this.Tween(this._t++, this._b, this._c, this.Duration)));
+		                this._timer = setTimeout(i(this, this.Move), this.Time)
+		            } else {
+		                this.MoveTo(this._target);
+		                this.Auto && (this._timer = setTimeout(i(this, this.Next), this.Pause))
+		            }
+		        },
+		        MoveTo: function(j) {
+		            this._slider.style[this._css] = j + "px"
+		        },
+		        Next: function() {
+		            this.Run(++this.Index)
+		        },
+		        Previous: function() {
+		            this.Run(--this.Index)
+		        },
+		        Stop: function() {
+		            clearTimeout(this._timer);
+		            this.MoveTo(this._target)
+		        }
+		    };
+		    return new h(a, b, c, {
+		        Vertical: false
+		    })
+		}
+	 
+</script>
+</body>
+</html>

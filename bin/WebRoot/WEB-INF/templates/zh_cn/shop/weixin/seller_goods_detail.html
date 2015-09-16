@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style"
+	content="black-translucent">
+<title>中化BBC商城-APP - 卖家中心</title>
+<link rel="stylesheet"
+	href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css">
+<link href="$!webPath/resources/style/weixin/default/css/phone.css"
+	rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/jquery-1.11.3.min.js"></script> 
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/bootstrap.min.js"></script> 
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery-ui-1.8.21.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.base.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+	//店铺分类
+	#foreach($ugc in $obj.goods_ugcs)
+    	jQuery("#ugc_id_$!{velocityCount}").val("$!ugc.className");
+	#end	 
+ 	//是否推荐
+	jQuery("#store_recommend").val($!obj.store_recommend?"推荐":"不推荐"); 
+	//表单验证
+  	jQuery("#theForm").validate({		
+		rules: {   
+			store_price:{
+				required:true,
+				number:true,
+				range:[0.01,1000000] 
+			},
+			goods_promotion:{
+				number:true,
+				range:[0.01,1000000] 
+			},
+			goods_inventory:{
+				number:true,
+				range:[1,1000000000] 
+			}
+		},
+		messages: {
+			store_price:{
+				required:"店铺价格不能为空",
+				number:"店铺价格只能是数字格式",
+				range:"店铺价格只能在0.01-1000000之间"
+			},
+			goods_promotion:{
+				number:"促销价格只能是数字格式",
+				range:"促销价格只能在0.01-1000000之间"
+			},
+			goods_inventory:{
+			    number:"商品库存只能为数字",
+				range:"商品库存数量只能在0-1000000000之间"
+			}
+		}
+	}); 
+});
+function saveForm(){
+	jQuery("#theForm").submit();
+}
+//价格限价
+function goods_promotion_check(obj){ 
+var value=obj.value;
+//goods_promotion有错因该是店铺价格
+if(value=="")
+return;
+  jQuery.post("$!webPath/seller/goods_promotion_check.htm",{"value":value,"goods_id":jQuery("#goods_id").val(),"goodsdc_id":""},function(data){
+   //返回"true" 验证通过 返回 其他回填到店铺价格中
+   if(data!="\"true\""){
+   jQuery(obj).val(data)
+   alert("此商品最低限价"+data)
+   }
+   },"text");  
+}
+</script>
+</head>
+<body class="bodybg">
+	<div class="goods_list_con">
+	<header>
+ <div class="mall_back"><a href="javascript:history.go(-1);">&lt;</a></div>
+  <span class="htitle">商品详细信息</span>
+</header> 
+<input type="hidden" id="goods_id" value="$!obj.id"/>
+		<form id="theForm" action="$!webPath/weixin/seller_goods_update.htm"
+				method="post" name="theForm" onsubmit="">
+			<div class="container detail_con fff">
+			 
+			 
+			   <ul class="Form_con">
+			   <li>$!obj.goods_name</li>
+			   <li>类目：$!goods_class_info</li>			   
+			   </ul>			    
+			   </div>
+			 <div class="container detail_con fff mt10">
+			  
+			  <ul class="Form_con">
+			   <li>价格：<input name="store_price" id="store_price" 
+							value="$!obj.store_price" onblur="goods_promotion_check(this)"/></li>
+			 <li>促销价：<input name="goods_promotion"
+							value="$!obj.goods_promotion" onblur="goods_promotion_check(this)"/></li>
+			<li><div><b>规格：</b></div>
+			<div>
+			#foreach($speckeys in $!specHTML)
+					#foreach($keys in $speckeys.keySet())
+					$keys: 
+					 #foreach($!value in $speckeys.get($keys))
+					 <a href="javascript:void(0);"  spec="$!gsp.spec.id" gsp="$!gsp.id"><b> $!value<i></i></b></a>
+					 #end
+					 <br>
+					 #end
+					#end
+			</div>
+			</li>
+			<li>
+			 库存: <input name="goods_inventory" value="$!obj.goods_inventory" /> 
+							</li>
+							<li>物料号: $!obj.goods_serial  </li>
+						 <li> 图片: <img
+							src="$!webPath/$!{obj.goods_main_photo.path}/$!{obj.goods_main_photo.name}_small.$!{obj.goods_main_photo.ext}">
+						 </li>
+						 
+						 <li> 重量:  $!obj.goods_weight 千克(Kg)  						</li>
+			  </ul>
+			  
+			 </div>
+			   <div class="container detail_con fff mt10">
+			 
+			 <ul class="Form_con">
+			  
+						 <li> 品牌: $!obj.goods_brand.name				</li>						
+						 <li>
+						<div>商品类型属性：</div> 	
+						 #foreach($!map in $!goods_property)				
+					$!map.name :
+					$!map.val	
+					<br>
+					#end				
+					</li>					
+					<li>
+						 #if(!$!obj||$!{obj.goods_ugcs.size()}==0) #else
+						  本店分类: 
+							#foreach($goods_ugc in $obj.goods_ugcs)<span>$!goods_ugc.className</span>#end #end 
+							</li>
+							<li>
+						 推荐: 
+					 
+						#if($!obj.store_recommend=="false")
+						否
+						#else
+						是
+						#end
+					 
+					</li>
+					<li>
+						 SEO: $!obj.seo_keywords 
+					</li>
+					<li>
+					<li><input type="submit" class="cmd_login"  value="提交" /> <input
+							name="goods_session" type="hidden" id="goods_session"
+							value="$!goods_session" /> <input name="id" type="hidden"
+							value="$!obj.id" /> 
+					</li>
+			   </ul>
+			 
+			 </div>
+			 </form>
+			 </div>
+					 
+		$!httpInclude.include("/weixin/platform/nav_bottom.htm")
+</body>
+</html>

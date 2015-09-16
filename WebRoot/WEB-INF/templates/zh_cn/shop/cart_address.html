@@ -1,0 +1,165 @@
+<link href="$!webPath/resources/style/common/css/window.css" type="text/css" rel="stylesheet" />
+<script>
+jQuery.validator.addMethod("mobile_telephone",function(value,element){
+	  if(jQuery("#telephone").val()==""&&jQuery("#mobile").val()==""){
+	     return false;
+		 
+	  }else return true;
+	});
+	jQuery.validator.addMethod("teleVerify",function(value,element){
+	    var re =  /(^0?[1][34578][0-9]{9}$)/;
+	    if(re.test(jQuery("#telephone").val())){			
+			return true;
+		}else {
+		    return false;
+		}		  
+	});
+	jQuery.validator.addMethod("zipVerify",function(value,element){
+	    var re =  /(^[1-9][0-9]{5}$)/;
+	    if(re.test(jQuery("#zip").val())){			
+			return true;
+		}else {
+		    return false;
+		}		  
+	});
+	jQuery.validator.addMethod("mobileVerify",function(value,element){
+	   if(jQuery("#mobile").val() == "" || jQuery("#mobile").val() == "-"){
+		   return true;
+	   }else{
+		   var re = /^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$|(^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])\d{8}$)/;	   
+		   if(re.test(jQuery("#mobile").val())){			
+			   return true;
+		   }else {
+			   return false;
+		   }	
+	   }	  
+	});
+	jQuery(document).ready(function(){
+	  //								
+	 jQuery("#theForm").validate({
+		ignore: "",
+	    rules:{
+		  trueName:{required :true},
+		  area1:{required : true},
+		  area2:{required : true},
+		  area3:{required : true},
+		  area_info:{required :true},
+		  telephone:{required:true,teleVerify:true}
+		 },
+		messages:{
+		  trueName:{required :"收货人不能为空"},
+		  area1:{required :"请选择省"},
+		  area2:{required :"请选择市"},
+		  area3:{required :"请选择区"},
+		  area_info:{required :"详细地址不能为空"},
+		  telephone:{required:"手机号码必填 ",teleVerify : "手机号码格式不对"}
+		}
+	  });
+	    //
+	 jQuery("select").change(function(){
+	     var level=jQuery(this).attr("level");
+		 var id=jQuery(this).val();
+		 if(id!=""){
+		  jQuery.post("$!webPath/load_area.htm",{"pid":id},function(data){
+		     jQuery("#area"+level).empty();
+			  jQuery("#area"+level).append("<option value=''>请选择</option>");
+		    jQuery.each(data, function(index,item){
+			  jQuery("#area"+level).append("<option value='"+item.id+"'>"+item.areaName+"</option>");
+			  jQuery("#area"+level).show();
+			});
+		  },"json");
+		 }else{
+		   for(var i=level;i<=3;i++){
+		    jQuery("#area"+i).empty();
+		    jQuery("#area"+i).hide();
+		   }
+		 }
+	  });
+	  //
+	 jQuery("#area3").change(function(){
+	   var id=jQuery(this).val();
+	   jQuery("#area_id").val(id);
+	 });
+	});
+
+</script>
+<form action="$!webPath/cart_address_save.htm" method="post" id="theForm">
+  <table style="float:left;" width="100%" border="0" cellspacing="0" cellpadding="0" class="box_table">
+    <tr>
+      <td width="100" align="right" valign="top"><span class="hui_table">收货人姓名</span>：
+        <input name="id" type="hidden" id="id" value="$!obj.id" />
+        <input name="store_id" type="hidden" id="store_id" value="$!store_id" />
+      </td>
+      <td align="left"><span class="dia_txt">
+        <input name="trueName" type="text" id="trueName" value="$!obj.trueName" size="35" />
+      </span></td>
+    </tr>
+    <tr>
+      <td align="right" valign="top"><span class="hui_table">所在区域：</span></td>
+      <td align="left">
+                  <select name="area1" id="area1" level="2" style="width:100px;">
+                  <option value="">请选择地区</option>
+ 				  #foreach($area in $areas)
+                     #if($!obj)
+                     	#if($!areaIdFirst==$!area.id)
+	                    <option value="$!area.id" selected="selected">$!area.areaName</option>
+                     	#else
+                     	<option value="$!area.id">$!area.areaName</option>
+                     	#end
+                     #else
+                     <option value="$!area.id">$!area.areaName</option>
+                     #end
+				  #end
+                   </select>
+                  <input type="button" name="area_edit" id="area_edit" value="修改" style="display:none;" onclick="javascript:jQuery('#area1').show();jQuery('#area_info').empty();jQuery(this).hide();" />
+                  #if($!obj)
+	                  <select name="area2" id="area2" style="width:60px;" level="3">
+	                  <option value="">请选择</option>
+	                  #foreach($area in $areasSecond)
+	                  		#if($!areaIdSecond==$!area.id)
+		                    <option value="$!area.id" selected="selected">$!area.areaName</option>
+	                     	#else
+	                     	<option value="$!area.id">$!area.areaName</option>
+	                     	#end
+	                  #end
+	                  </select>
+					  <select name="area3" id="area3" style="width:60px;" level="4">
+					  <option value="">请选择</option>
+	                  #foreach($area in $areasThird)
+	                  		#if($!obj.area.id==$!area.id)
+		                    <option value="$!area.id" selected="selected">$!area.areaName</option>
+	                     	#else
+	                     	<option value="$!area.id">$!area.areaName</option>
+	                     	#end
+	                  #end
+	                  </select>
+	                  <input name="area_id" type="hidden" id="area_id"  value="$!obj.area.id"/>
+                  #else
+	                  <select name="area2" id="area2" style="display:none;width:60px;" level="3">
+	                  </select>
+					  <select name="area3" id="area3" style="display:none;width:60px;" level="4">
+	                  </select>
+	                  <input name="area_id" type="hidden" id="area_id"  value=""/>
+                  #end
+      </td>
+    </tr>
+    <tr>
+      <td align="right" valign="top"><span class="hui_table">详细地址</span>：</td>
+      <td align="left"><span class="dia_txt">
+        <input name="area_info" type="text" id="area_info" value="$!obj.area_info" size="35" />
+      </span></td>
+    </tr>
+    <tr>
+      <td align="right" valign="top"><span class="hui_table">手机号码</span>：</td>
+      <td align="left"><span class="dia_txt">
+        <input name="telephone" type="text" id="telephone" value="$!obj.telephone" size="35" />
+      </span></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><span class="inputbtn">
+        <input name="" type="submit" value="提交" style="cursor:pointer;"/>
+        <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+      </span></td>
+    </tr>
+  </table>
+</form>

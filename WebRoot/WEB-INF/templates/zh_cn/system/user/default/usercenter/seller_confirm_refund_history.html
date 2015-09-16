@@ -1,0 +1,20 @@
+<link href="$!webPath/resources/style/common/css/window.css"
+	type="text/css" rel="stylesheet" />
+<form action="$!webPath/seller/seller_confirm_refund.htm" method="post"
+	id="theForm">
+	<table style="float: left;" width="100%" border="0" cellspacing="0"
+		cellpadding="0" class="box_table">
+		
+		<tr>
+			<td width="200" >还款日期</td>
+			<td >还款金额</td>
+		</tr>
+		#foreach($obj in $objs)
+		<tr>
+			<td width="200">$!obj.addTime
+			</td>
+			<td >$!obj.needPay</td>
+		</tr>
+		#end
+	</table>
+</form>

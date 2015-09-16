@@ -1,0 +1,32 @@
+ <meta charset="utf-8" />
+ <script>
+//搜索框特殊字符验证
+function input_search_special(element){
+   	var value=jQuery(element).val()
+	var vkeyWords=/[`~!@#$^&*()+=|\\\[\]\{\}:;'%\,.<>\/\?]/;
+	if(vkeyWords.test(value)){
+	    var value2
+	    if(value.length>1)
+			value2=value.substring(0, (value.length-1));
+		else
+			value2="";
+		if(vkeyWords.test(value2))
+			jQuery(element).val("");
+		else
+			jQuery(element).val(value.substring(0, (value.length-1)));
+			
+	}
+}
+</script>
+ <form class="header-search-form" id="search_form" name="search_form" method="post" action="$!webPath/weixin/platform/search_goods_list.htm?seo=seo">
+ <div class="header-search-box">
+ <div class="header-search-input">
+ <input type="text" value="$!keyword" autocomplete="off" cleardefault="no" name="keyword" maxlength="20" id="keyword" class="hilight1" onchange="input_search_special(this)" onkeyup="input_search_special(this)">
+  <input type="hidden" value="$!gc_id" autocomplete="off" cleardefault="no" name="gc_id" maxlength="20" id="gc_id" class="hilight1">
+  <input type="hidden" value="$!gb_id" autocomplete="off" cleardefault="no" name="gb_id" maxlength="20" id="gb_id" class="hilight1">
+ <input type="hidden" value="$!gbc_id" autocomplete="off" cleardefault="no" name="gbc_id" maxlength="20" id="gbc_id" class="hilight1">
+  <input type="hidden" value="$!storeId" autocomplete="off" cleardefault="no" name="storeId" maxlength="20" id="storeId" class="hilight1">
+ </div>
+ <button type="submit" class="header-icon-search" id="layout_search_submit" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);"  ><span>搜索</span></button>
+ </div>
+ </form>

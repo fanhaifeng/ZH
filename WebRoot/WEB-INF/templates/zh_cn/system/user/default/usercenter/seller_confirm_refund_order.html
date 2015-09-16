@@ -1,0 +1,67 @@
+<script src="$!webPath/resources/js/jquery-1.6.2.js"/>
+<script src="$!webPath/resources/js/jquery.validate.min.js"/>
+<link href="$!webPath/resources/style/common/css/window.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+jQuery(document).ready(function() {		
+	jQuery.validator.addMethod("verify", function(value,element) {
+		var re = /^([0-9.])+$/;
+		if (re.test(jQuery("#needpay").val())) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+	
+	jQuery("#theForm").validate({
+		ignore : "",
+		rules : {
+			needpay : {
+				required : true,
+				verify : true,
+				remote : {
+					url : "$!webPath/verify_chargeNum.htm", //后台处理程序
+					type : "post", //数据发送方式
+					dataType : "json", //接受数据格式   
+					data : { //要传递的数据
+						"order_id": $!obj.id,
+						"needpay" : function(){
+							return jQuery("#needpay").val();
+						}
+					}
+				}
+			}
+		},
+		messages : {
+			needpay : {
+				required : "还款金额不能为空",
+				verify : "请输入数字 ",
+				remote : "还款总金额已经超出赊销金额"
+	    	}
+		}
+	});
+});
+</script>
+<form action="$!webPath/seller/seller_confirm_refund.htm" method="post"
+	id="theForm">
+	<table style="float: left;" width="100%" border="0" cellspacing="0"
+		cellpadding="0" class="box_table">
+		<tr>
+			<td colspan="2" align="left" valign="top">请输入您的还款金额</td>
+		</tr>
+		<tr>
+			<td width="100" align="right" valign="top">订单号： <input name="order_id"
+				type="hidden" id="order_id" value="$!obj.id" />
+			</td>
+			<td align="left">$!obj.order_id</td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">还款金额：</td>
+			<td align="left"><input name="needpay" id="needpay" value="0" /></td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center"><span class="inputbtn"> <input
+					name="" type="submit" value="提交" style="cursor: pointer;" />
+			</span></td>
+		</tr>
+	</table>
+</form>

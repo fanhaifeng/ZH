@@ -1,0 +1,26 @@
+<link href="$!webPath/resources/style/common/css/window.css"
+	type="text/css" rel="stylesheet" />
+<form action="$!webPath/seller/seller_confirm_refund.htm" method="post"
+	id="theForm">
+	<table style="float: left;" width="100%" border="0" cellspacing="0"
+		cellpadding="0" class="box_table">
+		<tr>
+			<td colspan="2" align="left" valign="top">请输入您的还款金额</td>
+		</tr>
+		<tr>
+			<td width="100" align="right" valign="top">订单号： <input name="order_id"
+				type="hidden" id="order_id" value="$!obj.id" />
+			</td>
+			<td align="left">$!obj.order_id</td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">还款金额：</td>
+			<td align="left"><input name="needpay" id="needpay" value="0" /></td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center"><span class="inputbtn"> <input
+					name="" type="submit" value="提交" style="cursor: pointer;" />
+			</span></td>
+		</tr>
+	</table>
+</form>

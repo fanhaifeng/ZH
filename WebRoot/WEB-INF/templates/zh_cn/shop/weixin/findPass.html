@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP - 用户登录</title>
+
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+function saveForm(){
+	jQuery("#theForm").submit();
+}
+</script>
+</head>
+<body class="login_bg">
+<hgroup>
+  <h3 class="goods_car clearfix">
+  <a href="javascript:void(0);" onclick="forIndex()"><em>&lt;</em></a><span><b>找回密码</b></span>
+  </h3>
+</hgroup>
+<div class="user_center">
+  <section class="user_top">
+  </section>
+  </div>
+<form action="$!webPath/weixin/resetPassword.htm" method="post" name="theForm" id="theForm" class="fff">
+  <div class="phone_login">
+    <section class="section_login"><span>手机号：</span>
+      <input name="telephone" id="telephone" placeholder="请输入手机号" type="text" class="input_txt">
+    </section>  
+  </div>
+  <div class="cmd">     
+      <button class="cmd_login" type="button" onClick="saveForm()">找回</button>
+    </div>
+</form>
+
+</body>
+</html>

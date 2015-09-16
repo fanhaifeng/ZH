@@ -1,0 +1,35 @@
+#foreach($obj in $objs)		    
+	#if($!obj.gettype==0)
+    	#set($gettype="订单")
+    #end
+    #if($!obj.gettype==1)
+    	#set($gettype="注册")
+    #end
+    #if($!obj.gettype==2)
+    	#set($gettype="推荐用户")
+    #end
+    #if($!obj.gettype==-1)
+    	#set($gettype="农技服务")
+    #end
+<!-- 农豆变化计算 -->
+			    #if($!{obj.integrals})
+			    #set($integrals=$!{obj.integrals})  
+			    #else 
+			    #set($integrals=0)
+			    #end
+			    
+			    #if($!{obj.integrals_store})
+			    #set($integrals_store=$!{obj.integrals_store})  
+			    #else 
+			    #set($integrals_store=0)
+			    #end
+			    
+			    #set($change=$!integrals+$!integrals_store)  
+				<div class="container">
+					<div class="order_totalprice">
+						<span>农豆来源：<i>$!gettype#if($!obj.gettype==0)($!obj.orderForm.order_id)#end</i></span> 
+						<span>农豆变化：<i>#if($!obj.type==1)  + #else - #end $!change</i></span>
+						<span>日期：<i>$!CommUtil.formatLongDate($!obj.addTime)</i></span>
+					</div>
+				</div> 
+			#end 

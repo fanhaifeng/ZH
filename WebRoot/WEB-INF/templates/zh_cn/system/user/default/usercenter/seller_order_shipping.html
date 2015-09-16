@@ -1,0 +1,25 @@
+<link href="$!webPath/resources/style/common/css/window.css" type="text/css" rel="stylesheet" />
+<script>
+jQuery(document).ready(function(){
+ 	if($!error){
+ 		jQuery("#submit").hide();
+ 	}
+});
+</script>
+<form action="$!webPath/seller/order_shipping_save.htm" method="post" id="theForm">
+  #if($!error) #set($msg="库存不足，无法发货!")#end
+  <label style="color:red;">$!msg</label>
+  <table style="float:left;" width="100%" border="0" cellspacing="0" cellpadding="0" class="box_table">
+     <tr>
+      <td align="right" valign="top">备注：</td>
+      <td align="left"><textarea name="state_info" id="state_info" cols="35" rows="5"></textarea></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><span class="inputbtn">
+      	<input name="id" type="hidden" id="id" value="$!obj.id" />
+        <input name="" id="submit" type="submit" value="提交" style="cursor:pointer;"/>
+        <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+      </span></td>
+    </tr>
+  </table>
+</form>

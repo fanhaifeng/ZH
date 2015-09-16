@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>赊销 - Powered by LakeCloud</title>
+<meta name="keywords" content="$!config.keywords" />
+<meta name="description" content="$!config.description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
+<style>
+span.save {
+  display: none;
+}
+</style>
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
+<script>
+function onlyNonNegative(obj) {  
+	var event = obj || event; 
+	var inputChar = event.keyCode;  
+	 //alert(event.keyCode);  
+	   
+	 //1.判断是否有多于一个小数点  
+	 if(inputChar==190 ) {//输入的是否为.  
+	  var index1 = obj.value.indexOf(".") + 1;//取第一次出现.的后一个位置  
+	  var index2 = obj.value.indexOf(".",index1);  
+	  while(index2!=-1) {  
+	  //alert("有多个.");  
+	     
+	   obj.value = obj.value.substring(0,index2);  
+	   index2 = obj.value.indexOf(".",index1);  
+	  }  
+	 }  
+	 //2.如果输入的不是.或者不是数字，替换 g:全局替换  
+	 obj.value = obj.value.replace(/[^(\d|.)]/g,"");  
+}  
+	
+	
+function editOrSave(obj,tag,userId){
+	if(tag == "edit"){
+		//编辑
+		jQuery("#num"+userId).show();
+		jQuery("#day"+userId).show();
+		jQuery("#labelnum"+userId).hide();
+		jQuery("#labelday"+userId).hide();
+		jQuery("#save"+userId).show();
+		jQuery("#edit"+userId).hide();
+	}else{
+		 //保存
+		 var num = jQuery("#num"+userId).val();
+		 var day = jQuery("#day"+userId).val();
+		 
+		 var re = new RegExp("^[.0-9]*$");
+		 var re1 = new RegExp("^[0-9]*$");
+	    
+         if( re.test(num) && re1.test(day) ){
+        	 var store_id = $!store_id;
+    		 var buyer_id = userId;
+    		 
+    		 jQuery.ajax({
+    			 url:'$!webPath/seller/charge_update.htm',
+    			 data:{"num":num,"day":day,"store_id":store_id,"buyer_id":buyer_id},
+    			 beforeSend:function(){  
+    			 },
+    		     success:function(data){
+    		    	console.log(data);
+    		    	if(data.resultCode == "ERROR"){
+    		    		alert(data.resultData);
+    		    	}else{
+    		    		jQuery("#num"+userId).hide();
+    		    		jQuery("#day"+userId).hide();
+    		    		jQuery("#labelnum"+userId).show();
+    		    		jQuery("#labelday"+userId).show();
+    		    		jQuery("#labelnum"+userId).text(jQuery("#num"+userId).val());
+    		    		jQuery("#labelday"+userId).text(jQuery("#day"+userId).val());
+    		    		
+        				jQuery("#edit"+userId).show();
+        				jQuery("#save"+userId).hide();
+    		    	}
+    		
+    		     },
+    		     error:function(data){
+    				alert("出错了");
+    				jQuery("#num"+userId).show();
+    				jQuery("#day"+userId).show();
+    				jQuery("#labelnum"+userId).hide();
+    				jQuery("#labelday"+userId).hide();
+
+    				jQuery("#edit"+userId).show();
+    				jQuery("#save"+userId).hide();
+    		     }
+    		 });
+         }else{
+        	 alert("表单数据格式不对,请重新填写");
+     		 jQuery("#save"+userId).show();
+     		jQuery("#edit"+userId).hide();
+         }
+	}
+}
+</script>
+</head>
+<body>
+$!httpInclude.include("/top.htm")
+<div class="main"> 
+  $!httpInclude.include("/seller/nav_head.htm")
+  <div class="user_center">
+  <form action="$!webPath/seller/charge_sell.htm" name="ListForm" id="ListForm" method="post">
+    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+      <tr>
+        $!httpInclude.include("/seller/nav.htm?op=charge_sell")
+        <td id="centerbg" valign="top">
+        <div class="buyer_position">
+          <div class="buyer_p_box"><a href="$!webPath/seller/index.htm">卖家中心</a> > <span>赊销列表</span></div></div>
+          <div class="productmain">
+            <div class="pdctitle blue2">赊销</div>
+            
+          <div class="allmem_search">
+				<ul>
+					<li><span>筛选条件</span> <span class="allmen size4"> <select
+							name="status" id="status">
+								<option value="">请选择...</option>
+								<option value="0">未授信</option>
+								<option value="1">已授信</option>
+						</select>
+					</span> <span class="btn_search"> <input name="" type="submit"
+							value="搜索" style="cursor: pointer;" />
+					</span></li>
+				</ul>
+			</div>
+            <div class="operation">
+              <table width="790" border="0" cellspacing="0" cellpadding="0" id="opertable" >
+                <tr id="opertitle">
+			        <td>用户名</td>
+			        <td>区域</td>
+			        <td>联系方式</td>
+			        <td>赊销金额(元)</td>
+			        <td>赊销周期(天)</td>
+			        <td>操作</td>
+                </tr>
+			 #foreach($obj in $objs)
+		      <tr id="$!obj.id">
+		         <td>$!obj.userName</td>
+		         <td>$!obj.area.areaName</td>
+		         <td>$!obj.telephone</td>
+		         <td>#if($!obj.charges.size() <= 0)
+		         		 <label id="labelnum$!obj.id">0</label>
+			         	 <input style="display:none;" type="text"  onkeyup="onlyNonNegative(this)" name="num$!obj.id" id="num$!obj.id" value="0"/>
+			          #else
+			             #foreach( $charge in $!obj.charges )
+			               #if($!obj.id == $charge.user.id)
+			                <label id="labelnum$!obj.id">$!charge.paymentNum</label>
+			               <input style="display:none;" onkeyup="onlyNonNegative(this)"   type="text" name="num$!obj.id" id="num$!obj.id" value="$!charge.paymentNum" />
+					       #end
+					     #end
+			          #end
+			    </td>
+		        <td> #if($!obj.charges.size() <= 0)
+		        		 <label id="labelday$!obj.id">0</label>
+			         	 <input style="display:none;"  type="text" onkeyup="onlyNonNegative(this)" name="day$!obj.id" id="day$!obj.id" value="0"/>
+			          #else
+			          	#foreach( $charge in $!obj.charges )
+			          	  #if($!obj.id == $charge.user.id)
+			          	   <label id="labelday$!obj.id">$!charge.paymentDays</label>
+			          	  <input style="display:none;" onkeyup="onlyNonNegative(this)"  type="text" name="day$!obj.id" id="day$!obj.id" value="$!charge.paymentDays"/>
+					  	  #end
+					 	 #end
+					  #end
+		        </td>
+		         <td>
+			         <span class="edit" id="edit$!obj.id"><a href="javascript:void(0)" id="edit$!obj.id" onclick="editOrSave(this,'edit',$!obj.id)">编辑</a></span>
+			         <span class="save" id="save$!obj.id"><a href="javascript:void(0)" id="save$!obj.id" onclick="editOrSave(this,'save',$!obj.id)">保存</a></span>
+		         </td>
+		      </tr>
+		      #end  
+              </table>
+            </div>
+            <div class="alldel">
+              <div  class="userfenye">$!gotoPageHTML</div>
+            </div>
+          </div></td>
+      </tr>
+    </table>
+    
+    </form>
+  </div>
+  $!httpInclude.include("/footer.htm")
+</div>
+</body>
+<script>
+jQuery(document).ready(function(){
+	jQuery("#status").val($!status);
+});
+</script>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+#macro ( genericTree $somelist ) 
+#foreach ( $some in $somelist )
+<option value="$!some.id">
+#if($!some.level>0)
+#foreach($count in [-1..$!some.level])&nbsp;#end #end $!some.className</option>
+#genericTree($some.childs) 
+#end 
+#end
+<!--[if IE]>
+<style type="text/css">
+.input{behavior: url($!webPath/resources/style/common/css/ie-css3.htc);}
+</style>
+<![endif]-->
+<link href="$!webPath/resources/style/system/manage/$!{config.websiteCss}/template.css"  rel="stylesheet" type="text/css"/>
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
+<script>
+function queryGoodsdc(){
+	jQuery("#goodsNameq").val("");
+	jQuery("#goodsbrandq").val("");
+	jQuery("#goodsclassq").val("");
+
+	var gn = jQuery("#goods_name").val();
+	jQuery("#goodsnameq").val(gn);
+	var gb = jQuery(".goods_brand").val();
+	jQuery("#goodsbrandq").val(gb);
+	var gg = jQuery(".goods_class").val();
+	jQuery("#goodsclassq").val(gg);
+	
+	 
+	 jQuery("#ListForm").submit();
+}
+</script>
+</head>
+<body scroll="yes">
+<div class="cont">
+  <h1 class="seth1">商品库管理</h1>
+  <div class="settab"> 
+	<span class="tab-one"></span> <span class="tabs"> 
+	<a href="$!webPath/admin/goodsDC_list.htm" class="this">所有商品</a><!-- |<a href="$!webPath/admin/goodsDC_outline.htm">违规下架商品</a>--></span> 
+	<span class="tab-two"></span>	</div>
+	<form name="queryForm" id="queryForm" action="" method="post">
+    <div class="allmem_search">
+      <ul>
+        <li> <span>商品名称</span> <span class="allmen size4">
+          <input name="goods_name" type="text" id="goods_name" />
+          </span> <span>品牌名称</span> 
+          <select name="goods.goods_brand.id" id="goods.goods_brand.id" class="goods_brand">
+          <option value="">所有品牌</option>
+          #foreach($gb in $gbs)
+          <option value="$!gb.id">$!gb.name</option>
+          #end
+          </select>
+          <span>类别</span>
+          <select name="goods.gc.id" id="goods.gc.id"  class="goods_class">
+          <option value="">所有分类</option>
+            
+           #genericTree($!gcs)
+          
+          </select>
+          <span class="btn_search">
+          <input name="" type="button"  value="搜索" style="cursor:pointer;" onclick="queryGoodsdc();"/>
+        </span> </li>
+      </ul>
+    </div>
+  </form>
+  <div class="operation">
+    <h3>友情提示</h3>
+    <ul>
+      <li>商品库中的商品信息更改后将同步到商品管理中的商品信息</li>
+    </ul>
+  </div>
+  <form name="ListForm" id="ListForm" action="" method="post">
+    <div class="brandtable">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="brand_table">
+        <tr style="background: #if($!config.websiteCss=='blue') #2A7AD2 #end 
+      #if($!config.websiteCss=='black')#333 #end; height:30px; color:#FFF">
+          <!--<td width="3%">&nbsp;</td>
+          --><td width="25%">商品名称
+           </td>
+          <td width="9%">品牌</td>
+          <td width="12%">分类名</td>
+          <td width="9%">商品重量</td>
+          <td width="12%">商品货号</td>
+          <td width="12%">商品状态</td><!--
+          <td width="8%">运费</td>
+          --><td  align="center">操作</td>
+        </tr>
+      #foreach($obj in $objs)
+        <tr><!--
+          <td align="center"><input name="checkbox" type="checkbox" id="checkbox" value="$!obj.id" /></td>
+          -->
+          <td>$!obj.goods_name</td>
+          <td>$!obj.goods_brand.name</td>
+          <td>$!obj.gc.className</td><!--
+           #if($!obj.goods_choice_type==0)
+           #set($goods_choice_types="实体商品")
+          #end
+          #if($!obj.goods_choice_type==1)
+           #set($goods_choice_types="虚拟商品")
+          #end
+          <td>$!goods_choice_types</td>
+          -->
+          <td>$!obj.goods_weight</td>
+          <td>$!obj.goods_serial</td>
+           #if($!obj.goodsdc_status==0)
+           #set($goodsdc_status="可销售")
+          #end
+          #if($!obj.goodsdc_status==1)
+           #set($goodsdc_status="不可销售")
+          #end
+          <td>$!goodsdc_status</td>
+          <!--
+          #if($!obj.goods_transfee==0)
+           #set($goods_transfees="买家承担运费")
+          #end
+          #if($!obj.goods_transfee==1)
+           #set($goods_transfees="卖家承担运费")
+          #end
+          <td>$!goods_transfees</td>
+          --><td class="ac8" align="center">
+          <a href="$!webPath/admin/goods_DC_edit.htm?id=$!obj.id&type=show">查看</a>
+          <a href="$!webPath/admin/goods_DC_edit.htm?id=$!obj.id&type=edit">编辑</a>
+          <a href="$!webPath/admin/goods_referprice.htm?id=$!obj.id">商品指导价管理</a>
+          </td>
+        </tr>
+     #end
+		<!--<tr>
+        <td align="center"><input type="checkbox" name="all" id="all" value="" onclick="selectAll(this)"/>
+          <input name="mulitId" type="hidden" id="mulitId" /></td>
+        <td colspan="2" class="bdel">
+		<span class="sp1">全部</span><span class="sp2">
+          <div class="shop_btn_del shopbtn">
+            <input name="" type="button" value="删除" onclick="cmd('$!webPath/admin/goodsDC_del.htm');" style="cursor:pointer;display:none;" />
+          </div>
+          </span>		  </td>
+        <td colspan="7"></td>
+      </tr>
+    --></table>
+	  <div class="fenye" align="right">
+       <span id="queryCondition" style="display:none">
+            <input name="goodsnamet" value="$!goodsnamet" id="goodsnameq" />
+       		<input name="goodsbrandt" value="$!goodsbrandt" id="goodsbrandq" />
+       		<input name="goodsclasst" value="$!goodsclasst" id="goodsclassq" />
+     <!--
+		   #foreach($sm in $sms)
+     <input name="$!sm.key" id="$!sm.key" type="hidden" value="$!sm.value"/>
+		   #end
+	 --></span>
+	   <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+	   $!gotoPageFormHTML </div>
+    </div>
+  </form>
+</div>
+</body>
+</html>

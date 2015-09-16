@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>微信商城 - 我的收藏</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css">
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script>
+jQuery(document).ready(function() {
+   var beginCount =6;
+  jQuery("#loading_more").click(function(){
+	  jQuery.post("$!webPath/weixin/buyer/favorite_goods_ajax.htm",
+		  {
+		  "beginCount":beginCount	  
+		  },
+		  function(data){
+			  if(data){
+				  jQuery("#fav_goods_list").append(data)
+				  beginCount = beginCount +6;
+				   }else{
+					  jQuery(".index_load").hide();
+					 jQuery("#no_more").show();
+				   }
+			  },
+		  "text");	  
+		  });  	  
+});
+function favorite_del(id){
+	jQuery.post("$!webPath/weixin/buyer/favorite_del.htm",{
+		"mulitId":id,"type":0
+	},
+	function(data){
+		location.reload();
+	},"text");
+}
+</script>
+</head>
+<body class="bodybg">
+<div class="page_bottom">
+<hgroup>
+  <h3 class="goods_car clearfix"><a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>我的收藏</b> </span></h3>
+</hgroup>
+
+<div class="fff">
+	<div class="container">
+	<div class="row regBar">
+ 
+	<div class=" col-xs-6 col-sm-6 col-md-6 col-lg-6"><a href="$!webPath/weixin/buyer/favorite_store.htm">店鋪收藏</a></div>
+	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 active " onClick="register_seller()">商品收藏</div>
+	</div>
+	 
+	</div>
+</div>
+<div class="container-fluid floor_con floor_list_con">
+ 
+<div class="row" id="fav_goods_list"> #foreach($obj in $objs)
+#if($!obj.goods.goods_main_photo)
+#set($img="$!webPath/$!{obj.goods.goods_main_photo.path}/$!{obj.goods.goods_main_photo.name}_small.$!{obj.goods.goods_main_photo.ext}")
+#else
+#set($img="$!webPath/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+#end
+<div class="col-xs-12 col-sm-12 line-item">
+<div class="pimg">
+<a href="$!webPath/weixin/goods.htm?goods_id=$!{obj.goods.id}">
+<img src="$!img" width="100" height="100" />
+</a>
+</div>
+<div class="p_con">
+<div class="baby_name">
+<a href="$!webPath/weixin/goods.htm?goods_id=$!{obj.goods.id}">$!obj.goods.goods_name</a>
+</div>
+<div class="store_name"><i><img src="$!webPath/resources/style/weixin/default/images/store_img.png" /></i>店铺名称：<a href="$!webPath/weixin/index.htm?store_id=$!{obj.goods.goods_store.id}">$!{obj.goods.goods_store.store_name}</a></div>
+<div class="price"><strong>$!{config.currency_code}$!{obj.goods.goods_current_price}</strong></div>
+</div>
+<div class="clearfix"></div>
+<div class="p_bar pr"><sub>收藏时间：$!CommUtil.formatLongDate($!obj.addTime)</sub>
+<div class="p_del" onclick="favorite_del($!{obj.id})"><i><img src="$!webPath/resources/style/weixin/default/images/del.png" /></i></div>
+</div>
+</div>
+#end </div>
+</div>
+ #if($!objs.size()>0)
+<div class="index_load"><a href="javascript:void(0);" id="loading_more">加载更多</a></div>
+<div class="index_load" id="no_more" style="display: none"><a href="javascript:void(0);" style="color:#F00">没有更多数据了</a></div>
+#else <span class="goods_none"><img src="$!webPath/resources/style/system/front/default/images/sigh.jpg" width="80"  height="62"/>
+<p>对不起，没有相应数据！</p>
+</span> #end
+</div>
+$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=account")
+</body>

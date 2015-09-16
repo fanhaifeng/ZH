@@ -1,0 +1,53 @@
+#foreach($floor in $floors)
+#set($num=0)
+<div class="container-fluid floor_con">
+	<div class="row">
+		<div class="col-xs-12 col-md-12 cate-title">
+		<h1 class="pull-left">$!{floor.gf_name}</h1>
+		<a class="pull-right" href="$!webPath/weixin/platform/goods_list.htm?type=hot&floorId=$!floor.id">显示全部></a>
+		</div>
+		 #foreach($info in $goodsFloorGoods)
+		 	#if($info.goodsFloor.id==$floor.id)
+		  	#set($num=$num+1)
+                 #if($!info.goods && $!num<=4)
+	                  #if($!info.goods.goods_main_photo)      
+	                    #set($img="$!imageWebServer/$!{info.goods.goods_main_photo.path}/$!{info.goods.goods_main_photo.name}_small.$!{info.goods.goods_main_photo.ext}")
+	                  #else
+	                  	#set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+	                  #end
+                  
+                  	#set($goods_url="$!webPath/weixin/goods.htm?goods_id=$!{info.goods.id}")
+	                   #if($!config.second_domain_open)
+	                      #set($goods_url="http://$!{info.goods.goods_store.store_second_domain}.$!{domainPath}/weixin/goods.htm?goods_id=$!{info.goods.id}")
+	                   #end
+				<div class="col-xs-6 col-md-3 " >
+				<div class="well">
+					<a class="p_img" href="$!goods_url">
+					<img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="javascript:$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); " />
+					</a>
+					<span class="p_name"><a href="$!webPath/weixin/goods.htm?goods_id=$!{info.goods.id}">$!{info.goods.goods_name}</a></span>
+					<!-- <li><span class="hui2">市场价：</span><span class="through hui">¥$!{info.goods.goods_price}</span></li>
+                    <li><span class="hui2">商城价：</span><strong class="red">¥$!{info.goods.goods_current_price}</strong></li>
+					 -->
+					<span class="p_price">价格：¥$!{info.goods.goods_current_price}</span>
+					<span class="shopname"><a href="$!webPath/weixin/index.htm?store_id=$!{info.goods_store.id}">$!CommUtil.substring("$!{info.goods.goods_store.store_name}",8)</a></span>
+					
+					</div>
+				</div>
+					
+				#end
+			#end
+		#end
+		<!--  <div class="col-xs-6 col-md-3 well">
+		<a href="#">
+		<img src="$!webPath/resources/style/weixin/default/images/p_test.jpg" />
+		<span class="p_name">复合肥中化全水溶19-4-25硫50KG高塔-肥业</span>
+		<span class="p_price">价格：待定</span>
+		<span class="shopname">*****店铺</span>
+		</a>
+		</div>
+		-->
+	</div>
+</div>
+#end
+

@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//WebRoot/WEB-INF/templates/zh_cn/shop/weixin/charge_buyer_list_data.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/shop/weixin/charge_user_list_data.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_confirm_refund_history.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_nav.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_order_shipping.html=UTF-8
+encoding//src/com/lakecloud/foundation/log/SystemLogAdvice.java=UTF-8
+encoding//src/com/lakecloud/manage/seller/action/CombinSellerAction.java=UTF-8
+encoding//src/com/lakecloud/manage/seller/action/GoodsSellerAction.java=UTF-8
+encoding//src/com/lakecloud/weixin/platform/view/action/WeixinPlatformGoodsViewAction.java=UTF-8
+encoding//src/com/lakecloud/weixin/utils/WeixinUtils.java=UTF-8
+encoding/<project>=UTF-8

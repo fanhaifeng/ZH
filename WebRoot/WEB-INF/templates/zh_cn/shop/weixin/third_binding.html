@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP- 中金支付</title> 
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script src="$!webPath/resources/js/jquery.form.js"></script>
+<script type="text/javascript">
+var flagForm=false;
+jQuery(document).ready(function(){
+	jQuery("#theForm").validate({
+		rules:{
+			BankID:{required :true},
+			AccountNumber:{required :true},
+			AccountName:{required :true},
+			IdentificationNumber:{required :true},
+			PhoneNumber:{required :true}
+		},messages:{
+			BankID:{required :"银行不能为空"},
+			AccountNumber:{required :"银行卡卡号不能为空"},
+			AccountName:{required :"持卡人姓名不能为空"},
+			IdentificationNumber:{required :"证件号不能为空"},
+			PhoneNumber:{required :"手机号不能为空"}
+		},submitHandler:function(){
+			flagForm=true;
+		}
+	});
+	//获取短信验证码
+	var validCode=true;
+	jQuery(".msgs").click (function() {
+		jQuery('#theForm').submit();
+		if(flagForm){
+			var time=120;
+			var code=jQuery(this);
+			if (validCode) {
+				validCode=false;
+				code.addClass("msgs1");
+				getSMS();
+				var t=setInterval(function() {
+					time--;
+					code.html(time+"秒");
+					if (time==0) {
+						clearInterval(t);
+						code.html("重新获取");
+						validCode=true;
+						code.removeClass("msgs1");
+					}
+				},1000)
+			}
+		}
+	});
+});
+function pay(){
+	var SMSValidationCode=jQuery("#SMSValidationCode").val();
+	var TxSNBinding=jQuery("#TxSNBinding").val();
+	var InstitutionID=jQuery("#InstitutionID").val();
+	if(SMSValidationCode!=""){
+		jQuery.ajax({type:"POST",url:"$!webPath/weixin/tx2532.htm",
+			data:{"SMSValidationCode":SMSValidationCode,"TxSNBinding":TxSNBinding,"InstitutionID":InstitutionID},
+			success:function(data){
+				if(data=="OK."){
+					jQuery("#error_goods_inventory").show().find("span").html("支付绑卡成功").parent().fadeOut(3000);
+					window.location.href="$!webPath/weixin/buyer/account.htm";
+				}
+				else{
+					jQuery("#error_goods_inventory").show().find("span").html(data).parent().fadeOut(3000);
+				}
+			}
+		});
+  }
+}
+function getSMS(){
+	var options = { 
+	// target:        '#output1',   // target element(s) to be updated with server response 
+	beforeSubmit:  before_ajax,  // pre-submit callback 
+	success:       success_ajax,  // post-submit callback  
+	// other available options: 
+	//url:       url         // override for form's 'action' attribute 
+	//type:      type        // 'get' or 'post', override for form's 'method' attribute 
+	dataType:  "json",       // 'xml', 'script', or 'json' (expected server response type) 
+	//clearForm: true        // clear all form fields after successful submit 
+	resetForm: true        // reset the form after successful submit 
+	//timeout:   3000 
+	};	
+	jQuery("#theForm").ajaxSubmit(options);
+}
+function before_ajax(formData, jqForm, options){ 
+	return true;
+}
+function success_ajax(data){
+	//showDialog("share_sns","系统提示",data.msg,0,"succeed",3);
+	if(data=="OK"){
+		//window.location.href="$!webPath/weixin/buyer/order.htm";
+	}
+	else{
+		jQuery("#error_goods_inventory").show().find("span").html(data).parent().fadeOut(3000);
+	}
+}
+</script>
+<style type="text/css">
+.msgs{display:inline-block;width:104px;color:#fff;font-size:12px;border:1px solid #0697DA;text-align:center;height:30px;line-height:30px;background:#0697DA;cursor:pointer;}
+form .msgs1{background:#E6E6E6;color:#818080;border:1px solid #CCCCCC;}
+</style>
+</head>
+<body class="bodybg">
+<div class="center_box" id="error_goods_inventory" style="display:none"><span class="count_none"></span></div>
+<div class="">
+	<hgroup>
+		<h3 class="goods_car clearfix">
+			<a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>支付绑卡</b></span>
+		</h3>
+	</hgroup>
+	<form action="$!webPath/weixin/tx2531.htm" method="post" id="theForm">
+	<div class="paybot container mt10 fff">
+		<h3>
+			您可以在用户中心中<a href="$!webPath/weixin/buyer/order.htm">“我的订单”</a>查看该订单
+		</h3>
+	</div>
+	<div class="plr10 fff ">
+		<dl class="ipt_code clearfix mt10 ">
+			<dt>选择银行：</dt>
+        		<dd>
+        			<select id="BankID" name="BankID"  >
+        				#foreach($bank in $bankBeanList)
+				            <option value="$!bank.key"  #if($!{bank.key}==$!{thirdBinding.bankID}) selected="selected"#end>$!bank.value</option>
+						#end
+		            </select>
+        		</dd>
+       		</dl>
+       		<dl class="ipt_code clearfix mt10">
+        	<dt>银行卡卡号：</dt>
+        	<dd><input type="text" name="AccountNumber" placeholder="请输入您的银行卡号" value="$!{thirdBinding.accountNumber}" /></dd>
+        	       		</dl>
+       		<dl class="ipt_code clearfix mt10">
+			<dt>持卡人姓名：</dt>
+        		<dd><input placeholder="请输入持卡人姓名" type="text" name="AccountName" value="$!{thirdBinding.accountName}" /></dd>
+       		</dl>
+       		<dl class="ipt_code clearfix mt10">
+        	<dt>证件类型：</dt>
+        		<dd>
+					<select id="IdentificationType" name="IdentificationType" style="width: 274">
+						#foreach($map in $identificationTypeList)
+				            <option value="$!map.key"  #if($!{map.key}==$!{thirdBinding.identificationType}) selected="selected"#end>$!map.value</option>
+						#end
+		            </select>
+				</dd>
+       		</dl>
+       		<dl class="ipt_code clearfix mt10">				
+        	<dt>证件号：</dt>
+        	<dd><input type="text" placeholder="请输入您的证件号" name="IdentificationNumber" value="$!{thirdBinding.identificationNumber}" /></dd>
+       		</dl>
+       		<dl class="ipt_code clearfix mt10">
+        	<dt>手机号：</dt>
+        		<dd><input type="text" placeholder="请输入您的手机号码" name="PhoneNumber" value="$!{thirdBinding.phoneNumber}" /></dd>
+       		</dl>
+       		<dl class="ipt_code clearfix mt10">
+        	<dt>验证码：</dt>
+			<dd><input size="10" type="text" placeholder="请输入验证码" name="SMSValidationCode" value="123456" id="SMSValidationCode"/><span class="msgs">获取短信验证码</span></dd>
+        	 
+		</dl>
+		<div class="banknextbtn">
+		<input name="" type="button" value="确认绑卡" onClick="pay();"
+			style="cursor: pointer;" />
+		<input name="order_id" type="hidden" id="order_id" value="$!{of.id}" />
+		<input type="hidden" name="CardType" value="10" />
+		<input type="hidden" name="InstitutionID" value="$!{InstitutionID}" id="InstitutionID"/>
+		<input type="hidden" name="TxSNBinding" value="$!{TxSNBinding}" id="TxSNBinding"/>
+	</div>
+	</div>
+	
+	</form>
+</div>
+$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=account")
+</body>
+</html>

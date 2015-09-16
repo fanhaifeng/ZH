@@ -1,0 +1,22 @@
+#foreach($obj in $objs)
+<hgroup class="order_hgroup_h4 container fff mt10">
+	<div class="shop_name">
+		<span class="p_name">$!{obj.user.userName} </span>
+	</div>
+	<div>
+		<i>买家电话：</i><span class="txt_red">$!{obj.user.telephone}</span>
+	</div>
+	<div>
+		<i>创建时间：</i><span class="txt_bule"> $!CommUtil.formatLongDate($!{obj.addTime})</span>
+	</div>
+	<div>
+		<i>赊销金额：</i><span class="txt_bule">$!{obj.paymentNum}</span>
+	</div>
+	<div>
+		<i>已用金额：</i><span class="txt_bule">$!{obj.usedPayNum}</span>
+	</div>
+	<div>
+		<i>赊销账期：</i><span class="txt_bule">$!{obj.paymentDays}天</span>
+	</div>
+</hgroup>
+#end

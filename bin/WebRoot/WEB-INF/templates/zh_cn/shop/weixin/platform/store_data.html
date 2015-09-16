@@ -1,0 +1,134 @@
+<div class="Hot_cf_main">
+        <!--店铺列表开始-->
+        #set($store_list_class_count= 0)
+        #foreach($obj in $objs)    
+        #if($!obj.store_logo)
+        #set($store_logo="$!webPath/$!{obj.store_logo.path}/$!{obj.store_logo.name}")
+        #else
+        #set($store_logo="$!webPath/$!config.storeImage.path/$!config.storeImage.name")
+        #end 
+        
+        #if($!store_list_class_count== 0)
+        #set($store_list_class ="")
+        #end
+        #if($!store_list_class_count== 1)
+        #set($store_list_class ="_c")
+        #end
+        #set($store_list_class_count = $!store_list_class_count + 1)
+        <div class="Hot_cf_main_list$!store_list_class">
+          <!--左侧 start-->
+          <div class="store_list_con container">
+            <div class="row">
+              <div class="col-xs-3 col-sm-2"> 
+              <a href="$!webPath/weixin/index.htm?store_id=$!{obj.id}" target="_blank"><img src="$!store_logo" width="70" height="70" /> </a>
+              <br/><span class="text-center">共<strong>$!obj.goods_list.size()</strong>件宝贝</span>
+              </div>
+              <div class="col-xs-9 col-sm-4">
+                <h4><a class="hc" href="$!webPath/weixin/index.htm?store_id=$!{obj.id}" target="_blank">$!obj.store_name</a> #set($credit=$!storeViewTools.generic_store_credit("$!obj.id"))
+                  #set($img="$!imageWebServer/resources/style/common/images/level_0.gif")
+                  #if($credit<10 && $credit>0)
+                  #set($credit=${credit} / 2)
+                  #set($credit=$credit+1)
+                  #end
+                  #if($credit>=20)
+                  #set($img="$!imageWebServer/resources/style/common/images/level_2.gif") 
+                  #set($credit=($credit - 20)/2) 
+                  #set($credit=$credit+1)
+                  #end
+                  #if($credit>=10)
+                  #set($img="$!imageWebServer/resources/style/common/images/level_1.gif") 
+                  #set($credit=($credit - 10)/2)
+                  #set($credit=$credit+1)
+                  #end
+                  #if($credit>5)#set($credit=5)#end <a class="hg" href="#"></a> #if($!credit==0) <img src="$!imageWebServer/resources/style/common/images/level_-1.gif" class="hg"/> #else #foreach($count in [1..$!credit])<img style="margin-left:1px;" src="$!img"  width="16px" height="16px" class="hg"/>#end #end </h4>
+                <p class="describe "> <strong>主营：</strong> <span class="Hot_color">$!obj.sc.parent.className</span> <span class="Hot_color"> $!obj.sc.className</span> </p>
+                <p class="mail"> 店主：$!obj.store_ower &nbsp; <a style="display:none;" class="shopemail"#if(!$!user) dialog_uri="$!webPath/user_dialog_login.htm" dialog_title="会员登录" dialog_width="450" dialog_height="100" dialog_id="user_login" href="javascript:void(0);" #else target="_blank" href="$!webPath/buyer/message_send.htm?userName=$!obj.user.userName" #end> <img width="15" height="11" src="$!webPath/resources/style/system/front/default/images/mail.jpg"> </a> </p>
+              <div class="place">地址：$!obj.area.parent.parent.areaName $!obj.area.parent.areaName $!obj.area.areaName</div>
+              </div>
+              <div class="col-xs-6 col-sm-3 hidden-xs"> #if($!credit==0)
+                #set($store_evaluate1="0")
+                #set($store_evaluate1="0%")
+                #else
+                #set($store_evaluate1="$!CommUtil.mul($!{obj.point.store_evaluate1},100)%")  
+                #end
+                <div class="good_comt" >好评率: $!store_evaluate1</div>
+                <div class="descr"> 描述相符度：$!CommUtil.null2Double($!{obj.point.description_evaluate})
+                  <!--下拉 start-->
+                  #set($map=$!storeViewTools.query_point($!obj))
+                  <div class="descr_xl" style="display:none;">
+                    <div class="hd">
+                      <div class="descr_b">
+                        <div class="bl">
+                          <ul>
+                            <li><em>描述相符：</em><a href="javascript:void(0);">$!CommUtil.null2Double($!{obj.point.description_evaluate}) 分</a></li>
+                            <li><em>服务态度：</em><a href="javascript:void(0);">$!CommUtil.null2Double($!{obj.point.service_evaluate}) 分</a></li>
+                            <li><em>发货速度：</em><a href="javascript:void(0);">$!CommUtil.null2Double($!{obj.point.ship_evaluate}) 分</a></li>
+                          </ul>
+                        </div>
+                        <div class="br">
+                          <ul>
+                            <li><em class='$!map.get("description_css")'>$!map.get("description_type")</em> $!map.get("description_result")</li>
+                            <li><em class='$!map.get("service_css")'>$!map.get("service_type")</em>$!map.get("service_result")</li>
+                            <li><em class='$!map.get("ship_css")'>$!map.get("ship_type")</em> $!map.get("ship_result")</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--下拉 end-->
+                </div>
+                <div class="icon_list" style="display:none"> <a href="javascript:void(0);" title="卖家承诺消费者保障服务"></a> <a href="javascript:void(0);" title="卖家承诺消费者保障服务"></a> </div>
+               
+              </div>
+              <div class="col-xs-12 col-sm-3">
+              #if(!$!user)
+				<a href="$!webPath/weixin/login.htm" class=" save pull-right">关注</a>
+			#else
+               <a class=" save pull-right" href="javascript:void(0);" onclick="addStoreFavorite($!obj.user.id,$!obj.id)">关注</a>
+		    #end
+               
+              </div>
+            </div>
+          </div>
+          <!--右侧 start-->
+          #set($recommend_goods=$!storeViewTools.query_recommend_store_goods($!obj,-1,-1))
+          #if($!recommend_goods.size()>0)
+          <script>
+		        jQuery(function(){ 
+			       jQuery("#store_goods_img_$!{obj.id}").jCarouselLite({
+	                    btnNext: "#to_right_$!{obj.id}",
+　　                     btnPrev: "#to_left_$!{obj.id}", 
+	                    auto: null,
+	                    speed: 2000,
+	                    visible:5,
+				        scroll:1
+                    });			   
+			     })
+		       </script>
+          #end
+          <div style="display:none;" class="Hot_cf_main_list_right" >
+            <div class="right_list_bt">
+              <div class="right_list" id="store_goods_img_$!{obj.id}" store_id="$!obj.id">
+                <ul>
+                  #foreach($goods in $recommend_goods)                    
+                  #if($!CommUtil.isNotNull($!{goods}))
+                  #set($goodsImg = "$!webPath/resources/style/common/images/thumb.jpg")
+                  #if($!goods.goods_main_photo)
+                  #set($bigImg = "$!webPath/$!goods.goods_main_photo.path/$!goods.goods_main_photo.name")
+                  #set($goodsImg="$!{bigImg}_small.$!{goods.goods_main_photo.ext}")
+                  #end
+                  <li><a href="$!webPath/goods_$!{goods.id}.htm" target="_blank"> <img src="$!goodsImg" width="120" height="102" /> </a><span>￥$!{goods.store_price}</span></li>
+                  #else
+                  <li><a href="javascript:void(0);"> <img src="$!webPath/resources/style/common/images/thumb.jpg" width="120" height="102" /> </a></li>
+                  #end
+                  #end
+                </ul>
+                <a href="javascript:void(0);" id="to_left_$!{obj.id}" obj_id="$!obj.id" type="left"  class="to_left" ></a> <a href="javascript:void(0);" id="to_right_$!{obj.id}" obj_id="$!obj.id" type="right"  class="to_right" ></a> </div>
+               <a href="$!webPath/search.htm?type=store&sc_id=$!{obj.sc.id}" class="bt_r">相似店铺》</a> </div>
+          </div>
+        </div>
+        <!--店铺相邻不同样式-->
+        #if($!store_list_class_count== 2)
+        #set($store_list_class_count=0)
+        #end 
+        #end </div>

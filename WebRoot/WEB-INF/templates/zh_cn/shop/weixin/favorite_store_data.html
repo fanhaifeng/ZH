@@ -1,0 +1,21 @@
+#foreach($obj in $objs)
+#if($!obj.store.store_logo)
+#set($img="$!webPath/$!{obj.store.store_logo.path}/$!{obj.store.store_logo.name}_small.$!{obj.store.store_logo.ext}")
+#else
+#set($img="$!webPath/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+#end
+<dl class="goodsdl container">
+#if($!obj.store.store_logo)
+#set($store_logo="$!webPath/$!{obj.store.store_logo.path}/$!{obj.store.store_logo.name}")
+#else
+#set($store_logo="$!webPath/$!config.storeImage.path/$!config.storeImage.name")
+#end
+<dt><a href="$!webPath/weixin/index.htm?store_id=$!{obj.store.id}"> <span class="goodsimg"><img src="$!store_logo" width="50" height="50" /></span></a></dt>
+<dd> <a href="$!webPath/weixin/index.htm?store_id=$!{obj.store.id}">$!obj.store.store_name</a></dd>
+  <dd><em><strong>主营：</strong> <span class="Hot_color">$!obj.store.sc.parent.className</span> <span class="Hot_color"> $!obj.store.sc.className</span></em></dd>
+  <dd><em>店主：$!obj.store.store_ower</em></dd>
+  <dd><em>地址：$!obj.store.area.parent.parent.areaName</em></dd>
+  <dd class="p_bar pr">
+  <div class="p_del" onclick="favorite_del($!{obj.id})"><i><img src="$!webPath/resources/style/weixin/default/images/del.png" /></i></div></dd>
+</dl>
+#end

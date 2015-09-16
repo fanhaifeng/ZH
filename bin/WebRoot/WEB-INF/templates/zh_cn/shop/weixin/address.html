@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>微信商城 - 收货地址列表</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css">
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script>
+function address_add(){
+	window.location.href="$!webPath/weixin/buyer/address_add.htm";
+	}
+function address_edit(id){
+	window.location.href="$!webPath/weixin/buyer/address_edit.htm?id="+id;
+	}
+function address_del(id){
+	window.location.href="$!webPath/weixin/buyer/address_del.htm?mulitId="+id;
+	}	
+</script>
+<body class="bodybg">
+<div class="page_bottom">
+<hgroup>
+  <h3 class="goods_car clearfix"><a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>地址管理</b></span></h3>
+</hgroup>
+ 
+  #foreach($obj in $objs)
+  #set($address="$!obj.area.parent.parent.areaName $!obj.area.parent.areaName $!obj.area.areaName")
+  <section class="new_address_box container fff mt10">
+   <ul>
+   <li class="clearfix"><span class="pull-left">收货地址：</span><div class="msg_con"> $!address $!obj.area_info</div></li>
+    <li>收货人： $!obj.trueName</li>
+    <li>联系方式： $!obj.mobile &nbsp; $!obj.telephone </li>
+     
+    <li><span class="button_fun">
+    <button type="button" onClick="address_edit('$!obj.id')">编辑</button>
+    <button type="button" onClick="address_del('$!obj.id')">删除</button>
+    </span>
+    </li>
+    </ul>
+    </section>  
+  #end
+ 
+<div class="container">
+  <button type="button" class="cmd_login" onClick="address_add()">新增收货地址</button>
+</div>
+</div>
+$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=account")
+</body>
+</html>

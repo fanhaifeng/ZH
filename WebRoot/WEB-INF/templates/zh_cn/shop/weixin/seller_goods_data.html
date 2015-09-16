@@ -1,0 +1,38 @@
+<script>
+jQuery(document).ready(function() {
+//图片懒加载
+$("img").lazyload({
+    placeholder : "$!imageWebServer/resources/style/common/images/loader.gif", //加载图片前的占位图片
+    effect      : "fadeIn" //加载图片使用的效果(淡入)
+});
+});
+</script>
+#if($!objs.size()>0)
+  #foreach($goods in $objs)
+   <dl class="clearfix">
+    #if($!goods.goods_main_photo)                       
+    #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+    #else
+    #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}.jpg")
+    #end
+    <dt class="pimg">
+    <a class="p_img" href="$!webPath/weixin/seller_goods_detail.htm?goods_id=$!goods.id"><img src="$!img" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); " /></a>
+    </dt>
+    <dd>
+      
+        <div class="baby_name"><a href="$!webPath/weixin/seller_goods_detail.htm?goods_id=$!goods.id">$!goods.goods_name</a></div>
+        <div class="price">	#if ($!goods.goods_promotion)
+        		¥<strong>$!{goods.goods_current_price}</strong><del>¥$!{goods.goods_price}</del>
+ 			#else
+	 			#if($!{goods.goods_price}==$!{goods.goods_current_price})
+	 			¥<strong>$!{goods.goods_price}</strong>  
+	 			#else
+			    ¥<strong>$!{goods.goods_current_price}</strong><del>¥$!{goods.goods_price}</del>
+				#end
+ 			#end </div>
+        <div class="goods_address"><span>$!goods.goods_store.area.parent.parent.areaName</span><br/>销量：<b style="color:#e10000">$!goods.goods_salenum</b></div>
+       
+    </dd>
+  </dl>
+#end
+ #end

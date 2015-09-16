@@ -1,0 +1,56 @@
+<div class="evaluation">
+  <div class="eva_bar_box">
+    <div class="eva_bar">
+      <div class="eva_bar_left">
+        <h4>与描述相符</h4>
+        <strong>$!CommUtil.null2Double($!{goods.description_evaluate})</strong> </div>
+      #set($long = $!CommUtil.null2Double($!{goods.description_evaluate})/5*100)
+      <div class="eva_bar_right">
+        <div class="eva_scroller"> <span style="width:$!{long}%;"> <em>$!CommUtil.null2Double($!{goods.description_evaluate})</em> </span> </div>
+        <ul class="scroller_ul">
+          <li>非常不满意</li>
+          <li>不满意</li>
+          <li>一般</li>
+          <li>满意</li>
+          <li>非常满意</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  #if($!rows==0)
+  <div class="novalue"> 还没有评价内容 </div>
+  #else
+  #foreach($obj in $objs)
+  <div class="evalone">
+    <ul>
+      #if($!{obj.description_evaluate}==0)
+      #set($description_evaluate="买家未评分")
+      #end
+      #if($!{obj.description_evaluate}>0)
+      #set($description_evaluate="非常不满意")
+      #end
+      #if($!{obj.description_evaluate}>1)
+      #set($description_evaluate="不满意")
+      #end
+      #if($!{obj.description_evaluate}>2)
+      #set($description_evaluate="一般")
+      #end
+      #if($!{obj.description_evaluate}>3)
+      #set($description_evaluate="满意")
+      #end
+      #if($!{obj.description_evaluate}>4)
+      #set($description_evaluate="非常满意")
+      #end
+      #if($!{obj.evaluate_info}!='null'&&$!{obj.evaluate_info}=="")
+      #set($evaluate_info="买家很懒什么都没留下！")
+      #else
+      #set($evaluate_info=$!{obj.evaluate_info})
+      #end
+      <li><span class="blue evalonesp" style="width: 150px">$!{obj.evaluate_user.userName}</span><span style="width: 150px">$!description_evaluate</span><span style="width: 150px">$!CommUtil.formatShortDate($!obj.addTime)</span><span style="width:510px">$!evaluate_info</span></li>
+    </ul>
+  </div>
+  #end
+  <div class="fenye">
+    <div class="fenyes">$!gotoPageAjaxHTML</div>
+  </div>
+  #end </div>

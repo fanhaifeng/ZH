@@ -1,0 +1,161 @@
+<script>
+jQuery(document).ready(function(){
+  jQuery(".toph_bgsear li").mouseover(function(){
+      jQuery(".toph_bgsear>li").show();
+  }).mouseleave(function(){
+       jQuery(".toph_bgsear>li").last().hide();
+  }).click(function(){
+	 var index=jQuery(this).index();
+	 if(index==1){
+	   var f_text=jQuery(".toph_bgsear li").find("a").first().text();
+	   var f_type=jQuery(".toph_bgsear li").first().attr("type");
+	   jQuery(".toph_bgsear li").attr("type",jQuery(this).attr("type"));
+       jQuery(".toph_bgsear li").find("a").first().html(jQuery(this).find("a").text()+"<s></s>");
+	   jQuery(".toph_bgsear li").find("a").last().text(f_text);
+	   jQuery(".toph_bgsear li").last().attr("type",f_type);
+	   jQuery("#type").val(jQuery(".toph_bgsear li").first().attr("type"));
+	   jQuery(".toph_bgsear>li").last().hide();
+	 }
+  });
+
+  jQuery(".two_code_a").click(function(){
+	  jQuery(this).parent().remove();
+	  });
+	
+});
+function search_form(){
+  var keyword=arguments[0];
+  var type=arguments[1];
+  if(keyword!=""&&keyword!=undefined){
+   jQuery("#keyword").val(keyword);
+  }
+  if(type!=""&&type!=undefined){
+    jQuery("#type").val(type);
+  }
+  jQuery("#searchForm").submit();	
+  jQuery("#keyword").val("");
+}
+</script>
+<form action="$!webPath/search.htm" method="post" target="_blank" id="searchForm">
+  <input name="type" type="hidden" id="type" value="$!type" />
+  <div class="head main">
+    <div class="logo">  #if($!config.websiteLogo) <a href="$!webPath/index.htm"> <img src="$!webPath/resources/images/logo.png" border="0" /> </a> #else <a href="$!webPath/index.htm"><img src="$!imageWebServer/resources/style/system/front/default/images/logo.png" border="0" /> </a> #end </div>
+    <div class="chose_city fl">
+    <span id="showCity">#if($!user)$!CommUtil.substring("$!{user.area.areaName}",4) #else 全国 #end</span> 
+    <a href="javascript:void(0);" data-reveal-id="bigpobbox" id="bigpobbox_city_a" >切换至城市</a>
+	
+	<div id="bigpobbox" class="bigpobbox reveal-modal">
+	</div>
+	<script type="text/javascript">
+		if(jQuery.cookie('pc_city_name')!=null){
+			jQuery("#showCity").html(jQuery.cookie('pc_city_name').substring(0,4));
+		}
+		if(jQuery.cookie('pc_city_name') == null){
+			#if($!user)
+				jQuery.cookie('pc_city_id',$!user.area.id, {expires: 7, path: "/"});
+			#end
+		}
+	</script>
+    </div>
+    
+    <div class="toph_bigsearch">
+      <div class="toph_sear">
+        <ul class="toph_bgsear">
+        #if($!type=="store")
+        <li  class="this" type="store"><a href="javascript:void(0);">店铺</a><s></s></li>        
+        <li style="display:none"  type="goods"><a href="javascript:void(0);">宝贝</a></li>
+        #else
+          <li class="this" type="goods"><a href="javascript:void(0);">宝贝<s></s></a></li>
+          <li style="display:none" type="store"><a href="javascript:void(0);">店铺</a></li>
+        #end
+        </ul>
+        <input name="keyword" type="text" id="keyword" placeholder="搜索其实真的很简单！" x-webkit-speech lang="zh-CN" onwebkitspeechchange="jQuery('#searchForm').submit()" class="toph_sear_txt"/>
+        <input name="input" type="button" value="搜索" style="cursor:pointer;" onclick="search_form();" class="toph_sear_btn" />
+      </div>
+      <div class="keyword"> #foreach($info in $CommUtil.splitByChar("$!config.hotSearch",",")) #if($velocityCount<8)<a href="javascript:void(0);" onclick="search_form('$info','goods');">$!info</a> #end #end</div>
+    </div>
+<!--     #if($!config.weixin_store&&$!config.weixin_qr_img)
+    <div class="two_code"> <a href="javascript:void(0);" class="two_code_a"></a> <span class="two_code_box"><b>中化BBC商城-APP入口</b><img src="$!webPath/$!{config.weixin_qr_img.path}/$!{config.weixin_qr_img.name}" width="84" height="84" /></span> </div>
+    #end  -->
+      <script>
+		#set($store_second_url="$!webPath")
+		#if($!second_domain_view)
+			#set($store_second_url="http://$!{store.store_second_domain}.$!{domainPath}")
+		#end
+		/* var goods_count=$!cart.size();
+		 var total_price=0;
+		 #set($total_price=0)
+		 #foreach($gc in $cart)
+		  #if($!gc.goods.group_buy==2)
+		    #set($total_price=$!{gc.goods.group_goods.gg_price}*$!{gc.count}+$total_price)
+		  #else
+		    #set($total_price=$!{gc.goods.store_price}*$!{gc.count}+$total_price)
+		  #end
+		 #end*/
+		function cart_remove(id,store_id){
+           jQuery.post("$!store_second_url/remove_goods_cart.htm",{"id":id,"store_id":store_id},function(data){
+           jQuery("div[class=table] tr[id="+id+"]").remove();
+		   jQuery(".shopping[id="+id+"]").remove();
+		   jQuery(".shopp_ingtop[id="+id+"]").remove();
+           jQuery("#cart_goods_count_top").html(data.count);
+           jQuery("#cart_goods_price_top").html(data.total_price);
+		   jQuery("#top_total_price_"+store_id).html(data.total_price);
+           if(store_id!=""){
+              jQuery("#total_price_"+store_id).html(data.sc_total_price);
+           }
+		   if( jQuery("form[id=cart_"+store_id+"]").find("tr[goods_list^=goods_info]").length==0){
+		  	 jQuery("form[id=cart_"+store_id+"]").remove();
+		   }
+           if(jQuery("tr[goods_list^=goods_info]").length==0){
+              jQuery(".car_nogoods").show();
+           }
+         },"json");
+       }
+       var th;
+       var th2;
+       function show_cart_menu(){
+         jQuery.ajax({type:'POST',url:'$!store_second_url/cart_menu_detail.htm',data:'',
+						   beforeSend:function(){
+							     jQuery("#cart_goods_top_info").empty().html('<div class="menu-bd-panel"><div style="text-align:center;"><img src="$!webPath/resources/style/common/images/loader.gif" /></div></div>');
+							     jQuery("#cart_goods_top_info").show();
+							   },
+						  success:function(data){
+							     jQuery("#cart_goods_top_info").empty();
+								 jQuery("#cart_goods_top_info").html(data);
+							   }
+						});
+       }
+	    jQuery(document).ready(function(){
+		   jQuery("#cart_goods_top_menu").mouseenter(function(){
+		   clearTimeout(th);
+		   jQuery(this).css({"background-color":"#ffffff","border-bottom":"1px solid #fff"});
+		   th2=setTimeout("show_cart_menu()",0)
+		   });
+		   jQuery("#cart_menu").mouseleave(function(){
+		      clearTimeout(th2);
+		      
+		      th=setTimeout("jQuery('#cart_goods_top_info').hide();jQuery('#cart_goods_top_menu').attr({style:' '});",5000)
+		   });
+			/*
+		   jQuery("#showCity").click(function(){
+			   var winResult=window.showModalDialog("$!webPath/city.htm",'城市','dialogWidth:400px;dialogHeight:300px;dialogLeft:200px;dialogTop:150px;center:yes;help:yes;resizable:yes;status:yes');
+			   if (winResult==2){ //返回值 .可以修改.如果有值
+				   window.location.reload(); 
+				}
+			});
+			*/
+		});
+	   </script>
+    <div class="search menu-item fr">
+          <div class="minCart" id="cart_menu"><span class="menu-hd" id="cart_goods_top_menu"><s></s>购物车<span id="cart_goods_count_top">#if($!types)$!types#else 0 #end</span> <b></b></span>
+            <div class="menu-bd" id="cart_goods_top_info">
+             <div class="menu-bd-panel">
+                <div style="text-align:center;"><img src="$!webPath/resources/style/common/images/loader.gif" /></div>
+             </div>
+              
+            </div>
+          </div>
+        </div>
+    
+    </div>
+</form>

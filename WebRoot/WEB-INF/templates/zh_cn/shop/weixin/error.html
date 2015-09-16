@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>中化BBC商城-APP - 系统提示</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/style/weixin/default/js/jquery-1.11.3.min.js"></script>
+<script src="$!webPath/resources/js/jcarousellite_1.0.1.min.js"></script>
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/bootstrap.min.js"></script>
+</head>
+<body style="background:#ddd">
+
+<hgroup>
+  <h3 class="goods_car clearfix"><a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>系统提示</b></span></h3>
+</hgroup>
+<div class="main fff">
+  <div class="index" style="height:300px;">
+    <div style="height:280px;border:1px solid #CCCCCC;overflow:hidden; background:#FFF; margin-left:auto; margin-right:auto; margin-top:10px;  width:280px">
+      <div style="font-size:16px; color:#666666;margin-top:100px;">
+      <span style="text-align:center; display:block; width:100%;">
+      <img src="$!webPath/resources/style/common/images/icon/error.png" />
+      </span>
+      <span style=" padding-top:10px; line-height:30px; float:left;text-align:center; display:block; width:100%;">$!{op_title}！</span>
+      </div>
+    </div>
+  </div>
+  #if($!url)
+<script>
+	  var count=3;
+	  window.setInterval(go,1000);
+	  function go(){
+	    count--;
+	    if(count==0) {
+	    	try { 
+				window.webView.LoginFailed("登录失败");
+			} 
+				catch (e) { 
+			}
+	    	window.location.href="$!url";
+	    }
+	  }
+	</script>
+    #end
+</div>
+
+$!httpInclude.include("/weixin/platform/nav_bottom.htm")
+</body>
+</html>

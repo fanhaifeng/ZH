@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>用户注册 -$!config.title - Powered by LakeCloud</title>
+<meta name="keywords" content="$!config.keywords" />
+<meta name="description" content="$!config.description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/goods.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/index.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/common/css/overlay.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="$!webPath/resources/editor/themes/default/default.css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+jQuery(document).ready(function(){
+	jQuery.ajax({
+		type : "get",
+		async : false,
+		url : "http://211.94.93.238/zhnyxxgc/httpservice.action?method=searchAllCrops1",
+		dataType : "jsonp",
+		jsonp : "cropCallback",
+		async: false,
+		jsonpCallback : "cropCallback",
+		success : function(json) {
+			jQuery("#crop1").empty();						
+			if (json.resultcode == "ok") {
+				jsonString = json.resultdata;
+				console.log(jsonString);
+				jQuery("#crop1").empty();
+				jQuery("#crop1").append("<option value=''>请选择</option>");
+				jQuery.each(json.resultdata,function(i, n) {
+						var child = n.childern;
+						if (child !== null && child.length>0) { 
+							jQuery("#plant1").append("<span class='s_title'>"+n.cropName+" ：</span> ");
+							jQuery("#plant1").append("<div class='line_con' id='con" + i + "'></div>");
+							console.log(child);
+							jQuery.each(child,function(j,m){
+								jQuery("#con" + i).append("<span><input type='checkbox' name='plant' value="+m.id+">"+m.cropName+"</input> </span> ");
+							});
+							jQuery("#crop1").append("<option value="+n.id+">"+n.cropName+ "</option>");
+						}
+				});
+			}
+		},
+		error: function() {
+			}
+	
+});
+
+
+jQuery("#theForm").validate({
+	ignore : "",
+	rules : {
+		crop1 : {
+			required : true
+		}
+	},
+
+	messages : {
+		crop1 : {
+			required : "请选择关心作物"
+		}
+	}
+});
+
+
+jQuery("#crop2").change(function() {
+	if (jQuery("#crop2").find(
+			"option:selected").text() != "请选择") {
+		jQuery("#crop")
+				.val(
+						jQuery("#crop2")
+								.find(
+										"option:selected")
+								.val());
+	} else {
+		jQuery("#crop").val("");
+	}
+});
+
+jQuery("#crop1").change(function() {
+	if (jQuery("#crop1").find(
+			"option:selected").text() == "请选择") {
+		jQuery("#crop2").hide();
+		jQuery("#crop").val("");
+	}
+	var id = jQuery(this).val();
+	if (id != "") {
+		jQuery("#crop2").show();
+		jQuery("#crop2").empty();
+		console.log(jsonString);
+		jQuery.each(jsonString ,function(i, n) {	
+			if( id == n.id ){
+				var child = n.childern;
+				if (child !== null && child.length>0) { 
+					jQuery.each(child,function(j,m){
+						jQuery("#crop2").append("<option value="+m.id+">"+ m.cropName+"</option>");
+					});
+					jQuery("#crop").val(jQuery("#crop2").find("option:selected").val());
+				}
+			}
+		});
+	}
+});			
+});	
+function saveForm() {
+jQuery("#theForm").submit();
+}
+function register() {
+window.location.href = "$!webPath/weixin/register.htm";
+}
+function register_seller() {
+window.location.href = "$!webPath/weixin/register_seller.htm";
+}
+function onlyNonNegative(obj) { 
+var event = obj || event;
+var inputChar = event.keyCode;  
+//alert(event);  
+
+//1.判断是否有多于一个小数点  
+if(inputChar==190 ) {//输入的是否为.  
+var index1 = obj.value.indexOf(".") + 1;//取第一次出现.的后一个位置  
+var index2 = obj.value.indexOf(".",index1);  
+while(index2!=-1) {  
+//alert("有多个.");  
+
+obj.value = obj.value.substring(0,index2);  
+index2 = obj.value.indexOf(".",index1);  
+}  
+}  
+//2.如果输入的不是.或者不是数字，替换 g:全局替换  
+obj.value = obj.value.replace(/[^(\d|.)]/g,"");  
+}  
+</script>
+</head>
+<body>
+ <div class="head main mt20 ">
+    <div class="fl">  #if($!config.websiteLogo) <a href="$!webPath/index.htm"> <img src="$!webPath/resources/images/logo.png" border="0" /> </a> #else <a href="$!webPath/index.htm"><img src="$!imageWebServer/resources/style/system/front/default/images/logo.png" border="0" /> </a> #end </div>
+<span class="my_txt">欢迎注册</span>
+</div>
+<div class="main"> 
+  <div class="index">
+    <div class="index2">
+     
+          <div class="navadda"> 
+           		<span class="navadd1 addcolor"> <i>1</i>基本信息</span>
+            	<span class="navadd2 this"> <i>2</i>关心作物</span>
+             	<span class="navadd3 addcolor"> <i>3</i>注册成功</span>
+            </div>
+    <div class="main login_user">
+        <div class="login_user_left">
+          <div class="login_user_in">
+            <div class="login_user_bottom">
+              <form action="$!webPath/register_finish.htm" method="post" name="theForm" id="theForm">
+                <table width="800" border="0" cellspacing="0" cellpadding="0" class="user_zc_table">
+					<input type="hidden" name="userName" value="$!userName"/>
+					<input type="hidden" name="password" value="$!password"/>
+					<input type="hidden" name="telephone" value="$!telephone"/>
+					<input type="hidden" name="area" value="$!area"/>
+					<input type="hidden" name="code" value="$!code"/>
+					<input type="hidden" name="mobile_verify_code" value="$!mobile_verify_code"/>
+					 <tr>
+                    <td  width="100" class="login_nameu">关心作物：</td>
+                    <td><span class="">
+                       <select name="crop1" id="crop1" class="a_areaAndArea" level="2">
+						<option value="">请选择</option>
+					</select> 
+                      </span><span class="">
+                       <select name="crop2" id="crop2" level="3" style="display: none" class="a_areaAndArea" >
+							<option value="">请选择</option>
+					</select>
+					<input name="care" type="hidden" id="crop" value="" /> </select>
+                      </span></td>        	
+                      <td class="login_nameu2"></td>
+                  </tr> 
+                  <tr>
+                    <td style="vertical-align: top;" class="login_nameu">种植作物：</td>
+                    <td>	
+	                    <div class="sub_con" id="plant1">
+						</div>
+					</td>
+					<td class="login_nameu2"></td>
+                  </tr>
+                   <tr>
+                    <td class="login_nameu"></td>
+                    <td>
+					<div class="sub_con" id="plant2"></div></td>
+					<td class="login_nameu2"></td>
+                  </tr>
+                  <tr>
+                    <td class="login_nameu">种植面积：</td>
+                    <td><span class="login_user_input input_size"><input type="text" name="cul_area" onkeyup="onlyNonNegative(this)"  id="cul_area" value="" class="register_txt"  placeholder="种植面积"/>
+						</span></td>
+                  </tr>
+                  <tr>
+                   <td class="login_nameu"></td>
+                    <td class="login_nameu">
+                  		<span class="login_user_btn_free">
+                      <input class="cmd_login" type="button" onClick="saveForm()" value="注册"/>
+                      </span>
+                    </td>
+                  </tr>
+				<!-- <ul>
+					<li>关心作物：
+					 <select name="crop1" class="a_crop" id="crop1"
+						level="2">
+						<option value="">请选择</option>
+					</select> 
+					<select name="crop2" class="a_crop" id="crop2" level="3"
+						style="display: none">
+							<option value="">请选择</option>
+					</select>
+					<input name="care" type="hidden" id="crop" value="" /> </select>
+					</li>
+
+					<li>
+					<div class="sub_title">种植作物：</div>
+						<div class="sub_con" id="plant1">
+						</div>
+						<div class="sub_con" id="plant2"></div>
+					</li>
+					
+					<li>种植面积：<input type="text" name="cul_area" onkeyup="onlyNonNegative(this)"  id="cul_area" value="" class="register_txt"  placeholder="种植面积"/></li>
+					
+					<li id="a_register" style="display: none">
+						<div
+							style="height: 200px; overflow-y: scroll; border: 1px solid #CCC; background-color: #FFF; padding: 5px; font-size: 12px; line-height: 24px;">
+							$!obj.content</div>
+					</li>
+					<li id="a_register" >  
+                     	<span class="login_user_btn_free"><button class="cmd_login" type="button"
+								onClick="saveForm()">注册</button></span></li>
+                   	</li>
+					</ul> -->
+                </table>
+              </form>
+            </div>
+          </div>
+        </div>
+       <div class="login_user_right">
+           <ul class="login_user_ul">
+          <li class="title_h"> <h1 class="login_user_h"><i>&nbsp;</i>温馨提示,所有会员享受</h1></li>
+           	<li> <span class="login_user_span2">免费开设店铺销售商品，</span></li>
+            <li> <span class="login_user_span2">提交完善您的个人资料，</span></li>
+            <li> <span class="login_user_span2">在线购买商城任意商品，</span></li>
+            <li> <span class="login_user_span2">收藏关注的商品及店铺。</span></li>
+          </ul>
+          <p class="login_user_h">如果已经拥有账户</p>
+          
+           <div class="login_sys"> <span class="login_user_free"><a href="$!webPath/user/login.htm">立即登录 </a></span>
+          </div>
+     
+     
+       </div>
+      </div>
+    </div>
+  </div>
+  $!httpInclude.include("/footer.htm")
+</div>
+</body>
+</html>

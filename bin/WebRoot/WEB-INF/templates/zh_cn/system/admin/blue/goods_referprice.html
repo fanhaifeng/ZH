@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>选择商品分类 -  Powered by LakeCloud</title>
+<meta name="keywords" content="$!config.keywords" />
+<meta name="description" content="$!config.description" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/common/css/overlay.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="$!webPath/resources/editor/themes/default/default.css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery-ui-1.8.21.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.base.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script charset="utf-8" src="$!webPath/resources/editor/kindeditor.js"></script>
+<script charset="utf-8" src="$!webPath/resources/editor/lang/zh_CN.js"></script>
+<script src="$!webPath/resources/js/swfupload.js"></script>
+<script src="$!webPath/resources/js/swfupload.queue.js"></script>
+<script>
+function saveForm(a,b)
+{
+	var nowprice =$("#p_"+a+"").val();
+	var lowprice =$("#l_"+a+"").html();
+	if(checknum(nowprice)==false){
+		alert("您输入的价格格式有误");
+	}else if(checkprice(nowprice,lowprice)==false){
+    	alert("请输入小于最低经销商价格的数字");
+    }else
+       jQuery.post("$!webPath/admin/goods_referprice_finish.htm",{goods_company:a,id:b,goods_referprice_low:nowprice},function(data){
+       alert(data.message);
+    },"json"); 
+}
+
+//判断输入数字是否满足小于最低价条件
+function checkprice(now,low){ 
+	 if(low == "" || low==null){
+	 	return true;
+	 }else if(parseFloat(now)>parseFloat(low)){
+	 	return false;
+	 }
+}
+//判断输入的是否为数字
+function checknum(nowprice){  
+	var patrn=/^\d+(\.{0,1}\d+){0,1}$/;    
+	if(!patrn.exec(nowprice)){        
+		return false;     
+	}
+	else{      
+		return true;   
+	 }
+}
+</script>
+</head>
+<body>
+
+<div class="main"> 
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabledetail" >
+  <tr style="background:#CCC"> 
+    <td width="23%">分公司</td>
+    <td width="23%">指导价</td>
+    <td width="23%"><span class="hui2">经销商最低价格</span></td>
+    <td width="23%"></td>
+  </tr>
+   #foreach($pr in $brprList)           
+       <tr>
+   		<td>$!pr.compname<span ></span></td>  		
+   		<td><input name="" type="text" id="p_$!pr.brId" style="border:1px solid #A7A6AA; height:20px; line-height:20px; padding-left:5px;margin-bottom:5px;" value="$!pr.reprice"></td>
+   		<td><span  class="hui2" id="l_$!pr.brId">$!pr.lowprice</span></td>
+   		<td><span class="submittable">
+        <input name="" type="button" value="保存" onclick="saveForm($!pr.brId,$!id);" style="cursor:pointer;"/></span></td>
+       </tr>           
+  #end
+
+</table>
+</div>
+</body>
+</html>

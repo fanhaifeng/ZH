@@ -1,0 +1,26 @@
+           #foreach($goods in $goods_recommend_list)   
+            #if($!goods.goods_main_photo)
+            #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+            #else
+            #set($img="$!imageWebServer/resources/style/common/images/blank.gif")
+            #end
+            #set($goods_url="$!webPath/goods_$!{goods.id}.htm")
+            #if($!config.second_domain_open)
+            #set($goods_url="http://$!{goods.goods_store.store_second_domain}.$!{domainPath}/goods_$!{goods.id}.htm")
+            #end  
+            <ul>
+              <li class="goodsimgs"><span class="goods_sp_span" >
+                 <p><a href="$!goods_url" class="p_img"  target="_blank">
+      				 <img style="width:100%;" src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg');"/>
+     		        </a>
+     			 </p>
+                </span></li> 
+                <li class="clearfix"> <span class="hui2">商城价：</span><strong class="red">¥$!goods.goods_price</strong> 
+                      </li>
+            <li> <span class="hui2">零售价：</span><span class="through hui">¥$!goods.goods_current_price</span> 
+                     </li>
+              
+              <li class="goodsnames"><a href="$!goods_url" target="_blank">$!CommUtil.substring("$!goods.goods_name",28)</a></li>
+              <li class="recentgoodsok">最近成交<strong>#if($!goods.goods_salenum<=0)0#else$!goods.goods_salenum#end</strong>笔</li>
+            </ul>
+            #end

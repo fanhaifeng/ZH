@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP- 中金支付</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script src="$!webPath/resources/js/jquery.form.js"></script>
+<script type="text/javascript">
+var flagForm=false;
+jQuery(document).ready(function(){
+	//获取短信验证码
+	var validCode=true;
+	jQuery(".msgs").click (function() {
+		var time=120;
+		var code=jQuery(this);
+		if (validCode) {
+			validCode=false;
+			code.addClass("msgs1");
+			getSMS();
+			var t=setInterval(function() {
+				time--;
+				code.html(time+"秒");
+				if (time==0) {
+					clearInterval(t);
+					code.html("重新获取");
+					validCode=true;
+					code.removeClass("msgs1");
+				}
+			},1000)
+		}
+	});
+});
+function pay(){
+	var order_id=jQuery("#order_id").val();
+	var InstitutionID=jQuery("#InstitutionID").val();
+	var OrderNo=jQuery("#OrderNo").val();
+	var PaymentNo=jQuery("#PaymentNo").val();
+	var SMSValidationCode=jQuery("#SMSValidationCode").val();
+	if(SMSValidationCode!=""){
+		jQuery.ajax({type:"POST",url:"$!webPath/weixin/tx1376.htm",
+			data:{"order_id":order_id,"SMSValidationCode":SMSValidationCode,"InstitutionID":InstitutionID,"OrderNo":OrderNo,"PaymentNo":PaymentNo},
+			success:function(data){
+				if(data=="OK."){
+					jQuery("#error_goods_inventory").show().find("span").html("支付成功").parent().fadeOut(3000);
+					window.location.href="$!webPath/weixin/buyer/account.htm";
+				}
+				else{
+					jQuery("#error_goods_inventory").show().find("span").html(data).parent().fadeOut(3000);
+				}
+			}
+		});
+  }
+}
+function getSMS(){
+	var options = { 
+	// target:        '#output1',   // target element(s) to be updated with server response 
+	beforeSubmit:  before_ajax,  // pre-submit callback 
+	success:       success_ajax,  // post-submit callback  
+	// other available options: 
+	//url:       url         // override for form's 'action' attribute 
+	//type:      type        // 'get' or 'post', override for form's 'method' attribute 
+	dataType:  "json",       // 'xml', 'script', or 'json' (expected server response type) 
+	//clearForm: true        // clear all form fields after successful submit 
+	resetForm: true        // reset the form after successful submit 
+	//timeout:   3000 
+	};	
+	jQuery("#theForm").ajaxSubmit(options);
+}
+function before_ajax(formData, jqForm, options){ 
+	return true;
+}
+function success_ajax(data){
+	//showDialog("share_sns","系统提示",data.msg,0,"succeed",3);
+	if(data=="OK"){
+		//window.location.href="$!webPath/weixin/buyer/order.htm";
+	}
+	else{
+		jQuery("#error_goods_inventory").show().find("span").html(data).parent().fadeOut(3000);
+	}
+}
+</script>
+<style type="text/css">
+.msgs{display:inline-block;width:104px;color:#fff;font-size:12px;border:1px solid #0697DA;text-align:center;height:30px;line-height:30px;background:#0697DA;cursor:pointer;}
+form .msgs1{background:#E6E6E6;color:#818080;border:1px solid #CCCCCC;}
+</style>
+</head>
+<body class="bodybg">
+<div class="center_box" id="error_goods_inventory" style="display:none"><span class="count_none"></span></div>
+<div class="">
+	<hgroup>
+		<h3 class="goods_car clearfix">
+			<a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>中金支付</b></span>
+		</h3>
+	</hgroup>
+	<form action="$!webPath/weixin/tx1375.htm" method="post" id="theForm">
+	<div class="paybot container mt10 fff">
+		<ul>
+			<li><strong>订单编号：</strong><strong class="orange">$!{order_id}</strong></li>
+			<li><strong>应付金额：</strong><strong class="orange">¥$!{totalPrice}</strong></li>
+		</ul>
+		<h3>
+			您可以在用户中心中<a href="$!webPath/weixin/buyer/order.htm">“我的订单”</a>查看该订单
+		</h3>
+	</div>
+	<div class="container fff mt10">
+		 <dl class="codeInfo">
+		 <dt>选择银行：</dt>
+		 <dd>
+		#foreach($bank in $bankBeanList)
+         #if($!{bank.key}==$!{thirdBinding.bankID})
+         	$!bank.value
+         #end
+		#end
+		</dd>
+		<dt>银行卡卡号：
+		</dt>
+		<dd>$!{thirdBinding.accountNumber}</dd>
+		<dt>持卡人姓名：</dt>
+         <dd>$!{thirdBinding.accountName} </dd>
+         <dt>证件类型：</dt>
+         <dd>
+         #foreach($map in $identificationTypeList)
+				            #if($!{map.key}==$!{thirdBinding.identificationType})
+				            	$!map.value
+				            #end
+						#end
+						</dd>
+			<dt>证件号：</dt>
+			<dd>$!{thirdBinding.identificationNumber}</dd>
+			<dt>手机号：</dt>
+			<dd>$!{thirdBinding.phoneNumber}</dd>
+			<dt>验证码：</dt>
+			<dd><input type="text" name="SMSValidationCode" value="123456" id="SMSValidationCode"/><span class="msgs">获取短信验证码</span></dd>
+		 </dl>
+      <div class="banknextbtn">
+		<input name="" type="button" value="确认支付" onClick="pay();"
+			style="cursor: pointer;" />
+		<input name="order_id" type="hidden" id="order_id" value="$!{order_id}" />
+		<input type="hidden" name="InstitutionID" value="$!{InstitutionID}" id="InstitutionID"/>
+		<input type="hidden" name="OrderNo" value="$!{OrderNo}" id="OrderNo"/>
+		<input type="hidden" name="PaymentNo" value="$!{PaymentNo}" id="PaymentNo"/>
+		<input type="hidden" name="Amount" value="$!{totalPrice}" id="Amount"/>
+		<input type="hidden" name="TxSNBinding" value="$!{thirdBinding.txSNBinding}" id="TxSNBinding"/>
+		<input type="hidden" name="Remark" value="" id="Remark"/>
+	</div> 
+        	 
+	</div>
+	
+	</form>
+</div>
+$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=account")
+</body>
+</html>

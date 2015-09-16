@@ -1,0 +1,34 @@
+﻿<div class="nav ">
+<div class="main"> <span class="navright"></span>
+    <div class="navleft">
+    
+        <b class="nav_lefts"><a href="$!webPath/goods_class.htm">全部商品分类</a>
+    <span>
+    </span></b>
+    </div>
+    <ul class="navul">
+    #set($navs=$!navTools.queryNav(0,-1))
+    #foreach($nav in $navs)
+    #if($!CommUtil.indexOf("$!nav.url","http://")>=0)
+      #set($url="$!nav.url")
+    #else
+      #set($url="$!webPath/$!{nav.url}")
+    #end
+    <li><a href="$!url" id="$!nav.id" #if($!nav.new_win==1)target="_blank"#end original_url="$!nav.original_url"><span>$!{nav.title}</span></a></li>
+    #end
+    #foreach($gc in $!gcs)
+    <li><a href="$!webPath/store_goods_list_$!{gc.id}.htm"><span>$!gc.className</span></a></li>
+    #end
+    </ul>
+    </div>
+  </div>
+<script>
+jQuery(document).ready(function(){
+  jQuery(".navul a").each(function(){
+    var original_url=jQuery(this).attr("original_url");
+	if("$!{current_url}".indexOf(original_url)>=0){
+	   jQuery(this).addClass("this");	
+	}
+  });
+});
+</script>

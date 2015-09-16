@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP - 用户中心</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/style/weixin/default/js/jquery-1.11.3.min.js"></script>
+<script src="$!webPath/resources/js/jcarousellite_1.0.1.min.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery("#theForm").validate({
+	   rules:{
+		   return_content:{required:true}
+		   },
+	   messages:{
+		   return_content:{required:"申请说明不能为空"}
+	   }
+	});
+});
+</script>
+</head>
+<body>
+	<hgroup>
+		<h3 class="goods_car clearfix">
+			<a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>申请退货</b></span>
+		</h3>
+	</hgroup>
+#if($!view)
+<div class="plr10">提交申请后请及时与卖家联系，退货操作由卖家来完成  </div>
+  <table style="float:left;" width="100%" border="0" cellspacing="0" cellpadding="0" class="">
+    <tr>
+      <td height="78" align="right" valign="top"> 
+      <div style="float:center; margin-top:10px; margin-left:10px;"><span style="margin-right:10px; float:left">申请说明：</span><b style="float:left">$!obj.return_content</b></div></td>
+    </tr>
+    <tr>
+      <td height="50" align="center"><span class="inputbtn">
+      </span></td>
+    </tr>
+  </table>
+#else
+<form class="plr10" action="$!webPath/weixin/buyer/order_return_apply_save.htm" method="post" id="theForm">
+<div class=""> 提交申请后请及时与卖家联系，卖家同意退货后可填写退货物流信息      </div>
+   
+      <div style=""><div>申请说明：</div>
+       <textarea style="width: 100%;" name="return_content"  rows="5" id="return_content"></textarea> 
+      </div> 
+     
+        <input class="cmd_login" name="" type="submit" value="提交" style="cursor:pointer;"/>
+        <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+        <input name="id" type="hidden" id="id" value="$!obj.id" />
+       
+</form>
+#end
+$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=account")
+</body>
+</html>

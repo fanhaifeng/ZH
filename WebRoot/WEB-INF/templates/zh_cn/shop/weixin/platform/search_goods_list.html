@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>$!op_title</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/jquery-1.11.3.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/bootstrap.min.js"></script>
+<script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
+<script>
+jQuery(document).ready(function() {
+   var begin_count =12;
+   var currentPage=$!currentPage;
+   var totalPage=$!totalPage;
+   var storeId=null;
+   var orderBy=null;
+   #if($!storeId && $!storeId!="")
+	   storeId=$!storeId;
+   #end
+   var sort="desc";
+   #if($!orderType)
+	   sort="$!orderType";
+   #end
+   #if($!orderBy && $!orderBy!="")
+	   orderBy="$!orderBy";
+   #end
+	//滚动加载
+	jQuery(window).scroll(function(){
+	 if (jQuery(document).scrollTop() >= jQuery(document).height() - jQuery(window).height()) {
+		 var keyword = jQuery("#keyword").val();
+		 var gb_id=jQuery("#gb_id").val(); 
+		 var gbc_id=jQuery("#gbc_id").val();
+		 var gc_id=jQuery("#gc_id").val(); 
+		 currentPage=currentPage+1;
+		 if((currentPage)<=totalPage){
+			 jQuery.post("$!webPath/weixin/platform/search_goods_data.htm",
+					  {
+					  "begin_count":begin_count,
+					  "keyword":keyword,
+					  "gb_id":gb_id,
+					  "gbc_id":gbc_id,
+					  "gc_id":gc_id,
+					  "currentPage":currentPage,
+					  "storeId":storeId,
+					  "orderBy":orderBy,
+					  "orderType":sort
+					  },
+					  function(data){
+						  if(data){
+							  jQuery("div#mall_list").append(data)
+							  begin_count = begin_count +12;
+						  }else{
+							 jQuery(".load_more").hide();
+							 jQuery("#no_more").show();
+							  } 
+						  },
+					  "text");	
+		 }else{
+			 jQuery(".load_more").hide();
+			 jQuery("#no_more").show();
+		}
+     }
+	});	
+
+
+	//排序	  
+	jQuery(".sort .sort_sp a").click(function(){
+		var params="";
+		if(jQuery(this).find("b s").attr("class")=="sort_sp_up"){
+			jQuery(this).find("b s").attr("class","sort_sp_down");
+			sort="desc";
+			params="&orderType="+sort;
+		}else{
+			jQuery(this).find("b s").attr("class","sort_sp_up");
+			sort="asc";
+			params="&orderType="+sort;
+		}
+		params=params+"&orderBy=current_price";
+		submitSearch(params);
+	}); 
+	function submitSearch(params){
+		var url=jQuery("#search_form").attr("action");
+		url=url+params;
+		jQuery("#search_form").attr("action",url);
+		jQuery("#search_form").submit();
+	}
+	//图片懒加载
+	$("img").lazyload({
+        placeholder : "$!imageWebServer/resources/style/common/images/loader.gif", //加载图片前的占位图片
+        effect      : "fadeIn" //加载图片使用的效果(淡入)
+   });
+	jQuery("#gc_id").val($!gc_id);//设置gc_id 
+	jQuery("#gb_id").val($!gb_id);//设置gb_id 	  
+	jQuery("#gbc_id").val($!gbc_id);//设置gbc_id 	
+	jQuery("#storeId").val($!storeId);//设置店铺id  	  
+});
+</script>
+</head>
+
+<body style="padding-bottom: 90px;">
+<div class="goods_list_con">
+<header>
+  <div class="">
+#set($logo="$!webPath/resources/style/weixin/default/images/logo.png")
+#if($!config.store_weixin_logo)
+#set($logo="$!webPath/$!config.store_weixin_logo.path/$!config.store_weixin_logo.name")
+#end   
+    <div class="mall_back"><a href="javascript:history.go(-1);">&lt;</a></div>
+<div class="logo" style="display:none;"><img src="$!logo" width="83" height="23" /></div>
+<!--<form class="header-search-form" id="layout_searchForm" action="">
+ <div class="header-search-box">
+ <div class="header-search-input">
+ <input type="text" value="中化化肥" autocomplete="off" cleardefault="no" name="keyword" maxlength="20" id="layout_newkeyword" class="hilight1">
+ </div>
+ <a class="header-icon-search" id="layout_search_submit" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);" href="javascript:void(0)"><span>搜索</span></a>
+ </div>
+ </form>-->
+  $!httpInclude.include("/weixin/search.htm")
+  </div>
+</header>
+
+<div class="sort"> 
+<span Style="display: none" class="sort_sp"><a href="javascript:void(0);" queryType="goods_collect"><b>人气<s class="sort_sp_up"></s></b></a></span>
+ <span Style="display: none" class="sort_sp"><a href="javascript:void(0);" queryType="goods_salenum"><b>销量<s class="sort_sp_up"></s></b></a></span> 
+ <span class="sort_sp"><a href="javascript:void(0);" queryType="goods_current_price"><b>价格<s #if($!orderType=="desc") class="sort_sp_down"  #else class="sort_sp_up"  #end ></s></b></a></span>
+  <span Style="display: none" class="sort_sp"><a href="javascript:void(0);" queryType="store_credit"><b>信誉<s class="sort_sp_up"></s></b></a></span> 
+</div>
+<!--<input id="keyword" name="keyword" value="$!keyword" type="hidden"/>
+<input id="gbc_id" name="gbc_id" value="$!gbc_id" type="hidden"/>
+<input id="gb_id" name="gb_id" value="$!gb_id" type="hidden"/>
+<input id="gc_id" name="gc_id" value="$!gc_id" type="hidden"/>
+-->
+<div class="main">
+  <div class="container-fluid floor_con floor_list_con">
+  <div class="row" id="mall_list">
+	#foreach($obj in $objs)
+    #set($img="$!imageWebServer/resources/style/common/images/blank.gif")
+    #if($!obj.goods_main_photo)
+    #set($big_img="$!imageWebServer/$!obj.goods_main_photo.path/$!obj.goods_main_photo.name")
+    #set($img="${big_img}_small.$!{obj.goods_main_photo.ext}")
+    #end
+    <div class="col-xs-12 col-sm-12 line-item">
+      <div class="pimg"><a href="$!webPath/weixin/goods.htm?goods_id=$!obj.id" class="p_img" >
+      <img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); " />
+      </a></div>
+      <div class="baby_name"><a href="$!webPath/weixin/goods.htm?goods_id=$!obj.id">$!obj.goods_name</a></div>
+       <div class="store_name"><i><img src="$!webPath/resources/style/weixin/default/images/store_img.png" /></i>$!CommUtil.substring("$!{obj.goods_store.store_name}",100)</div>
+      <div class="s_no">库存：$!obj.goods_inventory件</div>
+      <div class="price">¥<strong>$!obj.goods_current_price</strong></div>
+    </div>
+	#end
+	</div>
+  </div>
+#if($!totalPage>0)
+<div class="load_more" id="loading-data"><a href="javascript:void(0);">#if($!currentPage<$!totalPage)正在加载中...#else 没有更多数据 #end</a></div>
+<div class="load_more" id="no_more" style="display:none"><a href="javascript:void(0);" style="color:#F00">没有更多数据</a></div>
+#else
+<span class="goods_none"><img src="$!webPath/resources/style/weixin/default/images/no_date.png" width="80"  height="62"/><p>亲！没有您要找的宝贝呢。</p></span>
+#end
+</div>
+</div>
+$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=buy")
+</body>
+</html>

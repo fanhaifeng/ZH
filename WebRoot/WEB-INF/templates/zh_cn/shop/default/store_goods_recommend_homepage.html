@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>推荐商品 - Powered by LakeCloud</title>
+<meta name="keywords" content="$!gc.seo_keywords" />
+<meta name="description" content="$!gc.seo_description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/index.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/goods.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/goodshidden.css" type="text/css" rel="stylesheet" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery-ui-1.8.21.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
+<script>
+jQuery(document).ready(function(){
+  jQuery(".smallgoods .goodsimgs img").lazyload({effect:"fadeIn",width:100,height:150});
+});
+</script>
+</head>
+<body>
+$!httpInclude.include("/top.htm")
+<div class="main"> $!httpInclude.include("/head.htm?type=$!type")
+  $!httpInclude.include("/nav1.htm")
+  <form action="$!webPath/goods_recommend_list_homepage.htm" method="post" id="ListForm">
+		<div class="smallgoods"> #foreach($goods in $objs)
+             #if($!goods.goods_main_photo)
+       		 #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_middle.$!{goods.goods_main_photo.ext}")
+       		 #else
+       		 #set($img="$!imageWebServer/resources/style/common/images/blank.gif")
+       		 #end
+              <ul>
+                <li class="goodsimgs">
+				<a href="$!webPath/goods_$!{goods.id}.htm" class="p_img" target="_blank"><span class="goods_sp_span">
+      					<img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); "/>
+     		        </span></a>
+     			 </li>
+                <li class="goodslook"><a href="$!webPath/goods_$!{goods.id}.htm" target="_blank" class="look">查看详情</a><strong>¥$!goods.goods_current_price</strong></li>
+                <li class="goodsnames">
+                <a href="$!webPath/goods_$!{goods.id}.htm" target="_blank">$!CommUtil.substring("$!goods.goods_name",22)</a>
+                </li>
+                <!--
+                #if($!goods.group_buy==2)<span style="padding:3px 3px;color:#FFF;background:#F00">团购</span>#end
+                #if($!goods.activity_status==2)<span style="padding:3px 3px;color:#FFF;background:#F00">活动</span>#end
+                #if($!goods.bargain_status==2)<span style="padding:3px 3px;color:#FFF;background:#F00">特价</span>#end
+                #if($!goods.combin_status==2)<span style="padding:3px 3px;color:#FFF;background:#F00">组合</span>#end
+                #if($!goods.delivery_status==2)<span style="padding:3px 3px;color:#FFF;background:#F00">买就送</span>#end
+                <li class="recentgoodsok">最近成交<strong>$!goods.goods_salenum</strong>笔</li>
+              	-->
+              </ul>
+              #end </div>
+            <div class="shop_page"><span>
+              <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+              <input name="recommend" type="hidden" id="recommend" value="$!recommend" />
+              $!gotoPageFormHTML</span> </div>
+        </form>
+  $!httpInclude.include("/footer.htm")
+</div>
+</body>
+</html>

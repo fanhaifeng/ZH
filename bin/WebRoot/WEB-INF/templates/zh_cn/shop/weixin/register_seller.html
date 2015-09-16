@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style"
+	content="black-translucent">
+<title>微信商城 - 卖家用户注册</title>
+<link rel="stylesheet"
+	href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css">
+<link href="$!webPath/resources/style/weixin/default/css/phone.css"
+	rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js" type="text/ecmascript"></script>
+<script>
+	jQuery(document)
+			.ready(
+					function() {
+						var province = remote_ip_info["province"];
+						var city = remote_ip_info["city"];				
+						console.log(province + "=="+city);
+						jQuery
+								.ajax({
+									url : "$!webPath/getSomeArea.htm",
+									async : false,
+									success : function(result) {
+										jQuery("#a_area1").empty();
+										jQuery
+												.each(
+														result.resultData,
+														function(i, n) {
+															jQuery("#a_area1")
+																	.append(
+																			"<option value="+n.ID+">"
+																					+ n.AREANAME
+																					+ "</option>");
+														});
+										for (var i = 0; i < jQuery("select[name='a_area1'] option").length; i++) {
+											var pro = jQuery("select[name='a_area1'] option").get(i).text;
+											if (pro.indexOf(province) != -1) {
+												jQuery("select[name='a_area1']")
+														.find("option").eq(i)
+														.attr("selected", true);
+											}
+										}
+									}
+								});
+
+						jQuery
+								.ajax({
+									url : "$!webPath/getSomeArea.htm?parentId="
+											+ jQuery("#a_area1 option:selected")
+													.val(),
+									async : false,
+									success : function(result) {
+										jQuery("#a_area2").empty();
+										//jQuery("#a_area2").append("<option value=''>请选择</option>");
+										jQuery
+												.each(
+														result.resultData,
+														function(i, n) {
+															jQuery("#a_area2")
+																	.append(
+																			"<option value="+n.ID+">"
+																					+ n.AREANAME
+																					+ "</option>");
+														});
+										for (var i = 0; i < jQuery("select[name='a_area2'] option").length; i++) {
+											var city1 = jQuery("select[name='a_area2'] option").get(i).text;
+											if (!city1.indexOf(city)) {
+												jQuery("select[name='a_area2']")
+														.find("option").eq(i)
+														.attr("selected", true);
+											}
+										}
+									}
+								})
+
+						jQuery(".areaAndArea")
+								.change(
+										function() {
+											var level = jQuery(this).attr(
+													"level");
+											var id = jQuery(this).val();
+											if (id != "") {
+												jQuery
+														.post(
+																"$!webPath/load_area.htm",
+																{
+																	"pid" : id
+																},
+																function(data) {
+																	jQuery(
+																			"#area"
+																					+ level)
+																			.empty();
+																	jQuery("#area"+level).append("<option value='' >请选择</option>");
+																	jQuery
+																			.each(
+																					data,
+																					function(
+																							index,
+																							item) {
+																						jQuery(
+																								"#area"
+																										+ level)
+																								.append(
+																										"<option value='"+item.id+"'>"
+																												+ item.areaName
+																												+ "</option>");
+																						jQuery(
+																								"#area"
+																										+ level)
+																								.show();
+																					});
+																}, "json");
+											} else {
+												for (var i = level; i <= 3; i++) {
+													jQuery("#area" + i).empty();
+													jQuery("#area" + i).hide();
+												}
+											}
+										});
+
+						jQuery(".a_areaAndArea")
+								.change(
+										function() {
+											var level = jQuery(this).attr(
+													"level");
+											var id = jQuery(this).val();
+											if (id != "") {
+												jQuery
+														.post(
+																"$!webPath/load_area.htm",
+																{
+																	"pid" : id
+																},
+																function(data) {
+																	jQuery(
+																			"#a_area"
+																					+ level)
+																			.empty();
+																	//jQuery("#a_area"+level).append("<option value=''>请选择</option>");
+																	jQuery
+																			.each(
+																					data,
+																					function(
+																							index,
+																							item) {
+																						jQuery(
+																								"#a_area"
+																										+ level)
+																								.append(
+																										"<option value='"+item.id+"'>"
+																												+ item.areaName
+																												+ "</option>");
+
+																					});
+																	jQuery("#area").val(jQuery("#a_area2:eq(0)").val());
+																}, "json");
+											} else {
+												for (var i = level; i <= 2; i++) {
+													jQuery("#a_area" + i)
+															.empty();
+												}
+											}
+											jQuery("#area").val(
+													jQuery("#a_area2").val());
+										});
+
+						jQuery("#area").val(jQuery("#a_area2").val());
+						jQuery("#area3").change(function() {
+							var id = jQuery(this).val();
+							jQuery("#store_area").val(id);
+						});
+
+						jQuery.validator.addMethod("verify", function(value,
+								element) {
+							var re = /^([0-9a-zA-Z]|[\u4E00-\u9FA5])+$/;
+							if (re.test(jQuery("#userName").val())) {
+								return true;
+							} else {
+								return false;
+							}
+						});
+						jQuery("#theForm")
+								.validate(
+										{
+											ignore : "",
+											rules : {
+												userName : {
+													required : true,
+													verify : true,
+													remote : {
+														url : "$!webPath/verify_app_username.htm", //后台处理程序
+														type : "post", //数据发送方式
+														dataType : "json", //接受数据格式   
+														data : { //要传递的数据
+															"userName" : function() {
+																return jQuery(
+																		"#userName")
+																		.val();
+															}
+														}
+													}
+												},
+												mobile_verify_code : {
+													required : true,
+													remote : {
+														url : "$!webPath/verify_verifycode.htm", //后台处理程序
+														type : "post", //数据发送方式
+														dataType : "json", //接受数据格式   
+														data : { //要传递的数据
+															"mobile_verify_code" : function() {
+																return jQuery(
+																		"#mobile_verify_code")
+																		.val();
+															},
+															"telephone" : function() {
+																return jQuery(
+																		"#telephone")
+																		.val();
+															}
+														}
+													}
+												},
+												telephone : {
+													required : true,
+													remote : {
+														url : "$!webPath/verify_seller_telephone.htm", //后台处理程序
+														type : "post", //数据发送方式
+														dataType : "json", //接受数据格式   
+														data : { //要传递的数据
+															"telephone" : function() {
+																return jQuery(
+																		"#telephone")
+																		.val();
+															}
+														}
+													}
+												},
+												store_name : {
+													required : true,
+													remote : {
+														url : "$!webPath/verify_storeName.htm", //后台处理程序
+														type : "post", //数据发送方式
+														dataType : "json", //接受数据格式   
+														data : { //要传递的数据
+															"store_name" : function() {
+																return jQuery(
+																		"#store_name")
+																		.val();
+															}
+														}
+													}
+												},
+												password : {
+													required : true,
+													minlength : 6,
+													maxlength : 20
+												},
+												repassword : {
+													required : true,
+													equalTo : "#password"
+												},
+												sc_id : {
+													required : true
+												},
+												area : {
+													required : true
+												},
+												area1 : {
+													required : true
+												},
+												area2 : {
+													required : true
+												},
+												area3 : {
+													required : true
+												},
+												agree : {
+													required : true
+												}
+											},
+											messages : {
+												userName : {
+													required : "用户名不能为空",
+													verify : "不可使用特殊字符",
+													remote : "用户名已存在"
+												},
+												store_name : {
+													required : "店铺名不能为空",
+													remote : "店铺名已存在"
+												},
+												telephone : {
+													required : "手机号不能为空",
+													remote : "手机号已存在"
+												},
+												password : {
+													required : "密码不能为空",
+													minlength : "密码不能小于{0}个字符",
+													maxlength : "密码不能大于{0}个字符"
+												},
+												mobile_verify_code : {
+													required : "手机验证码不能为空",
+													remote : "手机验证码不正确"
+												},
+												repassword : {
+													required : "重复密码不能为空",
+													equalTo : "两次输入密码不一致"
+												},
+												sc_id : {
+													required : "请选择店铺分类"
+												},
+												area : {
+													required : "请选择区域"
+												},
+												area1 : {
+													required : "请选择店铺省级区域"
+												},
+												area2 : {
+													required : "请选择店铺市级区域"
+												},
+												area3 : {
+													required : "请选择店铺地级区域"
+												},
+												agree : {
+													required : "请接受用户协议"
+												}
+											}
+										});
+						//
+					});
+	function saveForm() {
+		jQuery("#theForm").submit();
+	}
+	function register() {
+		window.location.href = "$!webPath/weixin/register.htm";
+	}
+
+	function register_seller() {
+		window.location.href = "$!webPath/weixin/register_seller.htm";
+	}
+
+	var time = 60;
+	var time_id = "";
+
+	function generic_mobile_verify_code() {
+		var mobile = jQuery("#telephone").val();
+		if (isMobil(mobile)) {
+			jQuery.post("$!webPath/weixin/account_mobile_sms.htm", {
+				"type" : "mobile_vetify_code",
+				"mobile" : mobile
+			}, function(data) {
+				if (data == "100") {
+					jQuery("#mobile_verify_code_generic").hide();
+					time = 60;
+					time_id = setInterval(countDown, 1000);
+				}
+				if (data == "200") {
+					alert("短信发送失败");
+				}
+				if (data == "300") {
+					alert("商城未开启短信服务");
+				}
+			}, "text");
+		} else {
+			alert("请输入正确的手机号码");
+		}
+	}
+
+	function countDown() {
+		--time;
+		jQuery("#time_out_generic").html(time + "秒后可以重新获取,验证码15分钟有效");
+		if (time == 0) {
+			clearInterval(time_id);
+			jQuery("#time_out_generic").html("");
+			jQuery("#mobile_verify_code_generic").show();
+		}
+	}
+
+	function isMobil(s) {
+		var patrn = /(^0{0,1}1[3|4|5|6|7|8|9][0-9]{9}$)/;
+		if (!patrn.exec(s)) {
+			return false;
+		}
+		return true;
+	}
+</script>
+</head>
+<body class="bodybg">
+	<hgroup>
+		<h3 class="goods_car clearfix">
+			<a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>注册</b></span>
+		</h3>
+	</hgroup>
+
+	<div class="fff">
+		<div class="container">
+			<div class="row regBar">
+
+				<div class=" col-xs-6 col-sm-6 col-md-6 col-lg-6"
+					onClick="register()">免费注册</div>
+				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 active"
+					onClick="register_seller()">免费开店</div>
+			</div>
+
+		</div>
+	</div>
+	<div class="register fff mt10">
+		<div class="container">
+			<div class="row">
+				<form id="theForm" name="theForm"
+					action="$!webPath/weixin/register_seller_finish.htm" method="post">
+					<ul class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<li>用户名：<input name="userName" id="userName" type="text"
+							class="register_txt" placeholder="请输入您的用户名"></li>
+						<li>密码：<input id="password" name="password"
+							placeholder="请输入密码" type="password" class="register_txt">
+						</li>
+						<li>确认密码：<input id="repassword" name="repassword"
+							placeholder="请再次输入密码" type="password" class="register_txt"></li>
+						<li>手机号： <input name="telephone" placeholder="请输入您的手机号码"
+							type="text" id="telephone" class="register_txt" /> <a
+							href="javascript:void(0);"
+							onclick="generic_mobile_verify_code();"
+							id="mobile_verify_code_generic">获取验证码</a> <span
+							id="time_out_generic"></span>
+						</li>
+						<li>手机验证码： <input name="mobile_verify_code"
+							placeholder="请输入验证码" type="text" id="mobile_verify_code"
+							class="register_txt" />
+						</li>
+
+
+						<li>区域： <select name="a_area1" class="a_areaAndArea "
+							id="a_area1" level="2"> #foreach($area in $areas)
+								<option value="$!area.id">$!area.areaName</option> #end
+						</select> <select name="a_area2" class="a_areaAndArea" id="a_area2"
+							level="3">
+						</select> <input name="area" type="hidden" id="area" value="" /></li>
+						<li>店主姓名：<input name="true_name" type="text" id="true_name"
+							class="register_txt" placeholder="请输入店铺姓名" />
+						</li>
+						<li>店铺名称： <input name="store_name" type="text"
+							id="store_name" class="register_txt" placeholder="请输入店铺的名称" />
+						</li>
+						<li>店铺分类： <select name="sc_id" id="sc_id">
+								<option value="" selected="selected">请选择店铺分类</option>
+								#foreach($sc in $scs)
+								<option value="$!sc.id">$!sc.className</option> #foreach($sc1 in
+								$sc.childs)
+								<option value="$!sc1.id">&nbsp;&nbsp;&nbsp;$!sc1.className</option>
+								#end #end
+						</select>
+						</li>
+						<li>店铺区域 <select name="area1" class="areaAndArea" id="area1"
+							level="2">
+								<option value="" selected="selected">请选择地区</option>
+								#foreach($area in $areas)
+								<option value="$!area.id">$!area.areaName</option> #end
+						</select> <select name="area2" style="display:none;" class="areaAndArea" id="area2"
+						 level="3">
+						</select> <select name="area3" class="areaAndArea" id="area3"
+							 level="4" style="display:none;">
+						</select>
+						<input name="store_area" type="hidden" id="store_area" value="" />
+						
+						</li>
+						<li>详细地址： <input name="store_address" placeholder="请输入详细地址"
+							type="text" id="store_address" class="register_txt" /></li>
+						<li>身份证号：<input name="store_ower_card"
+							placeholder="请输入您的身份证号" type="text" id="store_ower_card"
+							class="register_txt" /></li>
+
+						<li><label> <input name="agree" id="agree"
+								type="checkbox" class="register_check"> 同意，<a
+								href="javascript:void(0);" class="a_register">用户服务协议</a>
+						</label></li>
+						<li id="a_register" style="display: none">
+
+							<div
+								style="height: 200px; overflow-y: scroll; border: 1px solid #CCC; background-color: #FFF; padding: 5px; font-size: 12px; line-height: 24px;">
+								$!obj.content</div>
+						</li>
+
+						<li><button class="cmd_login" type="button"
+								onClick="saveForm()">注册</button></li>
+					</ul>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

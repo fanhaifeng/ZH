@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>直降促销 - Powered by LakeCloud</title>
+<meta name="keywords" content="$!config.keywords" />
+<meta name="description" content="$!config.description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/common/css/jquery-ui-1.8.22.custom.css" type=text/css rel=stylesheet />
+<link href="$!webPath/resources/style/common/css/overlay.css" type="text/css" rel="stylesheet" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery-ui-1.8.21.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.zh.cn.js" charset="utf-8"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script charset="utf-8" src="$!webPath/resources/editor/kindeditor.js"></script>
+<script>
+jQuery(document).ready(function(){
+	clickMethods();
+	jQuery('#starttime').datepicker({
+		  dateFormat:"yy-mm-dd",
+		  changeMonth: true,
+		  changeYear: true,
+		  minDate:1,
+		  onSelect:function(dateText,inst){
+		  }
+	});
+	jQuery('#endtime').datepicker({
+		  dateFormat:"yy-mm-dd",
+		  changeMonth: true,
+		  changeYear: true,
+		  minDate:1,
+		  onSelect:function(dateText,inst){
+		  }
+	});
+	jQuery.validator.methods.endtime = function(value, element, param) {
+	   var startDate = jQuery(param).val().substring(0,10);
+	   value=value.substring(0,10);
+	   var date1=new Date(Date.parse(startDate));
+	   var date2=new Date(Date.parse(value));
+	   if(jQuery.browser.msie==true){
+	      date1 = new Date(Date.parse(startDate.replace("-", "/")));
+	      date2 = new Date(Date.parse(value.replace("-", "/")));
+	   }
+	   return date1 < date2;
+	 };
+	 jQuery.validator.methods.starttime = function(value, element, param) {
+	   var endDate = jQuery(param).val();
+	   var date1=new Date(Date.parse(endDate));
+	   var date2=new Date(Date.parse(value));
+	   if(jQuery.browser.msie==true){
+	      date1 = new Date(Date.parse(endDate.replace("-", "/")));
+	      date2 = new Date(Date.parse(value.replace("-", "/")));
+	   }
+	   return date1 > date2;
+	 };
+	 jQuery.validator.methods.decimalsValue=function(value, element) {
+         var decimalsValue =/^(?!0+(?:\.0+)?$)(?:[1-9]\d*|0)(?:\.\d{1,2})?$/ ;
+         return this.optional(element) || (decimalsValue.test(value));
+
+     };
+	jQuery("#theForm").validate({
+		rules:{
+			name:{required :true},
+			discount:{required :true,decimalsValue:"discount"},
+			sort:{required :true,digits:true},
+			starttime:{required :true},
+			endtime:{required :true,endtime:"#starttime"},
+			goods_ids:{required :true}
+		},messages:{
+			name:{required :"促销名称不能为空"},
+			discount:{required :"折扣金额不能为空",decimalsValue:"折扣金额有误"},
+			sort:{required :"优先级不能为空",digits:"优先级只能为整数"},
+			starttime:{required :"开始时间不能为空"},
+			endtime:{required :"结束时间不能为空",endtime:"结束日期必须大于开始日期"},
+			goods_ids:{required:"促销商品不能为空"}
+		},submitHandler:function(){
+			var sort = jQuery("#sort").val();
+			if(sort!=""){
+				var url="$!webPath/seller/promotion_count.htm?id=$!obj.id";
+				jQuery.ajax({type:"POST",url:url,
+					data:{"sort" : sort},
+					success:function(data){
+						if(data){
+							if(data > 0){
+								jQuery("#sort").val("");
+								jQuery("#sort").focus();
+								jQuery("#sort").after("<label class='error' for='users' generated='true'>优先级重复</label>");
+							}
+							else{
+								jQuery('#goods_ids option').prop('selected', true);
+								//jQuery("#submit").click(function(){
+									//jQuery("#theForm").submit();
+									document.getElementById('theForm').submit();
+								//});
+								//jQuery("#theForm").submit();
+							}
+						}
+					}
+				});
+			}
+        }
+	});
+});
+function promotion_goods(){
+  var goods_name=jQuery("#goods_name").val();
+  if(goods_name!=""){
+  jQuery.post("$!webPath/seller/activity_goods.htm",{"goods_name":goods_name},function(data){
+	   jQuery("#select1").empty();																			  
+       jQuery.each(data,function(index,item){
+		   jQuery("#select1").append("<option selected='selected' value='"+item.goods_id+"'>"+item.goods_name+"   "+item.goods_serial+"</option>");
+	   });
+  },"json");
+  }
+}
+function clickMethods() {
+	// 移到右边
+	jQuery("#add").click(function() {
+	// 获取选中的选项，删除并追加给对方
+		jQuery("#select1 option:selected").appendTo("#goods_ids");
+	});
+	// 移到左边
+	jQuery("#remove").click(function() {
+		jQuery("#goods_ids option:selected").appendTo("#select1");
+	});
+	// 全部移到右边
+	jQuery("#add_all").click(function() {
+	// 获取全部的选项，删除并追加给对放
+		jQuery("#select1 option").appendTo("#goods_ids");
+	});
+	// 全部移到左边
+	jQuery("#remove_all").click(function() {
+		jQuery("#goods_ids option").appendTo("#select1");
+	});
+	// 双击选项
+	jQuery("#select1").dblclick(function() {// 绑定双击事件
+		// 获取全部的选项，删除并追加给对方
+		jQuery("option:selected", this).appendTo("#goods_ids");// 追加给对方
+	});
+	// 双击选项
+	jQuery("#goods_ids").dblclick(function() {
+		jQuery("option:selected", this).appendTo("#select1");
+	});
+}
+</script>
+</head>
+<body>
+$!httpInclude.include("/top.htm")
+<div class="main"> $!httpInclude.include("/seller/nav_head.htm")
+  <div class="user_center">
+    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+      <tr>
+       $!httpInclude.include("/seller/nav.htm?op=promotion")
+        <td id="centerbg" valign="top">
+         <div class="buyer_position"><div class="buyer_p_box"><a href="$!webPath/seller/index.htm">卖家中心</a> > <span>#if($!edit==true)修改#else新增#end直降促销</span></div></div>
+        <div class="productmain">
+          <div class="ordernav">
+              <ul class="orderul">
+                <li><a href="$!webPath/seller/promotion_list.htm">直降促销列表</a></li>
+                <li class="this">
+                	#if($!edit==true)修改#else新增#end直降促销
+                </li>
+              </ul>
+            </div>
+          <div class="ordercon">
+            <form action="$!webPath/seller/promotion_save.htm" method="post" enctype="multipart/form-data" name="theForm" id="theForm">
+                <table width="705" border="0" cellspacing="0" cellpadding="0" class="addnavtable">
+                  <tr>
+                    <td width="15%" align="right" valign="top">*促销名称：</td>
+                    <td width="90%" class="px10 message">
+                    <span class="setinput"><input type="text" id="name" name="name" value="$!obj.name"/></span>
+<input name="id" type="hidden" id="id" value="$!obj.id" /></td>
+                  </tr>
+                  <tr>
+                    <td align="right" valign="top"> *折扣金额：</td>
+                    <td class="px10"><span class="setinput"><input type="text" id="discount" name="discount" value="$!obj.discount" /></span></td>
+                  </tr>
+                  <tr>
+                    <td align="right" valign="top"> *优先级：</td>
+                    <td class="px10"><span class="setinput"><input type="text" id="sort" name="sort" value="$!obj.sort" /></span></td>
+                  </tr>
+                  <tr>
+                    <td align="right" valign="top">*是否可堆叠：</td>
+                    <td class="px10">
+						<select id="ispile" name="ispile" class="combox" style="width: 220px">
+						#if($!obj.ispile==0)
+							<option value="0" selected="selected">与其他促销互斥</option>
+							<option value="1">与其他促销可以堆叠</option>
+		                  #else
+		                  	<option value="0">与其他促销互斥</option>
+							<option value="1" selected="selected">与其他促销可以堆叠</option>
+		                  #end
+						</select>
+					</td>
+                  </tr>
+                  <tr>
+                    <td align="right" valign="top">*开始时间：</td>
+                    <td class="px10"><span class="setinput"><input type="text" readonly="readonly" id="starttime" name="starttime" size="30" value="$!CommUtil.formatLongDate($!obj.starttime)" /></span></td>
+                  </tr>
+                  <tr>
+                    <td align="right" valign="top">*结束时间：</td>
+                    <td class="px10"><span class="setinput"><input type="text" readonly="readonly" id="endtime" name="endtime" size="30" value="$!CommUtil.formatLongDate($!obj.endtime)" /></span></td>
+                  </tr>
+                  <tr>
+                    <td width="141" align="right">*促销商品：</td>
+                    <td width="651" class="px10"><span class="setinput">
+                      <input name="goods_name" type="text" id="goods_name" />
+                      <input id="search" name="search" type="button" style="cursor:pointer;width:60px;" value="搜索" onclick="promotion_goods();" />
+                    </span></td>
+                  </tr>
+                <TR>
+					<td align="center" valign="top">待选择商品</td>
+					<td align="center" valign="top">已选择商品</td>
+				</TR>
+				<TR>
+					<td class="px10" align="center" colspan="4" valign="top">
+					<br/>
+						<div style="width:700px;">
+							<div class="centent" style="float:left;">
+								<select multiple="multiple" id="select1" style="width:340px;height:160px;">
+								</select>
+							</div>
+							<div class="centent" style="padding-left:260px;">
+								<select multiple="multiple" id="goods_ids" name="goods_ids" style="width: 340px;height:160px;">
+									#if($!edit==true)
+										$!appendHtml
+					                #end
+								</select>
+							</div>
+						</div>
+					</td>
+				</TR>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td class="px10"><span class="setsub">
+                      <input name="提交" type="submit" value="保存" style="cursor:pointer;"/>
+                      </span></td>
+                  </tr>
+                </table>
+				</form>
+				<table width="705" border="0" cellspacing="0" cellpadding="0" class="addnavtable" style="margin-top: -100px;margin-bottom: 30px">
+				<TR>
+					<td class="px10" align="center" colspan="4" valign="top">
+					<br/>
+						<div style="width:700px;">
+							<div class="centent" style="float:left;">
+								<div>
+									<button id="add" >选中添加到右边&gt;&gt;</button>
+									<button id="add_all" >全部添加到右边&gt;&gt;</button>
+								</div>
+							</div>
+							<div class="centent" style="padding-left:260px;">
+								<div>
+									<button id="remove">&lt;&lt;选中删除到左边</button>
+									<button id="remove_all">&lt;&lt;全部删除到左边</button>
+								</div>
+							</div>
+						</div>
+					</td>
+				</TR>
+				</table>
+          </div>
+          </div></td>
+      </tr>
+    </table>
+  </div>
+  $!httpInclude.include("/footer.htm")
+</div>
+</body>
+</html>

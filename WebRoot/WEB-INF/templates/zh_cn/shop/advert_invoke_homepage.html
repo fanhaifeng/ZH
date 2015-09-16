@@ -1,0 +1,8 @@
+﻿ <ul class="bxslider">
+  #foreach($adv in $obj.advs)
+  <li style="height:420px;text-align:center;">
+<a href='$!webPath/advert_redirect.htm?url=$!adv.ad_url&id=$!adv.id' target='_blank'><img src='$!webPath/$!adv.ad_acc.path/$!adv.ad_acc.name'  /></a>
+  </li>
+  #end
+</ul>
+ 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>城市选择</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<script src="$!webPath/resources/style/weixin/default/js/jquery-1.11.3.min.js"></script>
+
+
+<script src="$!webPath/resources/style/weixin/default/js/jquery.cookie.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(e) {
+	jQuery("#mychoseprov").change(function(){
+		 var id=jQuery(this).val();
+		 if(id!=""){
+			if(id=='all'){
+				jQuery("#mychosecity").empty();
+				jQuery("#mychosecity").append("<option value='all'>全部</option>");
+				jQuery.cookie("app_city_id","all", {expires: 7, path: "/"}); 
+				jQuery.cookie("app_city_name","全部", {expires: 7, path: "/"});
+				jQuery.cookie("app_province_id","all", {expires: 7, path: "/"});  
+				jQuery.cookie("app_province_name","全部", {expires: 7, path: "/"});
+			}else{
+				 jQuery.post("$!webPath/load_area.htm",{"pid":id},function(data){
+				     jQuery("#mychosecity").empty();
+					  jQuery("#mychosecity").append("<option value='-1'>请选择</option>");
+				    jQuery.each(data, function(index,item){
+					  jQuery("#mychosecity").append("<option value='"+item.id+"'>"+item.areaName+"</option>");
+					});
+				  },"json");
+			}
+		 }
+	 });
+});
+
+function finishcitychoose(){
+	var selectedVal = jQuery('#mychosecity').find('option:selected').val();
+	var selectedText = jQuery('#mychosecity').find('option:selected').text();
+	var proviceName=jQuery('#mychoseprov').find('option:selected').text();
+	var provinceId = jQuery('#mychoseprov').find('option:selected').val();
+	if("-1"!=selectedVal&&"-1"!=provinceId){
+		jQuery.cookie("app_city_id",selectedVal, {expires: 7, path: "/"}); 
+		jQuery.cookie("app_city_name",selectedText, {expires: 7, path: "/"});
+		jQuery.cookie("app_province_id",provinceId, {expires: 7, path: "/"});  
+		jQuery.cookie("app_province_name",proviceName, {expires: 7, path: "/"});
+		window.location.href = '$!webPath/weixin/platform/index.htm'; 
+	}else{
+		alert("请选择城市!");
+	}
+	
+}
+</script>
+</head>
+
+<body>
+<header>
+ <div class="mall_back"><a href="javascript:history.go(-1);">&lt;</a></div>
+  <span class="htitle pull-left">选择地址 </span>
+  <b class="cratenew pull-right" onclick="finishcitychoose()">完成</b>
+</header>
+
+<div class="vigamain container"> 
+		<div class="new-ct main row">
+			<div class="mycreta col-xs-12 col-md-12 ">
+				<p id="clear">
+					<span class="mychose">请选择省份：</span> 
+					<select id="mychoseprov" >
+						<option value="-1">请选择</option>
+						<option value="all">全部</option>
+						#foreach($provice in $provinces)
+    						<option value="$!provice.id">$!provice.areaName</option>
+    					#end
+					</select>
+				</p>
+				<p id="clear">
+					<span class="mychose"> 请选择市区：</span> 
+					<select id="mychosecity">
+						<option value="-1">请选择</option>
+					</select>
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
+<link
+	href="$!webPath/resources/style/system/manage/$!{config.websiteCss}/template.css"
+	rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div class="cont">
+		<h1 class="seth1">卖家审核</h1>
+		<form action="$!webPath/admin/store_audit.htm" method="post"
+			name="queryForm" id="queryForm">
+			<div class="allmem_search">
+				<ul>
+					<li><span>卖家状态</span> <span class="allmen size4"> <select
+							name="status" id="status">
+								<option value="">请选择...</option>
+								<option value="0">待审核</option>
+								<option value="1">审核通过</option>
+								<option value="2">审核不通过</option>
+						</select>
+					</span> <span class="btn_search"> <input name="" type="submit"
+							value="搜索" style="cursor: pointer;" />
+					</span></li>
+				</ul>
+			</div>
+		</form>
+		<form action="$!webPath/admin/store_audit.htm" method="post"
+			name="ListForm" id="ListForm">
+			<div class="leveltable">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0"
+					class="level_table">
+					<tr
+						style="background: #if($!config.websiteCss=='blue') #2A7AD2 #end #if($!config.websiteCss=='black') #333 #end; height: 30px; color: #FFF">
+						<td width="8%">用户名</td>
+						<td width="8%">手机号</td>
+						<td width="5%">区域</td>
+						<td width="8%">店主姓名</td>
+						<td width="10%">店铺名称</td>
+						<td width="10%">店铺分类</td>
+						<td width="5%">店铺地区</td>
+						<td width="10%">详细地址</td>
+						<td width="10%">身份证</td>
+						<td width="4%">审核状态</td>
+						<td width="10%">备注信息</td>
+						<td>操作</td>
+					</tr>
+					#foreach($obj in $objs)
+					<tr id="row$!obj.id">
+						<td>$!obj.userName</td>
+						<td>$!obj.telephone</td>
+						<td>$!obj.area.getAreaName()</td>
+						<td>$!obj.trueName</td>
+						<td>$!obj.store_name</td>
+						<td>$!obj.store_class.getClassName()</td>
+						<td>$!obj.store_area.getAreaName()</td>
+						<td>$!obj.store_addr</td>
+						<td>$!obj.id_card</td> #if($!obj.status=="0") #set($status1="待审核")
+						#end #if($!obj.status=="1") #set($status1="通过") #end
+						#if($!obj.status=="2") #set($status1="不通过") #end
+						<td>$!status1</td>
+						<td><input type="text" name="option" id="option$!obj.id"
+							value="$!obj.option" /></td>
+						<td id="edit$!obj.id" class="ac9">#if($!obj.status=="0") 
+						    <a href="javascript:void();" onclick="pass($!obj.id,1);">通过</a> |
+							<a href="javascript:void();" onclick="pass($!obj.id,0);">不通过</a>
+							#end
+						</td>
+					</tr>
+					#end
+				</table>
+			</div>
+			<div class="fenye">
+				<input type="hidden" name="mulitId" id="mulitId" /> <input
+					name="currentPage" type="hidden" id="currentPage"
+					value="$!currentPage" /> <input type="hidden" name="status"
+					id="status" value="$!status" /> $!gotoPageFormHTML
+			</div>
+		</form>
+	</div>
+</body>
+<script>
+function pass(id,flag){
+	var option = jQuery("#option"+id).val();
+	
+	jQuery.ajax({
+  		type:'POST',
+        url:'$!webPath/admin/store_audit_pass.htm',
+		data:{"mulitId": id , "flag" : flag , "option" : option},
+	    success:function(data){
+	    	console.log(data.resultCode);
+    		alert(data.resultData);
+    		jQuery("#edit"+id).hide();
+	    	   
+	    }
+	});
+}
+
+function ajax_update(id,fieldName,obj){
+   var val=jQuery(obj).val();
+    jQuery.ajax(
+  		{
+  			type:'POST',
+             url:'$!webPath/admin/store_ajax.htm',
+		  data:{"id":id,"fieldName":fieldName,"value":val},
+		beforeSend:function(){
+		  
+		},
+	   success:function(data){
+            if(val==""){
+		   jQuery(obj).attr("src","$!webPath/resources/style/system/manage/blue/images/"+data+".png");
+		 }else{
+		   jQuery(obj).val(val);
+		 }      
+          }
+	});
+}
+</script>
+</html>

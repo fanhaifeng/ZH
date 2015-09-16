@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>微信商城 - 用户登录</title>
+
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+jQuery(document).ready(function(){
+  jQuery("#theForm").validate({
+     errorPlacement:function(error,element) {
+      error.appendTo(element.parent().find(".login_error_sp"));  
+	  element.parent().parent().addClass(" phone_login_red");
+    },
+	success:function(label){
+	    label.parent().hide();
+	},
+	rules: {
+			username: "required",
+			password: "required"}
+  });
+});
+function saveForm(){
+	jQuery("#theForm").submit();
+	}
+function register(){
+	window.location.href="$!webPath/weixin/register.htm";
+	}	
+	
+	function register_seller(){
+		window.location.href="$!webPath/weixin/register_seller.htm";
+	}
+function forIndex(){
+	window.location.href="$!webPath/weixin/platform/index.htm";
+}	
+</script>
+</head>
+<body class="login_bg">
+<hgroup>
+  <h3 class="goods_car clearfix">
+  <a href="javascript:void(0);" onclick="forIndex()"><em>&lt;</em></a><span><b>用户登陆</b><button class="cmd_regist fr" type="button" onClick="register()">注册</button></span>
+  
+  </h3>
+</hgroup>
+<div class="user_center">
+  <section class="user_top">
+  </section>
+  </div>
+<form action="$!webPath/iskyshop_login.htm" method="post" name="theForm" id="theForm" class="fff">
+  <div class="phone_login">
+    <section class="section_login"><span>账号：</span>
+      <input name="username" id="username" placeholder="请输入账号" type="text" class="input_txt">
+    </section>
+    <section class="section_login none_line"><span>密码：</span>
+      <input name="password" id="password" type="password" class="input_txt" placeholder="请输入密码">
+    </section>
+    <div class="cmd">     
+ 	  <div class="find_password"><a href="$!webPath/weixin/find_password.htm">忘记密码？</a></div>
+      <button class="cmd_login" type="button" onClick="saveForm()">登录</button>
+      <button class="cmd_login cmd_regist2" type="button" onClick="register_seller()">免费开店</button>
+    </div>
+  </div>
+</form>
+
+</body>
+</html>

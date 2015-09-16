@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>品牌列表</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css">
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
+<script>
+jQuery(document).ready(function(e) {
+    jQuery(".brand_more").toggle(function(){
+    	jQuery(this).parent().find("div:visible").hide();
+    	jQuery(this).find("img").attr("src","$!webPath/resources/style/weixin/default/images/brand_more.png");
+		
+		},function(){
+		jQuery(this).parent().find("div:hidden").show();	
+		jQuery(this).find("img").attr("src","$!webPath/resources/style/weixin/default/images/brand_up.png");
+		});
+//图片懒加载
+$("img").lazyload({
+    placeholder : "$!imageWebServer/resources/style/common/images/loader.gif", //加载图片前的占位图片
+    effect      : "fadeIn" //加载图片使用的效果(淡入)
+});
+});
+</script>
+</head>
+
+<body>
+<header>
+  <div class="main">
+#set($logo="$!webPath/resources/style/weixin/default/images/logo.png")
+#if($!config.store_weixin_logo)
+#set($logo="$!webPath/$!config.store_weixin_logo.path/$!config.store_weixin_logo.name")
+#end  
+    <div class="mall_back"><a href="javascript:history.go(-1);"> </a></div>
+    <span class="htitle">所有品牌</span>
+  </div>
+</header>
+#foreach($gbc in $gbcs)
+  #if($!gbc.brands.size()>0)
+  <div class="brand_width">
+ 
+      <h1 class="clearfix"><span class="fl">$!gbc.name</span><span class="fr"><a href="$!webPath/weixin/platform/search_goods_list.htm?gbc_id=$!gbc.id"><img src="$!webPath/resources/style/weixin/default/images/more.png"></a></span></h1>
+    
+</div>
+  <div class="container brand_list">
+  <div class="row"  >
+	    #foreach($gb in $gbc.brands)
+	      
+	    #if($!gb.brandLogo)                       
+	    #set($img="$!imageWebServer/$!{gb.brandLogo.path}/$!{gb.brandLogo.name}")
+	    #else
+	    #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}.jpg")
+	    #end
+      
+      <div class="col-xs-4">
+      <div  #if($!velocityCount>8) status="none" style="display:none" #end>
+      <a style=" " class="p_img" href="$!webPath/weixin/platform/search_goods_list.htm?gb_id=$!gb.id"><img src="$!img" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); " /></a>
+      </div>
+      <div style="text-align:center; " #if($!velocityCount>8) status="none" style="display:none" #end>
+      <a>$!gb.name</a>
+      </div>
+      </div>
+      #end
+    </div>
+ <a class=" row brand_more" href="javascript:void(0);"><img  src="$!webPath/resources/style/weixin/default/images/brand_up.png"></a> 
+</div>
+#end
+#end
+<div class="main"> $!httpInclude.include("/weixin/platform/footer.htm") </div>
+</div>
+$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=buy")
+</body>
+</html>

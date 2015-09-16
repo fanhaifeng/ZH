@@ -1,0 +1,25 @@
+#foreach($obj in $objs)
+#if($!obj.goods.goods_main_photo)
+#set($img="$!webPath/$!{obj.goods.goods_main_photo.path}/$!{obj.goods.goods_main_photo.name}_small.$!{obj.goods.goods_main_photo.ext}")
+#else
+#set($img="$!webPath/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+#end
+<div class="col-xs-12 col-sm-12 line-item">
+<div class="pimg">
+<a href="$!webPath/weixin/goods.htm?goods_id=$!{obj.goods.id}">
+<img src="$!img" width="50" height="50" />
+</a>
+</div>
+<div class="p_con">
+<div class="baby_name">
+<a href="$!webPath/weixin/goods.htm?goods_id=$!{obj.goods.id}">$!obj.goods.goods_name</a>
+</div>
+<div class="store_name"><i><img src="$!webPath/resources/style/weixin/default/images/store_img.png" /></i>店铺名称：<a href="$!webPath/weixin/index.htm?store_id=$!{obj.goods.goods_store.id}">$!{obj.goods.goods_store.store_name}</a></div>
+<div class="price"><strong>$!{config.currency_code}$!{obj.goods.goods_current_price}</strong></div>
+</div>
+<div class="clearfix"></div>
+<div class="p_bar pr"><sub>收藏时间：$!CommUtil.formatLongDate($!obj.addTime)</sub>
+<div class="p_del" onclick="favorite_del($!{obj.id})"><i><img src="$!webPath/resources/style/weixin/default/images/del.png" /></i></div>
+</div>
+</div>
+#end

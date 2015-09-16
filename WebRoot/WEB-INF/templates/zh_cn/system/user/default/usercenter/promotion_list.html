@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>直降促销 - Powered by LakeCloud</title>
+<meta name="keywords" content="$!config.keywords" />
+<meta name="description" content="$!config.description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/common/css/overlay.css" type="text/css" rel="stylesheet" />
+<link  href="$!webPath/resources/style/common/css/jquery-ui-1.8.22.custom.css" type=text/css rel=stylesheet>
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery-ui-1.8.21.js"></script>
+<script>
+//批量激活或停用
+function updateBatch(com, id, status) {
+	var url="$!webPath/seller/promotion_ajax.htm?currentPage=$!currentPage";
+	jQuery.ajax( {
+		type : "post",
+		url : url,
+		data : {
+			id : id,
+			value : status,
+			fieldName:'status'
+		},
+		success : function(html, textStatus, XMLHttpRequest) {
+			alert(com + "成功！");
+			location.reload();
+		}
+	});
+}
+//激活
+function activate(com, id) {
+	updateBatch(com, id, '1');
+}
+// 停用
+function blockUp(com, id) {
+	updateBatch(com, id, '2');
+}
+</script>
+</head>
+<body>
+$!httpInclude.include("/top.htm")
+<div class="main"> $!httpInclude.include("/seller/nav_head.htm")
+  <div class="user_center">
+    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+      <tr>
+        $!httpInclude.include("/seller/nav.htm?op=promotion")
+       <td id="centerbg" valign="top">
+           <div class="buyer_position"><div class="buyer_p_box"><a href="$!webPath/seller/index.htm">卖家中心</a> > <span>直降促销</span></div></div>
+        <div class="productmain">
+            <div class="ordernav">
+              <ul class="orderul">
+                <li class="this">直降促销列表</li>
+                <li><a href="$!webPath/seller/promotion_add.htm">新增直降促销</a></li>
+              </ul>
+            </div>
+            <div class="ordercon">
+            <form action="$!webPath/seller/promotion_list.htm" method="post" id="ListForm">
+	            <div class="ordersear" style="float:right;"> <span>促销名称：</span> <span class="ordersp1 size3">
+	                <input name="name" type="text" id="name" value="$!name"/>
+	                </span><span class="orderbtn">
+	                <input name="" type="submit" value="搜索" style="cursor:pointer;"/>
+	                </span>
+	            </div>
+              <div class="operation">
+              <table width="790" border="0" cellspacing="0" cellpadding="0" id="opertable" >
+                <tr id="opertitle">
+                  <td width="200" >促销名称</td>
+                  <td width="81">可堆叠</td>
+                  <td width="81">立减金额</td>
+                  <td width="60">优先级</td>
+                  <td width="60">状态</td>
+                  <!--<td width="81">创建时间</td>
+                  -->
+                  <td width="81">更新时间</td>
+                  <td width="81">开始时间</td>
+                  <td width="81">结束时间</td>
+                  <td width="81">创建人</td>
+                  <td width="109" align="center">操作</td>
+                </tr>
+                #foreach($obj in $objs)
+                <tr class="opertr">
+                  <td><a href="$!webPath/seller/promotion_view.htm?id=$!obj.id">$!obj.name</a></td>
+                  #if($!obj.ispile==0)
+                    #set($ispile="否")
+                  #end
+                  #if($!obj.ispile==1)
+                    #set($ispile="是")
+                  #end
+                  <td>$!ispile</td>
+                  <td>$!obj.discount</td>
+                  <td>$!obj.sort</td>
+                  #if($!obj.status==0)
+                    #set($status="未激活")
+                  #end
+                  #if($!obj.status==1)
+                    #set($status="已激活")
+                  #end
+                  #if($!obj.status==2)
+                    #set($status="已停用")
+                  #end
+                  <td>$!status</td>
+                  <!--<td>$!CommUtil.formatShortDate($!obj.createtime)</td>
+                  -->
+                  <td>$!CommUtil.formatShortDate($!obj.updatetime)</td>
+                  <td>$!CommUtil.formatShortDate($!obj.starttime)</td>
+                  <td>$!CommUtil.formatShortDate($!obj.endtime)</td>
+                  <td>$!obj.create_user</td>
+                  <td class="operajt">
+                  #if($!obj.status==1)<span><a href="javascript:void(0)" onclick="blockUp('停用','$!obj.id');return false">停用</a></span>
+                  #else<span><a href="javascript:void(0)" onclick="activate('激活','$!obj.id');return false">激活</a></span><span class="edit"><a href="$!webPath/seller/promotion_edit.htm?id=$!obj.id&currentPage=$!currentPage">编辑</a></span><span class="del"><a href="$!webPath/seller/promotion_del.htm?mulitId=$!obj.id&currentPage=$!currentPage">删除</a></span>
+                  #end
+                  </td>
+                </tr>
+                #end
+              </table>
+            </div>
+            <div class="alldel">
+              <div  class="userfenye"> 
+                <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+                <input name="gg_name" type="hidden" id="gg_name" value="$!gg_name" />
+                $!gotoPageFormHTML </div>
+            </div>
+            </form>            
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  $!httpInclude.include("/footer.htm")
+</div>
+</body>
+</html>

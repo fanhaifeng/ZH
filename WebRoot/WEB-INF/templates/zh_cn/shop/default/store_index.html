@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$!store.store_name - Powered by LakeCloud</title>
+<meta name="keywords" content="$!store.store_seo_keywords" />
+<meta name="description" content="$!store.store_seo_description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/shop/$!{store.template}/css/default.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/common/css/overlay.css" type="text/css" rel="stylesheet" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery-ui-1.8.21.js"></script>
+<script src="$!webPath/resources/js/jquery.lazyload.js"></script>
+<script src="$!webPath/resources/js/jcarousellite_1.0.1.min.js"></script>
+<script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
+#set($store_second_url="$!webPath")
+#if($!second_domain_view)
+  #set($store_second_url="http://$!{store.store_second_domain}.$!{domainPath}")
+#end
+<script src="$!store_second_url/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+jQuery(document).ready(function(){
+  jQuery(".smallgoods .goodsimgs img").lazyload({effect:"fadeIn"});
+  jQuery(".bigshopimg .img1").addClass("this");
+  //
+  jQuery(".bigshopimg").jCarouselLite({
+	 btnGo:[".img1",".img2",".img3"],
+	 auto: 3000,
+	 speed: 600,
+	 vertical:false,
+	 visible:1,
+	 start:1,
+	 afterEnd:function(a){
+	  var index=jQuery(a[0]).index();
+	  #if($!{store.slides.size().size()}>0)
+	  if(index>$!{store.slides.size()})index=1;
+	  #else
+	  if(index>3)index=1;
+	  #end
+	  jQuery(".bigshopimg a").removeClass("this");
+	  jQuery(".bigshopimg .img"+index).addClass("this");
+	 }
+  });
+  $("img").lazyload({
+	  placeholder : "$!imageWebServer/resources/style/common/images/loader.gif", //加载图片前的占位图片
+	  effect      : "fadeIn" //加载图片使用的效果(淡入)
+	});
+
+});
+</script>
+</head>
+<body>
+$!httpInclude.include("/top.htm") 
+$!httpInclude.include("/store_head.htm?store_id=$!{store.id}")
+  #set($banner="$!webPath/resources/style/shop/$!{store.template}/images/banner.jpg")
+  #if($!store.store_banner)
+    #set($banner="$!webPath/$!store.store_banner.path/$!store.store_banner.name")
+  #end
+<div class="banner_width">
+  <div class="shopbanner"><img src="$!banner"/></div>
+</div>
+<div class="nav_width">
+  <div class="main">
+   <div class="nav_bg">
+    <div class="shopnav">
+      $!httpInclude.include("/store_nav.htm?id=$!store.id")
+      <script>
+     jQuery(".shopnavul li").each(function(){
+	     var nav_id=jQuery(this).attr("id");
+         if(nav_id=="$!{nav_id}"){
+		   jQuery(this).addClass("this");
+		 }else jQuery(this).removeClass("this");
+	 });
+    </script>
+      <div class="shopnavs"></div>
+    </div>
+    </div>
+  </div>
+  <div class="navbotm"></div>
+</div>
+<div class="main">
+  <div class="shop">
+    <div class="shop_index"> $!httpInclude.include("/store_left.htm?id=$!store.id")
+      <div class="shopindex_right">
+        <div class="bigshopimg"> #if($store.slides.size()>0)
+          <ul class="shopslider">
+            #foreach($slide in $store.slides)
+            <li><a href="$!slide.url" target="_blank"><img src="$!webPath/$!slide.acc.path/$!slide.acc.name" width="797" height="393" /></a></li>
+            #end
+          </ul>
+          <span style="z-index:3;">
+          #foreach($slide in $store.slides)<a href="javascript:void(0);" class="img$!{velocityCount}">$!{velocityCount}</a>#end</span> #else
+          <ul class="shopslider">
+            <li><a href="www.n1b.cn/fert_bbc/index.html" target="_blank"><img src="$!imageWebServer/resources/style/common/images/slide1.jpg"/></a></li>
+            <li><a href="www.n1b.cn/fert_bbc/index.html" target="_blank"><img src="$!imageWebServer/resources/style/common/images/slide2.jpg"/></a></li>
+            <li><a href="www.n1b.cn/fert_bbc/index.html" target="_blank"><img src="$!imageWebServer/resources/style/common/images/slide3.jpg"/></a></li>
+          </ul>
+          <span style="z-index:3;"><a href="javascript:void(0);" class="img1">1</a><a href="javascript:void(0);" class="img2">2</a><a href="javascript:void(0);" class="img3">3</a></span>
+           #end
+            </div>
+        <div class="regoods">
+          <h1><a href="$!webPath/goods_list.htm?store_id=$!{store.id}&recommend=true">更多</a><span>推荐商品</span></h1>
+          <div class="smallgoods"> #foreach($goods in $goods_recommend)
+        #if($!goods.goods_main_photo)
+        #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_middle.$!{goods.goods_main_photo.ext}")
+        #else
+        #set($img="$!imageWebServer/resources/style/common/images/blank.gif")
+        #end
+        #set($goods_url="$!webPath/goods_$!{goods.id}.htm")
+        #if($!config.second_domain_open)
+          #set($goods_url="http://$!{goods.goods_store.store_second_domain}.$!{domainPath}/goods_$!{goods.id}.htm")
+        #end 
+            <ul>
+              <li class="goodsimgs"><span class="goods_sp_span">
+                 <p><a href="$!goods_url" class="p_img"  target="_blank">
+      					<img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); " width="160"/>
+     		        </a>
+     			 </p>
+                </span></li> 
+				 <li class="goodslook">商城价：<strong><b>¥$!{goods.goods_current_price}</b></strong></li>
+                 <li class="goodslook">零售价：<del>¥$!{goods.goods_price}</del></li>              
+                 <li class="goodsnames"><a href="$!goods_url" target="_blank">$!CommUtil.substring("$!goods.goods_name",28)</a></li>
+              <li class="recentgoodsok">最近成交<strong>#if($!goods.goods_salenum<=0)0#else$!goods.goods_salenum#end</strong>笔</li>
+            </ul>
+            #end </div>
+        </div>
+        <div class="regoods">
+          <h1><a href="$!webPath/goods_list.htm?store_id=$!{store.id}&newgoods=true">更多</a><span>新品上市</span></h1>
+          <div class="smallgoods"> 
+          #foreach($goods in $goods_new)
+            #if($!goods.goods_main_photo)
+        #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+        #else
+        #set($img="$!imageWebServer/resources/style/common/images/blank.gif")
+        #end
+        #set($goods_url="$!webPath/goods_$!{goods.id}.htm")
+        #if($!config.second_domain_open)
+          #set($goods_url="http://$!{goods.goods_store.store_second_domain}.$!{domainPath}/goods_$!{goods.id}.htm")
+        #end 
+            <ul>
+              <li class="goodsimgs"><span class="goods_sp_span">
+<p><a href="$!goods_url" class="p_img"  target="_blank">
+      			<img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); " width="160"/>
+     		   </a>
+     		</p>                </span></li>
+ 				 <li class="goodslook">商城价：<strong><b>¥$!{goods.goods_current_price}</b></strong></li>
+                 <li class="goodslook">零售价：<del>¥$!{goods.goods_price}</del></li>              
+                 <li class="goodsnames"><a href="$!goods_url" target="_blank">$!CommUtil.substring("$!goods.goods_name",28)</a></li>
+              <li class="recentgoodsok">最近成交<strong>#if($!goods.goods_salenum<=0)0#else$!goods.goods_salenum#end</strong>笔</li>
+            </ul>
+            #end </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  $!httpInclude.include("/footer.htm") </div>
+  <!--店铺二维码-->
+ #if($!store.weixin_qr_img)
+ <script>
+ jQuery(document).ready(function(e) {
+    jQuery(".ewm_close").click(function(){
+		jQuery(this).parent().hide();
+		});
+});
+ </script>
+<div class="shop_erweiwrap">
+<a class="ewm_close" href="javascript:void(0);"><img src="$!webPath/resources/style/system/front/default/images/ewm_close.jpg" /></a>
+<a class="shop_weweiimg" href="javascript:void(0);">
+<span>微信店铺二维码</span>
+<b><img src="$!webPath/$!store.weixin_qr_img.path/$!store.weixin_qr_img.name" width="101" /></b>
+</a>
+</div>
+#end
+</body>
+</html>

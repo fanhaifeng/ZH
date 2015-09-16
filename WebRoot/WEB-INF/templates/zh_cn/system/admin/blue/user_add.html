@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+#macro ( genericTree $somelist ) 
+#foreach ( $some in $somelist )
+<option value="$!some.id">
+#if($!some.level>0)
+#foreach($count in [0..$!some.level])&nbsp;#end #end $!some.className</option>
+#genericTree($some.childs) 
+#end 
+#end
+</head>
+<link href="$!webPath/resources/style/system/manage/$!{config.websiteCss}/template.css"  rel="stylesheet" type="text/css"/>
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+jQuery(document).ready(function(){
+	jQuery.ajax({
+		url: "$!webPath/getSomeArea.htm",
+		async: false,
+		success:function(result){
+			jQuery("#a_area1").empty();
+			jQuery.each(result.resultData,function(i,n){
+				jQuery("#a_area1").append("<option value="+n.ID+">"+n.AREANAME+"</option>");	
+			});
+			for(var i=0;i<jQuery("select[name='a_area1'] option").length;i++){
+				if(jQuery("select[name='a_area1'] option").get(i).text == "$!obj.area.parent.areaName"){
+					jQuery("select[name='a_area1']").find("option").eq(i).attr("selected",true);
+				}
+			}
+		}
+	});
+
+	jQuery.ajax({
+		url: "$!webPath/getSomeArea.htm?parentId="+jQuery("#a_area1 option:selected").val(),
+		async: false,
+		success:function(result){
+			jQuery("#a_area2").empty();
+			//jQuery("#a_area2").append("<option value=''>请选择</option>");
+			jQuery.each(result.resultData,function(i,n){
+				jQuery("#a_area2").append("<option value="+n.ID+">"+n.AREANAME+"</option>");	
+			});
+			for(var i=0;i<jQuery("select[name='a_area2'] option").length;i++){
+				if(jQuery("select[name='a_area2'] option").get(i).text == "$!obj.area.areaName"){
+					
+					jQuery("select[name='a_area2']").find("option").eq(i).attr("selected",true);
+				}
+			}
+		}
+	});
+
+jQuery(".areaAndArea").change(function(){
+ var level=jQuery(this).attr("level");
+ var id=jQuery(this).val();
+ if(id!=""){
+  jQuery.post("$!webPath/load_area.htm",{"pid":id},function(data){
+    jQuery("#area"+level).empty();
+	//jQuery("#area"+level).append("<option value=''>请选择</option>");
+    jQuery.each(data, function(index,item){
+	  jQuery("#area"+level).append("<option value='"+item.id+"'>"+item.areaName+"</option>");
+	  jQuery("#area"+level).show();
+	});
+  },"json");
+ }else{
+   for(var i=level;i<=2;i++){
+    jQuery("#area"+i).empty();
+    jQuery("#area"+i).hide();
+   }
+ }
+});
+
+
+jQuery("#area").val(jQuery("#a_area2").val());
+
+
+jQuery(".a_areaAndArea").change(function(){
+ var level=jQuery(this).attr("level");
+ var id=jQuery(this).val();
+ if(id!=""){
+  jQuery.post("$!webPath/load_area.htm",{"pid":id},function(data){
+    jQuery("#a_area"+level).empty();
+	//jQuery("#a_area"+level).append("<option value=''>请选择</option>");
+    jQuery.each(data, function(index,item){
+	  jQuery("#a_area"+level).append("<option value='"+item.id+"'>"+item.areaName+"</option>");
+	});
+    jQuery("#area").val(jQuery("#a_area2").val());
+  },"json");
+  
+
+ }else{
+   for(var i=level;i<=2;i++){
+    jQuery("#a_area"+i).empty();
+   }
+ }
+ 
+ if( jQuery("#a_area2").find("option:selected").text() == "请选择"){
+	 jQuery("#area").val(jQuery("#a_area1").find("option:selected").val());
+ }else{
+	 jQuery("#area").val(jQuery("#a_area2").find("option:selected").val());
+ }
+});
+	
+	jQuery.validator.addMethod("verify",function(value,element){
+		 var re = /^[0-9a-zA-Z]*$/;
+        if(re.test(jQuery("#userName").val())){			
+			return true;
+		}else {
+		    return false;
+		}		  
+	});	
+	 
+  jQuery("#theForm").validate({
+    rules:{
+	  userName:{
+	    required :true,
+		verify:true,
+	     remote:{
+		    url: "$!webPath/verify_username.htm",     //后台处理程序
+            type: "post",               //数据发送方式
+            dataType: "json",           //接受数据格式   
+            data: {                     //要传递的数据
+                  "userName": function(){return jQuery("#userName").val();},
+				  "id":function(){return jQuery("#id").val()}
+		     }
+			}
+	  },
+	  telephone : {
+			required : true,
+			remote : {
+				url : "$!webPath/verify_telephone.htm", //后台处理程序
+				type : "post", //数据发送方式
+				dataType : "json", //接受数据格式   
+				data : { //要传递的数据
+					"telephone" : function() {
+						return jQuery("#telephone").val();
+					}
+					#if($!obj.id),
+	  				"id" : $!obj.id
+	  				#end
+				}
+			}
+		},
+	  area:{
+		required :true
+	  },
+	  email:{
+	    required :true,
+		email:true,
+		remote:{
+		    url: "$!webPath/verify_email.htm",     //后台处理程序
+            type: "post",               //数据发送方式
+            dataType: "json",           //接受数据格式   
+            data: {                     //要传递的数据
+                  "mail": function(){return jQuery("#userName").val();},
+				  "id":function(){return jQuery("#id").val()}
+		     }
+			}
+	  }#if(!$!edit),
+	  password:{
+	    required:true,
+		minlength:6,
+		maxlength:20
+	  }
+	  #end
+	 },
+	messages:{
+	  userName:{required:"用户名不能为空",remote:"该用户名已经存在",verify:"不可输入特殊符号"},
+	  telephone : {
+			required : "手机号不能为空",
+			remote : "手机号已存在"
+		},
+	  email:{required:"电子邮箱不能为空",email:"邮箱格式不对",remote:"该邮箱已被使用"}#if(!$!edit),
+	  password:{required:"密码不能为空",minlength:"密码不能少于{0}位",maxlength:"密码不能大于{0}位"}#end
+	}
+  });	
+  jQuery(":radio[id=sex]").each(function(){
+    if(jQuery(this).val()=="$!obj.sex")jQuery(this).attr("checked",true);
+  });
+  jQuery(":radio[id=report][value=$!obj.report]").attr("checked",true);
+});
+
+function saveForm(){
+   jQuery("#theForm").submit();
+}
+
+</script>
+<body>
+<div class="cont">
+  <h1 class="seth1">会员管理</h1>
+  <div class="settab"><span class="tab-one"></span>
+      <span class="tabs">
+       <a href="$!webPath/admin/user_list.htm">管理</a> |
+       <a href="$!webPath/admin/user_add.htm" #if(!$!edit)class="this"#end>新增</a>
+	   #if($!edit)
+	   <a href="javascript:void(0);" class="this">编辑</a>
+	   #end	  </span>
+      
+      <span class="tab-two"></span></div>
+ <form name="theForm" id="theForm" action="$!webPath/admin/user_save.htm" method="post">
+ <input name="id" type="hidden" id="id" value="$!obj.id" />
+  <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+  <input name="list_url" type="hidden" id="list_url" value="$!webPath/admin/user_list.htm" />
+  <input name="add_url" type="hidden" id="add_url" value="$!webPath/admin/user_add.htm" />
+  <div class="setcont">
+    <!--鼠标经过样式-->
+    <ul class="set1">
+      <li><strong class="orange fontsize20">*</strong>用户名</li>
+      <li><span class="webname">
+       #if($!edit)$!obj.userName #else <input name="userName" type="text" id="userName" value="$!obj.userName" size="40" />#end
+      </span></li>
+    </ul>
+      <ul class="set1">
+      <li><strong class="orange fontsize20">*</strong>密码</li>
+      <li><span class="webname">
+        <input name="password" type="password" id="password" size="40" autocomplete="off" />
+      </span><span id="nothis"><strong class="q"></strong><strong class="w">修改用户时候，密码留空表示不修改</strong><strong class="c"></strong></span></li>
+    </ul>
+    <ul class="set1">
+      <li>真实姓名</li>
+      <li><span class="webname">
+        <input name="trueName" type="text" id="trueName" value="$!obj.trueName" size="40" />
+      </span></li>
+    </ul>
+    
+	<ul class="set1">
+      <li>性别</li>
+	   <li><span class="webname">
+      <input style="border:none; height:16px; width:16px;" name="sex" id="sex"  type="radio" value="1" />
+      男
+	  <input style="border:none; height:16px; width:16px;"type="radio" id="sex" name="sex" value="0" />女
+	   <input style="border:none; height:16px; width:16px;" type="radio" id="sex" name="sex" value="-1" />保密
+	   </span>
+	   </li>
+	</ul>
+	
+    <ul class="set1">
+      <li>区域</li>
+ 	  <li>
+ 	  	<span class="openselead">
+           <select name="a_area1" class="a_areaAndArea" id="a_area1" level="2">
+	  		#foreach($area in $areas)
+                <option value="$!area.id">$!area.areaName</option>
+	  		#end
+         </select>
+         <select name="a_area2" class="a_areaAndArea" id="a_area2" level="3">
+         </select>
+         <input name="area" type="hidden" id="area"  value=""/>
+      </li>
+      </ul>
+   
+    <ul class="set1">
+      <li>QQ</li>
+      <li><span class="webname">
+        <input name="QQ" type="text" id="QQ" value="$!obj.QQ" />
+      </span></span></li>
+    </ul>
+	  <ul class="set1">
+      <li>旺旺</li>
+      <li><span class="webname">
+        <input name="WW" type="text" id="WW" value="$!obj.WW" />
+      </span></span></li>
+    </ul>
+	  <ul class="set1">
+      <li>MSN</li>
+      <li><span class="webname">
+        <input name="MSN" type="text" id="MSN" value="$!obj.MSN" />
+      </span></span></li>
+    </ul>
+    <ul class="set1">
+      <li><strong class="orange fontsize20">*</strong>手机号码</li>
+      <li><span class="webname">
+        <input name="telephone" type="text" id="telephone" value="$!obj.telephone" />
+      </span></span></li>
+    </ul>
+    </div>
+  </form>
+  <div class="submit">
+    <input name="save" type="button" value="提交" onclick="saveForm()" />
+  </div>
+</div>
+</body>
+</html>

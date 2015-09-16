@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP- 用户修改密码</title>
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" /> 
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+
+jQuery(document).ready(function(){
+  jQuery("#theForm").validate({
+       rules: {
+			old_password:{required:true},
+			new_password:{required:true,minlength:6,maxlength:20},
+			new_password1:{required:true,equalTo:"#new_password"}
+			},
+	   messages: {
+		    old_password:{required:"当前密码不能为空"},
+			new_password:{required:"新密码不能为空",minlength:"新密码不能少于{0}位",maxlength:"新密码不能大于{0}位"},
+			new_password1:{required:"重复密码不能为空",equalTo:"两次密码输入不一样"}
+		}
+  });
+});
+
+</script>
+</head>
+<body class="">
+<header>
+<div class="main">
+<div class="mall_back"><a href="javascript:history.go(-1);">&lt;</a></div>
+<span class="htitle">密码管理</span>
+</div>
+</header>
+<div class="register">
+  <form action="$!webPath/buyer/changepass.htm" method="post" name="theForm" id="theForm">
+  <ul class="con_password clearfix">
+  <li>原密码：<input name="old_password" type="password" id="old_password" class="register_txt" value=""></li>
+   <li>新密码：<input name="new_password" type="password" id="new_password" class="register_txt" value=""></li>
+    <li>确认密码：<input name="new_password1" type="password" id="new_password1" class="register_txt" value=""></li>
+     <li class="last"><input name="" type="submit"  value="提交" style="cursor:pointer;" class="register_btn" /></li>
+  </ul>
+     
+  </form>
+  $!httpInclude.include("/weixin/footer.htm")
+</div>
+</body>
+</html>

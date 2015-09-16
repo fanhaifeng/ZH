@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP - 送货地址</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css">
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+jQuery(document).ready(function(){
+    jQuery.validator.addMethod("mobile_telephone",function(value,element){
+    	  if(jQuery("#telephone").val()=="" && jQuery("#mobile").val()==""){
+    	     return false; 
+    	  }else{
+    		  return true;
+    	  }
+    });
+
+	jQuery.validator.addMethod("teleVerify",function(value,element){
+		var re =  /(^0?[1][34578][0-9]{9}$)/;
+	    if(re.test(jQuery("#telephone").val())){			
+			return true;
+		}else {
+		    return false;
+		}		  
+	});
+
+	jQuery("#cart_address_form").validate({
+		 ignore: "",
+		 rules:{
+			  trueName:{required :true},
+			  area1:{required : true},
+			  area2:{required : true},
+			  area3:{required : true},
+			  area_info:{required :true},
+			  telephone:{required:true,teleVerify:true}
+		},
+		messages:{
+			  trueName:{required :"收货人不能为空"},
+			  area1:{required :"请选择省"},
+			  area2:{required :"请选择市"},
+			  area3:{required :"请选择区"},
+			  area_info:{required :"详细地址不能为空"},
+			  telephone:{required:"手机号码必填 ",teleVerify : "手机号码格式不对"}
+		}
+	  });
+
+	 jQuery("select").change(function(){
+	     var level=jQuery(this).attr("level");
+		 var id=jQuery(this).val();
+		 if(id!=""){
+		  jQuery.post("$!webPath/load_area.htm",{"pid":id},function(data){
+		     jQuery("#area"+level).empty();
+			  jQuery("#area"+level).append("<option value=''>请选择</option>");
+		    jQuery.each(data, function(index,item){
+			  jQuery("#area"+level).append("<option value='"+item.id+"'>"+item.areaName+"</option>");
+			  jQuery("#area"+level).show();
+			});
+		  },"json");
+		 }else{
+		   for(var i=level;i<=3;i++){
+		    jQuery("#area"+i).empty();
+		    jQuery("#area"+i).hide();
+		   }
+		 }
+	  });
+ 
+	 jQuery("#area3").change(function(){
+	   var id=jQuery(this).val();
+	   jQuery("#area_id").val(id);
+	 });
+});
+
+function cart_address_FormSave(){
+	jQuery("#cart_address_form").submit();
+}
+
+function mobileStr(){
+	jQuery("#mobile").val(jQuery("#mobile1").val()+"-"+jQuery("#mobile2").val());
+}
+</script>
+</head>
+<body>
+<div class="container">
+<form action="$!webPath/weixin/cart_address_save.htm" method="post" id="cart_address_form" name="cart_address_form">
+ <section class="new_address_box">
+ <ul>
+ <li>
+ 收货人： <input name="id" type="hidden" id="id" value="$!obj.id" /><input name="trueName" type="text" id="trueName"  />
+ </li>
+ <li>区域：
+ <select name="area1" id="area1" level="2" style="width:100px;">
+                    <option value="" selected="selected">请选择地区</option>
+ 				  #foreach($area in $areas)
+                     <option value="$!area.id">$!area.areaName</option>
+				  #end
+                   </select>
+                  <input type="button" name="area_edit" id="area_edit" value="修改" style="display:none;" onclick="javascript:jQuery('#area1').show();jQuery('#area_info').empty();jQuery(this).hide();" />
+                  <select name="area2" id="area2" style="display:none;width:60px;" level="3">
+                  </select>
+                  <select name="area3" id="area3" style="display:none;width:60px;" level="4">
+                  </select>
+                  <input name="area_id" type="hidden" id="area_id"  value=""/>
+</li>
+ <li>
+ 地址： <input name="area_info" type="text" id="area_info"  />
+ </li>
+ <li>手机：<input name="telephone" type="text" id="telephone"/></li>
+ </ul>
+ </section>
+ <input class="cmd_login" name="" type="button" onclick="cart_address_FormSave()" value="提交" style="cursor:pointer;"/>
+        <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+        <input name="store_id" type="hidden" id="store_id" value="$!store_id" />
+ 
+</form>
+</div>
+</body></html>

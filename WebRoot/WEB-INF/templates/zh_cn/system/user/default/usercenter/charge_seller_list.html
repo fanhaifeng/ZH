@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>赊销 - Powered by LakeCloud</title>
+<meta name="keywords" content="$!config.keywords" />
+<meta name="description" content="$!config.description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
+</head>
+<body>
+$!httpInclude.include("/top.htm")
+<div class="main"> 
+  $!httpInclude.include("/seller/nav_head.htm")
+  <div class="user_center">
+  <form action="$!webPath/seller/charge_sell.htm" name="ListForm" id="ListForm" method="post">
+    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+      <tr>
+        $!httpInclude.include("/seller/nav.htm?op=charge_seller_list")
+        <td id="centerbg" valign="top">
+        <div class="buyer_position">
+          <div class="buyer_p_box"><a href="$!webPath/seller/index.htm">卖家中心</a> > <span>赊销列表</span></div></div>
+          <div class="productmain">
+            <div class="pdctitle blue2">赊销</div>
+            <div class="operation">
+              <table width="790" border="0" cellspacing="0" cellpadding="0" id="opertable" >
+                <tr id="opertitle">
+			        <td>用户名</td>
+			        <td>设置时间</td>
+			        <td>赊销金额(元)</td>
+			        <td>已用赊销金额(元)</td>
+			        <td>赊销账期(天)</td>
+			        <td>操作</td>
+                </tr>
+			 #foreach($obj in $objs)
+		      <tr id="$!obj.id">
+		         <td>$!obj.user.userName</td>
+		         <td>$!obj.addTime</td>
+		         <td>$!obj.paymentNum</td>
+		         <td>$!obj.usedPayNum</td>
+		         <td>$!obj.paymentDays</td>
+		         <td>
+			         <span class="edit" id="refund$!obj.user.id">
+			         	<a href="$!webPath/seller/seller_refund_list.htm?buyer_userName=$!obj.user.userName" id="refund$!obj.user.id" >还款</a>
+			         </span> 
+		         </td>
+		      </tr>
+		      #end  
+              </table>
+            </div>
+            <div class="alldel">
+              <div  class="userfenye">$!gotoPageHTML</div>
+            </div>
+          </div></td>
+      </tr>
+    </table>
+     <input name="currentPage" type="hidden" id="currentPage"  value="$!currentPage" />
+    </form>
+  </div>
+  $!httpInclude.include("/footer.htm")
+</div>
+</body>
+</html>

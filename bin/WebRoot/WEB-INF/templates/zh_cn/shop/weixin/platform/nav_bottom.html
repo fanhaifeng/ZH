@@ -1,0 +1,66 @@
+<script>
+jQuery(document).ready(function(e) {
+    #if($!op)
+       	jQuery("div.foot_nav").find('div a').removeClass("this");
+       	jQuery("div.foot_nav").find('div a[op="$!op"]').addClass("this");
+		//jQuery("div.foot_nav").find('ul li').removeClass("this");
+		//jQuery("div.foot_nav").find('ul li[op="$!op"]').addClass("this");
+	#end
+});
+</script>
+<script type="text/javascript">
+document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+WeixinJSBridge.call('hideToolbar');
+});
+</script>
+<div class="foot_nav container-fluid">
+<div class="row">
+<div class="col-xs-3 col-md-3">
+<a op="index" href="$!webPath/weixin/platform/index.htm"  class="icon icon-index this">
+<i>&nbsp;</i>
+ <span>首页</span>
+</a>
+</div>
+<div class="col-xs-3 col-md-3">
+<a op="buy" href="$!webPath/weixin/platform/classes_first.htm" class="icon icon-buy ">
+<i>&nbsp;</i>
+ <span>商品购买</span>
+</a>
+</div>
+<div class="col-xs-3 col-md-3">
+<a op="cart" href="$!webPath/weixin/goods_cart1.htm"  class="icon icon-shopcart ">
+<i>&nbsp;</i>
+ <span>购物车</span>
+</a>
+</div>
+<div class="col-xs-3 col-md-3">
+<a op="account" href="$!webPath/weixin/buyer/account.htm"  class="icon icon-member ">
+<i>&nbsp;</i>
+ <span>个人中心</span>
+</a>
+</div>
+
+</div>
+    	<div class="main">
+        #set($img="$!webPath/resources/style/weixin/default/images/logo.png")
+        #if($!config.store_weixin_logo)
+        #set($img="$!webPath/$!config.store_weixin_logo.path/$!config.store_weixin_logo.name")
+        #end
+        	<div style="display:none;" class="nav_foot_logo"><img src="$!img" width="83" height="23"  /></div>
+        	<ul style="display:none;">
+            	<li op="index"><a href="$!webPath/weixin/platform/index.htm"><span class="home"></span></a></li>
+                <li op="activity"><a href="$!webPath/weixin/platform/activity_goods_list.htm"><span class="glass"></span></a></li>
+                <li op="classes"><a href="$!webPath/weixin/platform/classes_first.htm"><span class="list"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script>
+    $(function(){
+    	$(".foot_nav .icon").hover(function(){    		 
+    		$(this).addClass("this");
+    	},function(){
+    		$(this).removeClass("this");
+    	});
+    	
+    });
+    </script>

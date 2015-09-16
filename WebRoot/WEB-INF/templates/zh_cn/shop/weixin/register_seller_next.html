@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style"
+	content="black-translucent">
+<title>中化BBC商城-APP - 买家用户注册</title>
+<link href="$!webPath/resources/style/weixin/default/css/phone.css"
+	rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.validate.min.js"></script>
+<script>
+	jQuery(document)
+			.ready(
+					function() {
+						jQuery.ajax({
+								type : "get",
+								async : false,
+								url : "http://211.94.93.238/zhnyxxgc/httpservice.action?method=searchAllCrops1",
+								dataType : "jsonp",
+								jsonp : "cropCallback",
+								async: false,
+								jsonpCallback : "cropCallback",
+								success : function(json) {
+									jQuery("#crop1").empty();						
+									if (json.resultcode == "ok") {
+										jsonString = json.resultdata;
+										jQuery("#crop1").empty();
+										jQuery("#crop1").append("<option value=''>请选择</option>");
+										jQuery.each(json.resultdata,function(i, n) {
+											var child = n.childern;
+											if (child !== null && child.length>0) { 
+												jQuery("#plant1").append("<span>"+n.cropName+"</span> ： ");
+												jQuery("#plant1").append("<div class='line_con' id='con" + i + "'></div>");
+												console.log(child);
+												jQuery.each(child,function(j,m){
+													jQuery("#con" + i).append("<input type='checkbox' name='plant' value="+m.id+">"+m.cropName+"</input>  ");
+												});
+												jQuery("#crop1").append("<option value="+n.id+">"+n.cropName+ "</option>");
+											}
+										});
+									}
+								}
+						});
+
+						jQuery("#crop2").change(function() {
+							if (jQuery("#crop2").find(
+									"option:selected").text() != "请选择") {
+								jQuery("#crop")
+										.val(
+												jQuery("#crop2")
+														.find(
+																"option:selected")
+														.val());
+							} else {
+								jQuery("#crop").val("");
+							}
+						});
+
+						jQuery("#theForm").validate({
+							ignore : "",
+							rules : {
+								crop1 : {
+									required : true
+								}
+							},
+						
+							messages : {
+								crop1 : {
+									required : "请选择关心作物"
+								}
+							}
+					   });
+
+						
+						jQuery("#crop1").change(function() {
+							if (jQuery("#crop1").find(
+									"option:selected").text() == "请选择") {
+								jQuery("#crop2").hide();
+								jQuery("#crop").val("");
+							}
+							var id = jQuery(this).val();
+							if (id != "") {
+								jQuery("#crop2").show();
+								jQuery("#crop2").empty();
+								console.log(jsonString);
+								jQuery.each(jsonString ,function(i, n) {	
+									if( id == n.id ){
+										var child = n.childern;
+										if (child !== null && child.length>0) { 
+											jQuery.each(child,function(j,m){
+												jQuery("#crop2").append("<option value="+m.id+">"+ m.cropName+"</option>");
+											});
+											jQuery("#crop").val(jQuery("#crop2").find("option:selected").val());
+										}
+									}
+								});
+							}
+						});	
+					});	
+	function saveForm() {
+		jQuery("#theForm").submit();
+	}
+	function register() {
+		window.location.href = "$!webPath/weixin/register.htm";
+	}
+	function register_seller() {
+		window.location.href = "$!webPath/weixin/register_seller.htm";
+	}
+	function onlyNonNegative(obj) { 
+		 var event = obj || event;
+		 var inputChar = event.keyCode;  
+		 //alert(event);  
+		   
+		 //1.判断是否有多于一个小数点  
+		 if(inputChar==190 ) {//输入的是否为.  
+		  var index1 = obj.value.indexOf(".") + 1;//取第一次出现.的后一个位置  
+		  var index2 = obj.value.indexOf(".",index1);  
+		  while(index2!=-1) {  
+		  //alert("有多个.");  
+		     
+		   obj.value = obj.value.substring(0,index2);  
+		   index2 = obj.value.indexOf(".",index1);  
+		  }  
+		 }  
+		 //2.如果输入的不是.或者不是数字，替换 g:全局替换  
+		 obj.value = obj.value.replace(/[^(\d|.)]/g,"");  
+	}  
+</script>
+</head>
+<body class="bodybg">
+	<hgroup>
+		<h3 class="goods_car clearfix">
+			<a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>用户注册</b></span>
+		</h3>
+	</hgroup>
+
+	<div class="fff">
+		<div class="container">
+			<div class="row regBar clearfix">
+				<div class=" fl active"
+					onClick="register()">免费注册</div>
+				<div class="fr"
+					onClick="register_seller()">免费开店</div>
+			</div>
+		</div>
+	</div>
+	<div class="register fff">
+		<div class="container">
+			<div class="row">
+				<form id="theForm" name="theForm"
+					action="$!webPath/weixin/register_seller_finish.htm" method="post">
+						<input type="hidden" name="userName" value="$!userName"/>
+						<input type="hidden" name="password" value="$!password"/>
+						<input type="hidden" name="telephone" value="$!telephone"/>
+						<input type="hidden" name="area" value="$!area"/>
+						<input type="hidden" name="true_name" value="$!true_name"/>
+						<input type="hidden" name="store_name" value="$!store_name"/>
+						<input type="hidden" name="sc_id" value="$!sc_id"/>
+						<input type="hidden" name="store_area" value="$!store_area"/>
+						<input type="hidden" name="store_address" value="$!store_address"/>
+						<input type="hidden" name="store_ower_card" value="$!store_ower_card"/>
+						<input type="hidden" name="mobile_verify_code" value="$!mobile_verify_code"/>
+						<input type="hidden" name="promote_tel" value="$!promote_tel"/>
+						<ul class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<li>关心作物：
+						 <select name="crop1" class="a_crop" id="crop1"
+							level="2">
+							<option value="">请选择</option>
+						</select> 
+						<select name="crop2" class="a_crop" id="crop2" level="3"
+							style="display: none">
+								<option value="">请选择</option>
+						</select>
+						<input name="care" type="hidden" id="crop" value="" /> </select>
+						</li>
+
+						<li><div class="sub_title">种植作物：</div>
+							<div class="sub_con" id="plant1"></div>
+							<div class="sub_con" id="plant2"></div>
+						</li>
+						
+						<li>种植面积：<input type="text"  onkeyup="onlyNonNegative(this)"  name="cul_area" id="cul_area" value="" class="register_txt"  placeholder="种植面积"/></li>
+						
+						<li id="a_register" style="display: none">
+							<div
+								style="height: 200px; overflow-y: scroll; border: 1px solid #CCC; background-color: #FFF; padding: 5px; font-size: 12px; line-height: 24px;">
+								$!obj.content</div>
+						</li>
+						<li>
+							<button class="cmd_login" type="button"
+								onClick="saveForm()">注册</button></li>
+					</ul>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

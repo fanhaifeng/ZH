@@ -1,0 +1,38 @@
+<link href="$!webPath/resources/style/common/css/window.css" type="text/css" rel="stylesheet" />
+<script src="$!webPath/resources/js/ajaxfileupload.js"></script>
+<!-- 商品导入页面 -->
+  <table style="float:left;" width="390" border="0" cellspacing="0" cellpadding="0" class="box_table">
+    <tr>
+      <td width="100" align="left" valign="top">
+      	<input id="importfile" type="file"  name="importfile"/>    
+      </td>
+    </tr>
+    <tr>
+      <td align="center"><span class="inputbtn">
+      	<input type="button" value="提交" onclick="ajaxFileUpload()"/>
+      </span></td>
+    </tr>
+  </table>
+<script>
+/**
+ * 导入商品信息 */
+function ajaxFileUpload(){
+if(jQuery("#importfile").val()==""){
+alert("选择需要导入的文件。");
+retrun;
+}
+	    jQuery.ajaxFileUpload({
+        	url: "/admin/import_file.htm",
+			secureuri: false,
+			fileElementId: ['importfile'],
+			dataType: 'text',
+			success: function(data) {
+			jQuery("#import td").html(data);
+			if(data==""){
+			alert("导入成功!")
+			}else
+			alert(data)
+			}
+        });
+}
+</script>

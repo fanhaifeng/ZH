@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>中化BBC商城-APP - $!obj.goods_name</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script>
+#set($group=0)
+#set($current_price=$!obj.goods_current_price)
+#if($!{obj.group_buy}==2)
+  #set($group=1)
+#end
+#if($!group==1)
+  #foreach($info in $obj.group_goods_list)
+    #if($info.group.id==$!obj.group.id)
+	  var store_price=$!info.gg_price;
+	  #set($current_price=$!{info.gg_price})
+      #if($!info.gg_max_count>0)
+        var goods_inventory=$!info.gg_max_count;
+      #else
+        var goods_inventory=$!info.gg_count;
+      #end
+	#end
+  #end
+#else
+  var store_price=$!obj.goods_current_price;
+  var goods_inventory=$!obj.goods_inventory;
+#end
+//
+var goods_price=$!obj.goods_price
+jQuery(document).ready(function(){
+
+jQuery("#goods_count").keyup(function(){
+   var goods_count=jQuery(this).val();
+   if(goods_count>goods_inventory){
+	  #if($!obj.group_buy==2)
+	    #if($!obj.group_goods.gg_max_count>0)
+		  jQuery("#error_goods_inventory").show().find("span").html("超出团购运行最大数量，请重新输入购买数量！").parent().fadeOut(3000);
+		#else
+		  jQuery("#error_goods_inventory").show().find("span").html("超出团购库存数量，请重新输入购买数量！").parent().fadeOut(3000);
+		#end
+	  #else
+	  jQuery("#error_goods_inventory").show().find("span").html("超出店铺库存，请重新输入购买数量！").parent().fadeOut(3000);
+	  #end
+	  jQuery(this).val(goods_inventory);
+	}
+});
+jQuery("a[id^=count_]").click(function(){
+	var count_type= jQuery(this).attr("count_type");
+	var goods_count=jQuery("#goods_count").val();
+	if(count_type=='cut'){
+		if(goods_count>=1){
+		goods_count = goods_count-1;
+		}	
+	}
+	else{
+	goods_count = goods_count-0+1;
+	if(goods_count>goods_inventory){
+	  #if($!obj.group_buy==2)
+	    #if($!obj.group_goods.gg_max_count>0)
+		  jQuery("#error_goods_inventory").show().find("span").html("已经是团购运行最大数量！").parent().fadeOut(3000);
+		#else
+		  jQuery("#error_goods_inventory").show().find("span").html("已经是团购库存最大数量！").parent().fadeOut(3000);
+		#end
+	  #else
+	  jQuery("#error_goods_inventory").show().find("span").html("已经是店铺库存最大数量！").parent().fadeOut(3000);
+	  #end
+	  goods_count = goods_count-1;
+	}
+	}
+	jQuery("#goods_count").val(goods_count);		
+	});
+  //
+
+});
+var time=0;
+var time_id;
+function add_cart(){
+#if($!user.id==$!obj.goods_store.user.id)
+  jQuery("#error_goods_inventory").show().find("span").html("不能购买自己的商品!").parent().fadeOut(3000);
+#else
+  var add=true
+  var gsp="";
+  if(jQuery(".choose_size").length==0){
+    add=true;
+  }else{
+	jQuery(".choose_size").each(function(){
+	   jQuery.each(jQuery(this).find("a[class=this]"),function(){
+		  gsp=jQuery(this).attr("gsp")+","+gsp; 
+	   });
+       if(jQuery(this).find("a[class=this]").length==0) add=false;
+	});
+  } 
+  var count=jQuery("#goods_count").val();
+  if(count<=0){
+    add=false;
+jQuery("#error_goods_inventory").show().find("span").html("至少购买一件商品!").parent().fadeOut(3000);	
+	return;
+  }
+  if(goods_inventory<=0){
+    add=false;
+	jQuery("#error_goods_inventory").show().find("span").html("商品库存不足，不能购买!").parent().fadeOut(3000);
+	return;
+  }  
+  if(add){
+	jQuery.post("$!webPath/weixin/add_goods_cart.htm",{"id":"$!obj.id","count":count,"price":store_price,"gsp":gsp},function(data){
+	jQuery("div.nav_width ul li[op='cart']").find("em").html(data.count);
+		 //更新顶部购物车信息
+		 jQuery("#error_goods_inventory").show().find("span").html("添加购物车成功！<a href='$!webPath/weixin/goods_cart1.htm'> >>查看购物车</a>").parent().fadeOut(5000);
+	},"json");
+  }else{
+    jQuery("#error_goods_inventory").show().find("span").html("请选择商品属性!").parent().fadeOut(3000);
+  }
+ #end
+}
+function buy_goods(){
+#if($!user.id==$!obj.goods_store.user.id)
+ jQuery("#error_goods_inventory").show().find("span").html("不能购买自己的商品!").parent().fadeOut(3000);
+#else
+  var add=true
+  var gsp="";
+  if(jQuery(".choose_size").length==0){
+    add=true;
+  }else{
+	jQuery(".choose_size").each(function(){
+	   jQuery.each(jQuery(this).find("a[class=this]"),function(){
+		  gsp=jQuery(this).attr("gsp")+","+gsp; 
+	   });
+       if(jQuery(this).find("a[class=this]").length==0) add=false;
+	});
+  }
+  var count=jQuery("#goods_count").val();
+  if(count<=0){
+    add=false;
+	jQuery("#error_goods_inventory").show().find("span").html("至少购买一件商品!").parent().fadeOut(3000);
+	return;
+  }
+  if(goods_inventory<=0){
+    add=false;
+	jQuery("#error_goods_inventory").show().find("span").html("商品库存不足，不能购买!").parent().fadeOut(3000);
+	return;
+  }    
+  var buy_type=arguments[0];
+  if(add){
+	jQuery.post("$!webPath/weixin/add_goods_cart.htm",{"id":"$!obj.id","count":count,"price":store_price,"gsp":gsp,"buy_type":buy_type},function(data){
+	     jQuery("#cart_goods_count").html(data.count);
+		 jQuery("#cart_goods_totalprice").html(data.total_price);
+		 window.location.href="$!webPath/weixin/goods_cart1.htm";
+	},"json");
+  }else{
+	jQuery("#goods_spec_info").removeClass().addClass("detailsbottom detailsbottom_hover");  
+	jQuery("#error_goods_inventory").show().find("span").html("请选择商品属性！").parent().fadeOut(3000);
+  }
+ #end  
+}
+
+#if($!user)
+function save_goods(){
+    #if($!user.id==$!obj.goods_store.user.id)
+	  jQuery("#error_goods_inventory").show().find("span").html("不能收藏自己的商品！").parent().fadeOut(3000);
+	#else
+	  jQuery.post("$!webPath/weixin/add_goods_favorite.htm",{"id":"$!obj.id"},function(data){
+		 if(data==0){
+			jQuery("#error_goods_inventory").show().find("span").html("商品收藏成功！").parent().fadeOut(3000);
+		 }
+		 if(data==1){
+		jQuery("#error_goods_inventory").show().find("span").html("已经收藏该商品！").parent().fadeOut(3000);	
+		 }
+	  },"text");
+	#end
+	};
+#else	
+	function save_goods(){
+		window.location.href="$!webPath/weixin/login.htm"
+		}
+#end
+</script>
+</head>
+<body class="bodybg">
+#set ($photosNum=$!obj.goods_photos.size()+1)
+#set ($photosWidth=$!photosNum*100+'%')
+<div class="page_bottom">
+<hgroup>
+  <h3 class="goods_car clearfix"><a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>商品展示</b></span></h3>
+</hgroup>
+<div class="banner scroll-wrapper" id="idContainer2" ontouchstart="touchStart(event)" ontouchmove="touchMove(event);" ontouchend="touchEnd(event);">
+	<ul class="scroller" style="position:relative;left:0px;width:$!photosWidth" id="idSlider2">
+        #if($!obj.goods_main_photo)
+	         <li style="width:-100.0%"><a href='javascript:void(0);'> <img src="$!webPath/$!{obj.goods_main_photo.path}/$!{obj.goods_main_photo.name}" /> </a> </li>
+			#if($!obj.goods_photos.size() > 0)
+				 #foreach($img in $obj.goods_photos)
+						<li style="width:-100.0%"> <a href='javascript:void(0);'> <img src="$!webPath/$!img.path/$!img.name" /> </a> </li>
+				 #end
+			#end
+		#else
+			<li style="width:-100.0%"> <a href='javascript:void(0);'> <img src="$!webPath/resources/style/common/images/good.jpg" /> </a> </li>
+		#end 
+	</ul>
+		<ul class="new-banner-num new-tbl-type" id="idNum">
+		</ul>  
+
+</div>
+<div class="details_top container">
+        #if($!obj.goods_main_photo)                      
+         #set($img="$!imageWebServer/$!{obj.goods_main_photo.path}/$!{obj.goods_main_photo.name}")
+        #else
+          #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+        #end
+  <p class=""><span class="">$!{obj.goods_name}</span>
+  <i class="details_star">
+  <a href="javascript:void(0);" onClick="save_goods()"><img src="$!webPath/resources/style/weixin/default/images/star_yellow.png" >
+  <br/>收藏</a>
+  </i>
+  </p>
+<p class="P_NO">物料号：$!{obj.goods_serial}
+ 
+</p>
+
+ </div>
+ <div  class="container price_con">
+ <ul class="clearfix">
+ 	#if ($!obj.goods_promotion)
+ 		  <li class="details_buy_price">价格：¥<del>$!{obj.goods_price}</del></li>   
+		  <li class="details_buy_money">促销价：¥<strong id="store_price">$!{obj.goods_current_price}</strong></li>
+ 	#else
+ 		#if($!{obj.goods_price}==$!{obj.goods_current_price})
+ 			<li class="details_buy_money">价格：¥<strong id="store_price">$!{obj.goods_price}</strong></li>   
+ 		#else
+		    <li class="details_buy_price">价格：¥<del>$!{obj.goods_price}</del></li>   
+			<li class="details_buy_money">促销价：¥<strong id="store_price">$!{obj.goods_current_price}</strong></li>
+		#end
+ 	#end 
+ 	
+ </ul>
+ </div>
+<div class="details_buy container">
+   
+ <script>
+  function goods_spec_set(obj){
+	var spec=jQuery(obj).attr("spec");
+	var gsp="";
+	var load=true;
+	jQuery(".choose_size a[spec="+spec+"]").removeClass("this");
+	jQuery(obj).addClass("this");
+	jQuery(".choose_size").each(function(){
+		jQuery.each(jQuery(this).find("a[class=this]"),function(){
+		  gsp=jQuery(this).attr("gsp")+","+gsp; 
+		});
+	});
+	jQuery(".choose_size").each(function(){
+		 if(jQuery(this).find("a[class=this]").length==0) load=false;
+	 });
+  if(load){
+	jQuery("#goods_spec_info").removeClass().addClass("detailsbottom");  
+	jQuery("#goods_spec_info_close").hide();    
+	jQuery("#goods_spec_chose").hide();
+	jQuery.post("$!webPath/load_goods_gsp.htm",{"id":"$!obj.id","gsp":gsp},function(data){
+	   goods_inventory=data.count;
+	   store_price=data.price;
+	   jQuery("#goods_inventory").html(goods_inventory);
+	   jQuery("#store_price").html(store_price.toFixed(2));
+	   //jQuery("#rest").html("¥"+(goods_price-store_price));
+	  },"json");
+	}
+  }
+  </script>        
+#foreach($spec in $goodsViewTools.generic_spec("$!obj.id"))
+<dl class="choose_size"><dt>$!{spec.name}：</dt><dd>
+#foreach($gsp in $obj.goods_specs)
+#if($!{gsp.spec.id}==$!spec.id)
+<a href="javascript:void(0);" onclick="goods_spec_set(this);" spec="$!gsp.spec.id" gsp="$!gsp.id"><b>$!gsp.value<i></i></b></a>
+#end
+#end
+
+</dd></dl>
+#end
+<dl class="count_num">
+<dt>数量</dt>
+#if($!obj.group_buy==2)
+#foreach($gg_info in $obj.group_goods_list)
+#if($!gg_info.gg_goods.id==$!obj.id)
+#set($goods_inventory=$!{gg_info.gg_count}) 
+#end                  
+#end
+#else
+#set($goods_inventory="$!{obj.goods_inventory}")
+#end 
+<dd><span class="count_cut"><a id="count_cut" count_type="cut" href="javascript:void(0);"></a></span>
+  <input name="goods_count" id="goods_count" value="1" type="text" class="count_txt"> 
+<span  class="count_add"><a id="count_add" count_type="add" href="javascript:void(0);"></a></span>
+#if($!group==1)团购剩余#else<em class="count_broad">库存#end :<b class="count_b" id="goods_inventory">$!{goods_inventory}</b>件</em></dd>
+</dl>
+    </li>
+    <li class="details_buy_go">
+    #if(!$!user)
+	    <a href="$!webPath/weixin/login.htm" class="buy_btn">立即购买</a>
+	    <a href="$!webPath/weixin/login.htm"  class="add_car_btn">加入购物车</a></li>
+    #else
+	    <a href="javascript:void(0);" onClick="buy_goods()" class="buy_btn">立即购买</a>
+	    <a href="javascript:void(0);" onclick="add_cart();" class="add_car_btn">加入购物车</a></li>
+    #end
+  </ul>
+  <div class="center_box" id="error_goods_inventory" style="display:none"><span class="count_none"></span></div>
+</div>
+<div class="details_mid container">
+<ul>
+<li class="details_buy_go shop_name">
+<span>
+<a href="$!webPath/weixin/index.htm?store_id=$!{obj.goods_store.id}">$!{obj.goods_store.store_name}</a>
+($!{obj.goods_store.favorite_count}人关注)</span>
+
+<a href="$!webPath/weixin/index.htm?store_id=$!{obj.goods_store.id}" class="link_store">进入店铺</a>
+</li> 
+</ul>
+</div>
+
+<div class="details_mid container  ">
+  <p><span>总销量：$!{obj.goods_salenum}件</span><span>所在地：$!obj.goods_store.area.parent.areaName</span></p>
+</div>
+<div class="details_tab container">
+  <div class=" details_tab_box">
+    <ul class="details_tab_ul">
+      <li class="this" detail_css="details_content"><b>宝贝详情</b></li>
+      <li detail_css="pro_parameters"><b>产品参数</b></li>
+      <li detail_css="details_mes"><b>评价<i>($!obj.evas.size())</i></b></li>
+      <li detail_css="relevant_product"><b>推荐商品</b></li>
+    </ul>
+    <div class="details_content">
+    $!obj.goods_details
+    </div>
+    <script>
+	jQuery(document).ready(function(){
+       var data='$!obj.goods_property';
+       var properties=eval("("+data+")");
+       jQuery.each(properties,function(index,item){
+          jQuery(".pro_parameters ul").append("<li><span>"+item.name+"</span><b>"+item.val+"</b></li>");
+       });
+	   //
+	   jQuery(".details_tab_ul>li").click(function(){
+	       jQuery(".details_tab_ul>li").removeClass("this");
+		   jQuery(this).addClass("this");
+		   var detail_css=jQuery(this).attr("detail_css");
+		   jQuery(".details_content").hide();
+		   jQuery(".pro_parameters").hide();
+		   jQuery(".details_mes").hide();
+		   jQuery(".relevant_product").hide();
+		   jQuery("."+detail_css).show();
+	   }).mouseover(function(){
+	       jQuery(this).css({"cursor":"pointer"});
+	   });
+     });
+	</script>
+    <div class="pro_parameters" style="display:none;">
+      <ul>
+      </ul>
+    </div>
+    <div class="details_mes" style="display:none;">
+      <h2>买家评论</h2>
+      #foreach($eva in $obj.evas)
+      <dl class="mes_dl">
+          #if($!eva.evaluate_user.photo)
+          #set($img="$!imageWebServer/$!eva.evaluate_user.photo.path/$!eva.evaluate_user.photo.name")
+          #else 
+          #set($img="$!imageWebServer/$!config.memberIcon.path/$!config.memberIcon.name")
+          #end 
+        <dt><img src="$!img" width="50" height="50"></dt>
+        <dd>
+          <h3>$!{eva.evaluate_user.userName}<i><img src="$!webPath/recources/style/weixin/default/images/grade_1.gif" width="16" height="16"></i></h3>
+          <p>#if($!{eva.evaluate_info})$!{eva.evaluate_info}#else 这家伙很懒，什么都没说#end</p>
+        <span>$!CommUtil.formatShortDate($!eva.addTime) $!eva.goods_spec</span></dd>
+      </dl>
+      #end
+    </div>
+    <div class="relevant_product" style="display:none;">
+     #foreach($goods in $recommend_goods_list)
+      <ul>
+        #if($!goods.goods_main_photo)              
+          #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_small.$!{goods.goods_main_photo.ext}")
+        #else
+          #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+        #end
+        <li><a href="$!webPath/weixin/goods.htm?goods_id=$!goods.id"><img src="$!img" ></a></li>
+        <li class="relevant_name"><a href="$!webPath/weixin/goods.htm?goods_id=$!goods.id">$!goods.goods_name</a></li>
+        <li class="relevant_price">¥$!{goods.store_price}<del>¥$!{goods.goods_price}</del></li>
+        <li class="relevant_buy">已售出：$!{goods.goods_salenum}笔</li>
+      </ul>
+     #end
+    </div>
+  </div>
+</div>
+  $!httpInclude.include("/weixin/footer.htm")
+  </div>
+$!httpInclude.include("/weixin/platform/nav_bottom.htm")
+
+<input type="hidden" value="$!photosNum" id="activity"/>
+<input type="hidden" value="15" id="crazy"/>
+<script>
+//活动轮播图
+
+$(function(){
+	  // 文档就绪
+	//var picCount = $(".scroller > li").length;
+	var picCount = $("#activity").val();
+	$(".pic-num1").css("width",(picCount*30)+"px");
+	var forEach = function(array, callback){
+		for (var i = 0, len = array.length; i < len; i++) { callback.call(this, array[i], i); }
+	}
+	var st = createPicMove("idContainer2", "idSlider2", picCount);	//图片数量更改后需更改此数值
+	var nums = [];
+	//插入数字
+	for(var i = 0, n = st._count - 1; i <= n;i++){
+		var li = document.createElement("li");
+		nums[i] = document.getElementById("idNum").appendChild(li);
+	}
+	//设置按钮样式
+	st.onStart = function(){
+		//forEach(nums, function(o, i){ o.className = ""})
+		forEach(nums, function(o, i){ o.className = st.Index == i ? "new-tbl-cell on" : "new-tbl-cell"; })
+	}
+	// 重新设置浮动
+	$("#idSlider2").css("position","relative");
+	
+	var _initX = 0;
+	var _finishX = 0;
+	var _startX = 0;
+	var _startY = 0;
+	function touchStart(event) {
+		_startX = event.touches[0].clientX;
+		_startY = event.touches[0].clientY;
+		_initX = _startX;
+	}
+	function touchMove(event) {
+		var touches = event.touches;
+		var _endX = event.touches[0].clientX;
+		var _endY = event.touches[0].clientY;
+		if(Math.abs(_endY-_startY)>Math.abs(_endX-_startX)){
+			return;		
+		}
+		event.preventDefault();
+		_finishX = _endX;
+		var _absX = Math.abs(_endX-_startX);
+		var lastX = $('#idSlider2').css('left').replace('px','');
+		if(_startX>_endX){
+			st.Stop();
+			$('#idSlider2').css('left',(parseInt(lastX)-_absX)+'px');
+		}else{
+			st.Stop();
+			$('#idSlider2').css('left',(parseInt(lastX)+_absX)+'px');
+		} 
+		_startX = _endX;
+	}
+	//触屏  离开屏幕事件
+	function touchEnd(event) {
+		if(_finishX==0){
+			return;
+		}
+		if(_initX>_finishX){
+			bindEvent(_initX,_finishX);
+		}else if(_initX<_finishX){
+			bindEvent(_initX,_finishX);
+		}
+		_initX = 0;
+		_finishX = 0;
+	}
+
+    /**
+     *  绑定触屏触发事件
+     * @param start
+     * @param end
+     */
+    function bindEvent(start,end){
+         if (start >= end) {
+                   st.Next();
+                } else {
+                    st.Previous();
+                }
+    }
+	st.Run();
+	var resetScrollEle = function(){
+		$("#shelper").css("width",$("#newkeyword").width()+"px");
+		var slider2Li = $("#idSlider2 li");
+		slider2Li.css("width",$(".scroll-wrapper").width()+"px");
+		$("#shelper").css("width",$("#newkeyword").width()+"px");
+	}
+	
+	window.addEventListener("resize",function(){
+		st.Change = st._slider.offsetWidth/st._count;
+		st.Next();
+		resetScrollEle();
+	});
+	window.addEventListener("orientationchange",function(){
+		st.Change = st._slider.offsetWidth/st._count;
+		st.Next();
+		resetScrollEle();
+	})
+	resetScrollEle();
+	/* 解决自动跳转问题
+		$(function(){
+    	//根据cookie判断用户是否已经主动取消，主动取消了则不再出现提醒
+    	var cookieName="ucTip";
+    	var cancel = false;
+        var start = document.cookie.indexOf(cookieName+"=");
+        if (start !=-1) {
+            start = start+cookieName.length+1;
+            var end = document.cookie.indexOf(";",start);
+            if (end==-1) {end = document.cookie.length;}
+            var ucTip = document.cookie.substring(start,end);
+    		if(ucTip=='1'){
+    			cancel = true; 
+    		}
+    	}
+    	if(!cancel){
+    		//外层div元素
+    		var ucElement = $('<div>').attr('id','ucTip').css({"position":"fixed","bottom":"30%","z-index":"10001","border":"0","display":"none"});
+    		//frame元素，目前UC只支持该接入类型
+    		var ucFrame = $('<iframe>').css({"height":"160px","width":"320px","border":"0px"}).attr('src','../app.uc.cn/appstore/AppCenter/frame@uc_param_str=nieidnutssvebipfcp&api_ver=2.0&id=445&bg=#ffffff');
+    		ucElement.append(ucFrame);
+    		//将元素添加到页面
+    		$('body').append(ucElement);
+    		//回调方法
+    		window.addEventListener("message",function(event){
+    			var dt = event.data.type;
+    			var dm = event.data.message;
+    			//判断出现的情况
+    			if(dm!='not android uc' && dm!='not exist' && dm!='browser version error' && dm!='already exist' && dm!=undefined){
+    				$('#ucTip').show();
+    			}
+    			//判断隐藏的情况
+    			if (dm == 'success' || dm=='cancle' || dm=='close'){
+        			$('#ucTip').hide();
+    				//如果用户主动取消，则记录到cookie，30天内不再提醒
+    				if(dm=='cancle'){
+    					var expires = new Date();
+    					expires.setTime(expires.getTime() + 30*24*60*60*1000);
+    					document.cookie=cookieName+'=1;expires='+expires.toGMTString()+';path=/;domain=.jd.com';
+    					document.cookie=cookieName+'=1;expires='+expires.toGMTString()+';path=/;domain=.360buy.com';
+    				}
+        		}
+    		},false);
+    	}
+    });
+		function clickResponse(obj){
+		$('[res]').removeClass('on');
+		$(obj).addClass('on');
+		setTimeout(function(){
+			$(obj).removeClass('on');
+		},700);
+	}
+	 */
+		function createPicMove(a, b, c) {
+		    var g = function(j) {
+		        return "string" == typeof j ? document.getElementById(j) : j
+		    };
+		    var d = function(j, l) {
+		        for (var k in l) {
+		            j[k] = l[k]
+		        }
+		        return j
+		    };
+		    var f = function(j) {
+		        return j.currentStyle || document.defaultView.getComputedStyle(j, null)
+		    };
+		    var i = function(l, j) {
+		        var k = Array.prototype.slice.call(arguments).slice(2);
+		        return function() {
+		            return j.apply(l, k.concat(Array.prototype.slice.call(arguments)))
+		        }
+		    };
+		    var e = {
+		        Quart: {
+		            easeOut: function(k, j, m, l) {
+		                return - m * ((k = k / l - 1) * k * k * k - 1) + j
+		            }
+		        },
+		        Back: {
+		            easeOut: function(k, j, n, m, l) {
+		                if (l == undefined) {
+		                    l = 1.70158
+		                }
+		                return n * ((k = k / m - 1) * k * ((l + 1) * k + l) + 1) + j
+		            }
+		        },
+		        Bounce: {
+		            easeOut: function(k, j, m, l) {
+		                if ((k /= l) < (1 / 2.75)) {
+		                    return m * (7.5625 * k * k) + j
+		                } else {
+		                    if (k < (2 / 2.75)) {
+		                        return m * (7.5625 * (k -= (1.5 / 2.75)) * k + 0.75) + j
+		                    } else {
+		                        if (k < (2.5 / 2.75)) {
+		                            return m * (7.5625 * (k -= (2.25 / 2.75)) * k + 0.9375) + j
+		                        } else {
+		                            return m * (7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375) + j
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		    };
+		    var h = function(k, n, m, l) {
+		        this._slider = g(n);
+		        this._container = g(k);
+		        this._timer = null;
+		        this._count = Math.abs(m);
+		        this._target = 0;
+		        this._t = this._b = this._c = 0;
+		        this.Index = 0;
+		        this.SetOptions(l);
+		        this.Auto = !!this.options.Auto;
+		        this.Duration = Math.abs(this.options.Duration);
+		        this.Time = Math.abs(this.options.Time);
+		        this.Pause = Math.abs(this.options.Pause);
+		        this.Tween = this.options.Tween;
+		        this.onStart = this.options.onStart;
+		        this.onFinish = this.options.onFinish;
+		        var j = !!this.options.Vertical;
+		        this._css = j ? "top": "left";
+		        var o = f(this._container).position;
+		        o == "relative" || o == "absolute" || (this._container.style.position = "relative");
+		        this._container.style.overflow = "hidden";
+		        this._slider.style.position = "absolute";
+		        this.Change = this.options.Change ? this.options.Change: this._slider[j ? "offsetHeight": "offsetWidth"] / this._count
+		    };
+		    h.prototype = {
+		        SetOptions: function(j) {
+		            this.options = {
+		                Vertical: true,
+		                Auto: true,
+		                Change: 0,
+		                Duration: 50,
+		                Time: 10,
+		                Pause: 4000,
+		                onStart: function() {},
+		                onFinish: function() {},
+		                Tween: e.Quart.easeOut
+		            };
+		            d(this.options, j || {})
+		        },
+		        Run: function(j) {
+		            j == undefined && (j = this.Index);
+		            j < 0 && (j = this._count - 1) || j >= this._count && (j = 0);
+		            this._target = -Math.abs(this.Change) * (this.Index = j);
+		            this._t = 0;
+		            this._b = parseInt(f(this._slider)[this.options.Vertical ? "top": "left"]);
+		            this._c = this._target - this._b;
+		            this.onStart();
+		            this.Move()
+		        },
+		        Move: function() {
+		            clearTimeout(this._timer);
+		            if (this._c && this._t < this.Duration) {
+		                this.MoveTo(Math.round(this.Tween(this._t++, this._b, this._c, this.Duration)));
+		                this._timer = setTimeout(i(this, this.Move), this.Time)
+		            } else {
+		                this.MoveTo(this._target);
+		                this.Auto && (this._timer = setTimeout(i(this, this.Next), this.Pause))
+		            }
+		        },
+		        MoveTo: function(j) {
+		            this._slider.style[this._css] = j + "px"
+		        },
+		        Next: function() {
+		            this.Run(++this.Index)
+		        },
+		        Previous: function() {
+		            this.Run(--this.Index)
+		        },
+		        Stop: function() {
+		            clearTimeout(this._timer);
+		            this.MoveTo(this._target)
+		        }
+		    };
+		    return new h(a, b, c, {
+		        Vertical: false
+		    })
+		}
+});
+
+	 
+</script>
+</body>
+</html>

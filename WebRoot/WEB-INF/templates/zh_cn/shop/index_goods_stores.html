@@ -1,0 +1,119 @@
+  <div class="hot_content">
+  <ul class="tab_list clearfix">
+  <li class="this">推荐商品<span class="more"><a href="$!webPath/goods_recommend_list_homepage.htm" target="_blank">更多</a></span></li>
+  <li>推荐店铺<span class="more"><a href="$!webPath/store_list.htm?type=store" target="_blank">更多</a></span></li>
+  </ul>
+  <div class="hot_content_c">
+<div class="hot_sale clearfix" >
+#foreach($!store_reommend_good in $store_reommend_goods)
+  <ul>
+  #if($!store_reommend_good.goods_main_photo)
+  #set($img="$!imageWebServer/$!{store_reommend_good.goods_main_photo.path}/$!{store_reommend_good.goods_main_photo.name}_middle.$!{store_reommend_good.goods_main_photo.ext}")
+  #else
+  #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+  #end
+  #set($goods_url="$!webPath/goods_$!{store_reommend_good.id}.htm")
+  #if($!config.second_domain_open)
+  #set($goods_url="http://$!{store_reommend_good.goods_store.store_second_domain}.$!{domainPath}/goods_$!{store_reommend_good.id}.htm")
+  #end
+  <li>
+  <a class="p_img" href="$!goods_url" target="_blank"><img src="$!img" /></a>
+  <a class="p_name" href="$!goods_url" target="_blank">$!CommUtil.substring("$!store_reommend_good.goods_name",20)</a>
+  <a class="p_price">商城价：<span class="red"><i>￥</i>$!{store_reommend_good.goods_current_price}</span><br/> <span class="through hui">零售价：￥$!{store_reommend_good.goods_price}</span></a>
+   <div style="font-size:14px;" class="text-center">店铺：<a href="$!webPath/store_$!{store_reommend_good.goods_store.id}.htm">$!CommUtil.substring("$!{store_reommend_good.goods_store.store_name}",8)</a></div> 
+  </li>
+  </ul>
+#end
+  </div>
+  <div class="hot_store clearfix" style="display:none;">
+  <ul>
+  <li>
+  <a class="P_store" href="$!store_url" target="_blank"><img src="$!img_store" /></a>
+  <a class="store_name" href="$!store_url" target="_blank">$!{star_store.store_name}</a> 
+  </li>
+  #foreach($star_store in $!storeViewTools.query_recommend_store(9,$!{pc_city_id}))
+	  #if($!star_store.store_logo)
+	  	#set($img_store="$!webPath/$!{star_store.store_logo.path}/$!{star_store.store_logo.name}")
+	  #else
+	  	#set($img_store="$!webPath/$!config.storeImage.path/$!config.storeImage.name")
+	  #end
+	  #set($store_url="$!webPath/store_$!{star_store.id}.htm")
+	  #if($!config.second_domain_open)
+	  	#set($store_url="http://$!{star_store.store_second_domain}.$!{domainPath}")
+	  #end
+  <li>
+  <a class="P_store" href="$!store_url" target="_blank"><img src="$!img_store" /></a>
+  <a class="store_name" href="$!store_url" target="_blank">$!{star_store.store_name}</a>
+  <div class="store_info">
+  <h1>店铺信息</h1>
+			<ul>
+				<li>创店时间：2015-07-22</li>
+				<li>所在地区：江苏省 无锡市 滨湖区 </li>
+				 
+				<li>商品数量：<strong class="blue">0</strong>件商品</li>
+				<li>店铺收藏：<strong class="blue">1</strong>人收藏</li>
+				<li>联系电话：15467654678</li>
+			</ul>
+  </div>
+  </li>
+  #end
+  </ul>
+  </div>
+</div>
+</div>
+<!--
+  <div class="limitime">
+    <h3><a href="javascript:void(0);" onclick="switch_recommend_goods();">换一组</a>推荐商品</h3>
+    <div class="limishop" id="store_reommend_goods">
+      <div class="limishop_hidden"> #foreach($!store_reommend_good in $store_reommend_goods)
+        <ul>
+          #if($!store_reommend_good.goods_main_photo)
+          #set($img="$!imageWebServer/$!{store_reommend_good.goods_main_photo.path}/$!{store_reommend_good.goods_main_photo.name}_middle.$!{store_reommend_good.goods_main_photo.ext}")
+          #else
+          #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
+          #end
+          #set($goods_url="$!webPath/goods_$!{store_reommend_good.id}.htm")
+          #if($!config.second_domain_open)
+          #set($goods_url="http://$!{store_reommend_good.goods_store.store_second_domain}.$!{domainPath}/goods_$!{store_reommend_good.id}.htm")
+          #end
+          <li class="limishop_img"><a href="$!goods_url" target="_blank"><span>
+            <p><img src="$!img" width="160" height="160" /></p>
+            </span></a><i class="recommend_new"></i> </li>
+          <li class="limitmone"><span>¥$!{store_reommend_good.goods_current_price}<i>¥$!{store_reommend_good.goods_price}</i></span></li>
+          <li><a href="$!goods_url" target="_blank" class="limihui">$!CommUtil.substring("$!store_reommend_good.goods_name",20)</a></li>
+          <li class="limitmo_ems"><em>店铺：
+            #set($store_url="$!webPath/store_$!{store_reommend_good.goods_store.id}.htm")
+            #if($!config.second_domain_open)
+            #set($store_url="http://$!{store_reommend_good.goods_store.store_second_domain}.$!{domainPath}")
+            #end <a href="$!store_url">$!CommUtil.substring("$!{store_reommend_good.goods_store.store_name}",8)</a></em></li>
+          <li class="limitmo_ems"><span><em>所在地：</em><b>$!{store_reommend_good.goods_store.area.parent.areaName}</b></span></li>
+        </ul>
+        #end </div>
+    </div>
+  </div>
+  <div class="specialre">
+    <h3><span><a href="$!webPath/store_list.htm?type=store" target="_blank">更多</a></span>推荐店铺</h3>
+    <div class="specialde">
+      <ul>
+        #foreach($star_store in $!storeViewTools.query_recommend_store(9,$!{pc_city_id}))
+        #set($store_url="$!webPath/store_$!{star_store.id}.htm")
+        #if($!config.second_domain_open)
+        #set($store_url="http://$!{star_store.store_second_domain}.$!{domainPath}")
+        #end
+        <li><a href="$!store_url" target="_blank">#if($!{star_store.store_logo})<img src="$!imageWebServer/$!{star_store.store_logo.path}/$!{star_store.store_logo.name}" width="94" height="94" />#end<span><i style="display:none;cursor:pointer;">$!{star_store.store_name}</i></span></a></li>
+        #end
+      </ul>
+    </div>
+  </div>
+-->
+  <script>
+  $(function(){
+	  $(".tab_list li").on("click",function(){
+		 var _index = $(this).index();
+		$(this).siblings().removeClass("this");
+		  $(this).addClass("this");
+		  $(".hot_content_c > div").siblings().hide();
+		  $(".hot_content_c > div").eq(_index).show();
+		  });
+	  });
+  </script>

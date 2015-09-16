@@ -1,0 +1,20 @@
+#foreach($obj in $objs)
+<hgroup class="order_hgroup_h4 container fff mt10">
+	<div class="shop_name">
+		<span class="p_name">$!{obj.store.store_name} </span>
+	</div>
+
+	<div>
+		<i>赊销金额：</i><span class="txt_red">$!{obj.paymentNum}</span>
+	</div>
+	<div>
+		<i>已用金额：</i><span class="txt_bule">$!{obj.usedPayNum}</span>
+	</div>
+	<div>
+		<i>赊销周期：</i> $!{obj.paymentDays}天
+	</div>
+	<div>
+		<i>创建时间：</i> $!CommUtil.formatLongDate($!{obj.addTime})
+	</div>
+</hgroup>
+#end
