@@ -1,0 +1,5 @@
+#Thu Jun 05 12:24:03 CST 2014
+eclipse.preferences.version=1
+validator.Checked=WebRoot
+validator.Revalidate=false
+validator.Unchecked=WebRoot/WEB-INF/web.xml,WebRoot/WEB-INF/urlrewrite.xml,WebRoot/WEB-INF/iskyshop-servlet.xml

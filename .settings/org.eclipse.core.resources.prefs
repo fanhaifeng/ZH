@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//WebRoot/WEB-INF/templates/zh_cn/shop/cart_address.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/shop/top.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/address_add.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_confirm_refund_order.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_nav.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_order_refund.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_order_return_apply_view.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_order_shipping.html=UTF-8
+encoding//WebRoot/WEB-INF/templates/zh_cn/system/user/default/usercenter/seller_order_shipping_code.html=UTF-8
+encoding//src/com/lakecloud/weixin/store/view/action/WeixinStoreLoginViewAction.java=UTF-8
+encoding//src/com/lakecloud/weixin/utils/WeixinUtils.java=UTF-8
+encoding/<project>=UTF-8
