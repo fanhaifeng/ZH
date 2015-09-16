@@ -9,3 +9,5 @@ merge
 git is free software ....
 
 issue-02
+
+git stash
