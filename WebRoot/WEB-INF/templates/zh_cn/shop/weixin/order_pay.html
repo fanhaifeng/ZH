@@ -151,10 +151,17 @@ jQuery(document).ready(function(){
    jQuery.validator.addMethod("verifyArea",function(value,element){
 	   var user_area=$!{of.user.area.id};
 	   var store_area=$!{of.store.area.parent.id};
-	   if(user_area!=store_area){
-	   		return false;
-	   }else{
-	   		return true;
+	   var integrationPlatform = jQuery("#integrationPlatform").val();
+	   if(integrationPlatform==""){
+		   return true;
+	   }
+	   else{
+		   var int_integrationPlatform=parseInt(integrationPlatform);
+		   if(user_area!=store_area && (int_integrationPlatform!=0)){
+		   		return false;
+		   }else{
+		   		return true;
+		   }
 	   }
    });
    jQuery("#theForm").validate({				 

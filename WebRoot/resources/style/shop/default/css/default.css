@@ -368,7 +368,7 @@ left:-50%; z-index:0;}
 .goodevtable td{ border:1px solid #ccc; padding-top:5px; padding-bottom:5px;}
 .evaludetail{ width:1202; overflow:hidden;  clear:both}
 .evlua ul {  float:left; overflow:hidden; padding-left:20px;}
-.evlua ul li{ float:left; background:url(../images/eval.jpg) no-repeat; width:97px; height:32px; line-height:32px; text-align:center; margin-right:5px; cursor:pointer}
+.evlua ul li{ float:left;  width:97px; height:32px; line-height:32px; text-align:center; margin-right:5px; cursor:pointer}
 .evlua ul .this{ background:url(../images/allevl.jpg) no-repeat; width:97px; height:32px;}
 .evlua{ width:947px; overflow:hidden; float:left; position:relative; top:2px;}
 .evalubot{ border-top:2px solid #8B98AD; float:left; overflow:hidden; width:1202;}
@@ -480,9 +480,9 @@ dd,dl,dt{ padding:0px; margin:0px;}
 /*评分*/
 .flower{ margin-right:5px;}
 .eval_service{ width:947px;  overflow:hidden; background:#EEEEEE; margin-bottom:10px;}
-.eval_service_box{ border:1px solid #ccc; width:785px; margin:5px; overflow:hidden}
+.eval_service_box{ border:1px solid #ccc; width:99%; margin:5px; overflow:hidden}
 .eval_service_box h3{ height:30px; border-bottom:1px solid #ccc; line-height:30px; padding-left:25px; background:#F4F9FF url(../images/shop_evl.gif) no-repeat 5px center; }
-.eval_service_bt{ width:765px; float:left; overflow:hidden; padding:10px; background:#fff; padding-bottom:20px;}
+.eval_service_bt{ width:100%; float:left; overflow:hidden; padding:10px; background:#fff; padding-bottom:20px;}
 .eval_tab{ width:375px; float:left; height:108px; margin-left:60px; display:inline; position:relative; z-index:3;}
 .eval_tab_right{ width:250px; float:left; height:114px; margin-top:12px; position:relative; z-index:2; margin-left:-4px;}
 .eval_tab ul{ width:375px; float:left; overflow:hidden;}

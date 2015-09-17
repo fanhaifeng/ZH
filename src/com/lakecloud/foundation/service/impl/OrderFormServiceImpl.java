@@ -1051,7 +1051,6 @@ public class OrderFormServiceImpl implements IOrderFormService {
 				String orderNo = "" + System.currentTimeMillis();
 				mv.addObject("OrderNo", orderNo);
 			} else if (payType.equals(ConstantUtils._PAYMENT_MARK[2])) {// 现款自提
-				subtract_operations_for_integration(of, request);
 				mv = new JModelAndView("weixin/payafter_pay.html",
 						configService.getSysConfig(), this.userConfigService
 								.getUserConfig(), 1, request, response);
@@ -1913,6 +1912,7 @@ public class OrderFormServiceImpl implements IOrderFormService {
 			}
 			of.setOrder_status(16);
 			update(of);
+			subtract_operations_for_integration(of, request);
 			if (this.configService.getSysConfig().isSmsEnbale()) {
 				try {
 					String phone = of.getStore().getUser().getTelephone();

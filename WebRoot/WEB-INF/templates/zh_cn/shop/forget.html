@@ -19,8 +19,27 @@ jQuery(document).ready(function(){
         error.appendTo(element.parent().parent());  
      },
 	rules: {
-			userName: {required:true},
-			email: {required:true,email:true},
+			telephone: {required:true},
+			mobile_verify_code : {
+				required : true,
+				remote : {
+					url : "$!webPath/verify_verifycode.htm", //后台处理程序
+					type : "post", //数据发送方式
+					dataType : "json", //接受数据格式   
+					data : { //要传递的数据
+						"mobile_verify_code" : function() {
+							return jQuery(
+									"#mobile_verify_code")
+									.val();
+						},
+						"telephone" : function() {
+							return jQuery(
+									"#telephone")
+									.val();
+						}
+					}
+				}
+			},
 			code:{required:true,
 			      remote:{
 		             url: "$!webPath/verify_code.htm",     //后台处理程序
@@ -32,16 +51,75 @@ jQuery(document).ready(function(){
 		          }
 			}
 		 },
-		messages: {
-			userName: {required:"用户名不能为空"},
-			email: {required:"邮箱不能为空",email:"邮箱格式不对"},
+		messages: {	
+			telephone: {required:"手机号码不能为空"},
+			mobile_verify_code : {
+				required : "手机验证码不能为空",
+				remote : "手机验证码不正确"
+			},
 			code:{required:"验证码不能为空",remote:"验证码不正确"}
-					}
+		}
   });
 });
+
+
  function refreshCode(){
     jQuery("#code_img").attr("src","$!webPath/verify.htm?d"+new Date().getTime());
  }
+ 
+ var time = 60;
+ var time_id = "";
+
+ function generic_mobile_verify_code() {
+ 	var mobile = jQuery("#telephone").val();
+ 	
+ 	if (mobile!="" && isMobil(mobile)) {
+		jQuery.post("$!webPath/weixin/account_mobile_sms.htm", {
+			"type" : "mobile_vetify_code",
+			"mobile" : mobile
+		}, function(data) {
+			if (data == "100") {
+				jQuery("#remote-tel").hide();
+				time = 60;
+				time_id = setInterval(countDown, 1000);
+			}
+			if (data == "200") {
+				jQuery("#remote-tel").show().html("短信发送失败").fadeOut(3000);
+			}
+			if (data == "300") {
+				jQuery("#remote-tel").show().html("商城未开启短信服务").fadeOut(3000);
+			}
+		}, "text");		
+ 	} else {
+ 		jQuery("#remote-tel").show().html("请输入正确的手机号码").fadeOut(3000);
+ 	}
+ }
+
+ function getInfo() {
+	 jQuery('input:checkbox[name=plant]:checked').each(function(i) {
+		 console.log(jQuery(this).val());
+		 console.log(i);
+	 });
+ }
+
+ function countDown() {
+ 	--time;
+ 	jQuery("#time_out_generic").html(time + "秒后可以重新获取,验证码15分钟有效");
+ 	console.log(time);
+ 	if (time == 0) {
+ 		clearInterval(time_id);
+ 		jQuery("#time_out_generic").html("");
+ 		jQuery("#mobile_verify_code_generic").show();
+ 	}
+ }
+
+ function isMobil(s) {
+ 	var patrn = /(^0{0,1}1[3|4|5|6|7|8|9][0-9]{9}$)/;
+ 	if (!patrn.exec(s)) {
+ 	return false;
+ 	}
+ 	return true;
+ }   
 </script>
 </head>
 <body>
@@ -59,23 +137,35 @@ $!httpInclude.include("/top.htm")
             <form action="$!webPath/find_pws.htm" method="post" id="theForm">
             <table width="800" border="0" cellspacing="0" cellpadding="0" class="login_user_table">
               <tr>
-                <td width="130" class="login_nameu">用户名：</td>
+                <td width="130" class="login_nameu">手机号码：</td>
                 <td><span class="login_user_input input_size">
-                  <input name="userName" type="text" id="userName" />
+                  <input name="telephone" type="text" id="telephone" />
                   </span></td>
+                  <td class="login_nameu2" id="remote-tel"></td>
               </tr>
-              <tr>
-                <td class="login_nameu">邮箱：</td>
-                <td><span class="login_user_input input_size">
-                  <input name="email" type="text" id="email" />
-                  </span></td>
-              </tr>
-              <tr>
-                <td class="login_nameu">验证码：</td>
-                <td><span class="login_user_input input_size2">
-                  <input name="code" type="text" id="code" style="text-transform:uppercase;" />
-                  </span><span class="yzm"><a href="javascript:void(0);"><img src="$!imageWebServer/verify.htm" name="code_img" width="59" height="27" id="code_img" style="cursor:pointer;" onclick="refreshCode();" /></a></span></td>
-              </tr>
+              <tr>	
+                   <td></td>
+                   <td>
+	                    <a href="javascript:void(0);" onclick="generic_mobile_verify_code();"
+						id="mobile_verify_code_generic">点击获取验证码</a>
+						<span id="time_out_generic"></span>
+					</td>
+					<td class="login_nameu2"></td>
+                  </tr>
+                  <tr>
+                    <td class="login_nameu">手机验证码：</td>
+                    <td><span class="login_user_input input_size">
+                      <input name="mobile_verify_code" type="text" id="mobile_verify_code" />
+                      </span>
+                    </td>
+                    <td class="login_nameu2"></td>
+                  </tr>     
+	              <tr>
+	                <td class="login_nameu">验证码：</td>
+	                <td><span class="login_user_input input_size2">
+	                  <input name="code" type="text" id="code" style="text-transform:uppercase;" />
+	                  </span><span class="yzm"><a href="javascript:void(0);"><img src="$!imageWebServer/verify.htm" name="code_img" width="59" height="27" id="code_img" style="cursor:pointer;" onclick="refreshCode();" /></a></span></td>
+	              </tr>
               <tr>
                 <td>&nbsp;</td>
                 <td><span class="login_user_find">

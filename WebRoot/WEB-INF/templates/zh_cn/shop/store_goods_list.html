@@ -256,7 +256,7 @@ $!httpInclude.include("/top.htm")
               <div class="chosen">
                 <div class="chosena">您已经选择：</div>
                 #if($!goods_property.size()>0)
-                <div class="chosenb"> #foreach($map in $goods_property) <span class="chose"> <strong class="hui2">$!map.get("name"):</strong> <strong class="orange">$!map.get("value")</strong> <strong class="close_chose"></strong> <strong class="del_chose"><img src="$!webPath/resources/style/system/front/default/images/close.jpg" width="14" height="14" onclick="goods_property_remove('$!map.get("type")','$!map.get("gs_info")')" /></strong> </span> #end </div>
+                <div class="chosenb"> #foreach($map in $goods_property) <span class="chose"> <strong class="orange">$!map.get("name")：</strong> <strong class="orange">$!map.get("value")</strong> <strong class="close_chose"></strong> <strong class="del_chose" onclick="goods_property_remove('$!map.get("type")','$!map.get("gs_info")')" ><img src="$!webPath/resources/style/system/front/default/images/close.png" width="25" height="22" /></strong> </span> #end </div>
                 #end <span class="chosen_sp" > 
                 <img src="$!webPath/resources/style/system/front/default/images/more_sp.gif" width="26" height="26" id="all_property_open" /> 
                 <img src="$!webPath/resources/style/system/front/default/images/more_sp2.gif" width="26" height="26" style="display:none" id="all_property_close"/> 
@@ -269,7 +269,7 @@ $!httpInclude.include("/top.htm")
                  <a href="javascript:void(0);" style="display:none" class="class_income">收起</a> 
                  </div>
                 #end
-                <div class="classa">$!info.name:</div>
+                <div class="classa">$!info.name：</div>
                 <div class="classb">
                  #foreach($v_info in $info.properties)
                   <span>

@@ -524,6 +524,7 @@ public class WeixinStoreIndexViewAction {
 			mv.addObject("store_id", store_id);
 			mv.addObject("store", store);
 			mv.addObject("user", user);
+			mv.addObject("imgTime", new Date());
 			
 			//获取该店铺所有商品
 			Map paramCoun = new HashMap();

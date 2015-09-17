@@ -1012,8 +1012,10 @@ public class GoodsViewAction {
 				JSONArray array = (JSONArray) JSONValue.parse(goods
 						.getGoods_property());
 				List<List<HashMap<String, String>>> list=new ArrayList<List<HashMap<String,String>>>();
+				int col = 3;//页面显示列数
+				mv.addObject("colnum", col*2);
 				for (int i=0;i<array.size();) {
-					int col=3;//列数
+					col=3;//列数
 					List<HashMap<String, String>> listSon=new ArrayList<HashMap<String,String>>();
 					for(;col>0;col--){
 						if(i>=array.size())

@@ -778,7 +778,9 @@ public class StoreSellerAction {
 				this.userConfigService.getUserConfig(), 0, request, response);
 		Store store = this.storeService.getObjByProperty("user.id",
 				SecurityUserHolder.getCurrentUser().getId());
+		Long time=new Date().getTime();
 		mv.addObject("store", store);
+		mv.addObject("this_time", time);
 		return mv;
 	}
 

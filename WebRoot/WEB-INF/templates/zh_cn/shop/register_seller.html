@@ -304,6 +304,19 @@ jQuery(document).ready(function(){
 					},
 					agree : {
 						required : true
+					},
+					code : {
+						required : true,
+						remote : {
+							url : "$!webPath/verify_code.htm", //后台处理程序
+							type : "post", //数据发送方式
+							dataType : "json", //接受数据格式   
+							data : { //要传递的数据
+								"code" : function() {
+									return jQuery("#code").val();
+								}
+							}
+						}
 					}
 				},
 				messages : {
@@ -352,6 +365,10 @@ jQuery(document).ready(function(){
 					},
 					agree : {
 						required : "请接受用户协议"
+					},
+					code :{
+						required : "请填写验证码",
+						remote : "验证码不正确"
 					}
 				}
 			});
@@ -374,29 +391,30 @@ var time_id = "";
 
 function generic_mobile_verify_code() {
 	var mobile = jQuery("#telephone").val();
-	if (isMobil(mobile)) {
+	
+	if (mobile!="" && isMobil(mobile)) {
 		if(!flag){
-			jQuery("#error_goods_inventory").show().find("span").html("手机号码已存在").parent().fadeOut(3000);
+			jQuery("#remote-tel").show().html("手机号码已存在").fadeOut(3000);
 		}else{
 			jQuery.post("$!webPath/weixin/account_mobile_sms.htm", {
 				"type" : "mobile_vetify_code",
 				"mobile" : mobile
 			}, function(data) {
 				if (data == "100") {
-					jQuery("#mobile_verify_code_generic").hide();
+					jQuery("#remote-tel").hide();
 					time = 60;
 					time_id = setInterval(countDown, 1000);
 				}
 				if (data == "200") {
-					jQuery("#error_goods_inventory").show().find("span").html("短信发送失败").parent().fadeOut(3000);
+					jQuery("#remote-tel").show().html("短信发送失败").fadeOut(3000);
 				}
 				if (data == "300") {
-					jQuery("#error_goods_inventory").show().find("span").html("商城未开启短信服务").parent().fadeOut(3000);
+					jQuery("#remote-tel").show().html("商城未开启短信服务").fadeOut(3000);
 				}
 			}, "text");
 		}	
 	} else {
-		jQuery("#error_goods_inventory").show().find("span").html("请输入正确的手机号码").parent().fadeOut(3000);
+		jQuery("#remote-tel").show().html("请输入正确的手机号码").fadeOut(3000);
 	}
 }
 
@@ -577,9 +595,9 @@ function isMobil(s) {
                   #if($!config.securityCodeRegister)
                   <tr>
                     <td class="login_nameu">验证码：</td>
-                    <td><span class="login_user_input input_size2">
+                    <td><span  style="float:left;"  class="login_user_input input_size2">
                       <input name="code" type="text" id="code" style="text-transform:uppercase;"/>
-                      </span><span class="yzm" #if($!config.securityCodeType=='voice')style="display:none;"#end><img style="cursor:pointer;" src="$!webPath/verify.htm" id="code_img" onclick="refreshCode();" width="59" height="27" /></span>
+                      </span><span style="float:left;" class="yzm" #if($!config.securityCodeType=='voice')style="display:none;"#end><img style="cursor:pointer;" src="$!webPath/verify.htm" id="code_img" onclick="refreshCode();" width="80" height="34" /></span>
 					  #if($!config.securityCodeType=="voice")
 					     <span class="yzm"><a href="javascript:void(0);" onclick="readCode('player')" title="朗读验证码">
                    <img src="$!imageWebServer/resources/style/common/images/speaker.gif" border="0" /></a></span><span id="player"></span>

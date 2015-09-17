@@ -42,43 +42,27 @@ import com.lakecloud.foundation.domain.GoodsReturn;
 import com.lakecloud.foundation.domain.GoodsReturnItem;
 import com.lakecloud.foundation.domain.GoodsReturnLog;
 import com.lakecloud.foundation.domain.GoodsSpecProperty;
-import com.lakecloud.foundation.domain.Integration;
-import com.lakecloud.foundation.domain.Integration_Child;
-import com.lakecloud.foundation.domain.Integration_Log;
 import com.lakecloud.foundation.domain.OrderForm;
 import com.lakecloud.foundation.domain.OrderFormLog;
 import com.lakecloud.foundation.domain.RefundLog;
-import com.lakecloud.foundation.domain.Store;
 import com.lakecloud.foundation.domain.Template;
 import com.lakecloud.foundation.domain.User;
 import com.lakecloud.foundation.domain.query.OrderFormQueryObject;
 import com.lakecloud.foundation.domain.virtual.TransInfo;
 import com.lakecloud.foundation.service.IChargeService;
-import com.lakecloud.foundation.service.IEvaluateService;
-import com.lakecloud.foundation.service.IExpressCompanyService;
 import com.lakecloud.foundation.service.IGoodsCartService;
 import com.lakecloud.foundation.service.IGoodsReturnItemService;
 import com.lakecloud.foundation.service.IGoodsReturnLogService;
 import com.lakecloud.foundation.service.IGoodsReturnService;
-import com.lakecloud.foundation.service.IGoodsService;
-import com.lakecloud.foundation.service.IGroupGoodsService;
-import com.lakecloud.foundation.service.IIntegralLogService;
-import com.lakecloud.foundation.service.IIntegrationService;
-import com.lakecloud.foundation.service.IIntegration_ChildService;
-import com.lakecloud.foundation.service.IIntegration_LogService;
 import com.lakecloud.foundation.service.IOrderFormLogService;
 import com.lakecloud.foundation.service.IOrderFormService;
-import com.lakecloud.foundation.service.IPaymentService;
 import com.lakecloud.foundation.service.IRefundLogService;
-import com.lakecloud.foundation.service.IRefundService;
 import com.lakecloud.foundation.service.ISysConfigService;
 import com.lakecloud.foundation.service.ITemplateService;
 import com.lakecloud.foundation.service.IUserConfigService;
 import com.lakecloud.foundation.service.IUserService;
-import com.lakecloud.manage.admin.tools.MsgTools;
 import com.lakecloud.manage.admin.tools.PaymentTools;
 import com.lakecloud.view.web.tools.StoreViewTools;
-import com.lakecloud.weixin.store.view.action.WeixinStorePayViewAction;
 
 /**
  * @info 卖家订单控制器，卖家中心订单管理所有控制器都在这里
@@ -99,8 +83,6 @@ public class OrderSellerAction {
 	@Autowired
 	private IRefundLogService refundLogService;
 	@Autowired
-	private IGoodsService goodsService;
-	@Autowired
 	private IGoodsReturnService goodsReturnService;
 	@Autowired
 	private IGoodsReturnItemService goodsReturnItemService;
@@ -109,33 +91,15 @@ public class OrderSellerAction {
 	@Autowired
 	private IGoodsCartService goodsCartService;
 	@Autowired
-	private IEvaluateService evaluateService;
-	@Autowired
 	private IUserService userService;
-	@Autowired
-	private IIntegralLogService integralLogService;
-	@Autowired
-	private IGroupGoodsService groupGoodsService;
 	@Autowired
 	private ITemplateService templateService;
 	@Autowired
-	private IPaymentService paymentService;
-	@Autowired
-	private IExpressCompanyService expressCompayService;
-	@Autowired
 	private StoreViewTools storeViewTools;
-	@Autowired
-	private MsgTools msgTools;
 	@Autowired
 	private PaymentTools paymentTools;
 	@Autowired
 	private IChargeService chargeService;
-	@Autowired
-	private IRefundService refundService;
-	@Autowired
-	private WeixinStorePayViewAction wsp;
-	
-	
 	
 	@SecurityMapping(title = "卖家订单列表", value = "/seller/order.htm*", rtype = "seller", rname = "订单管理", rcode = "order_seller", rgroup = "交易管理")
 	@RequestMapping("/seller/order.htm")
@@ -1009,80 +973,4 @@ public class OrderSellerAction {
 			}
 		}
 	}
-	@Autowired
-	private IIntegrationService is;
-	@Autowired
-	private IIntegration_ChildService ics;
-	@Autowired
-	private IIntegration_LogService ils;
-	/**
-	 * 初始化农豆
-	 * @param request
-	 * @param response
-	 * @param id
-	 * @return
-	 */
-	@RequestMapping("/seller/cshnd.htm")
-	public void cshnd(HttpServletRequest request,
-			HttpServletResponse response,String nd2,String gqnd2,String js) {
-		int icm=0;
-		int ilm=0;
-		int js2 = CommUtil.null2Int(js);
-		int nd = CommUtil.null2Int(nd2)*js2;
-		int gqnd = CommUtil.null2Int(gqnd2)*js2;
-		Integration_Log ilog=new Integration_Log();
-		ilog.setAddTime(new Date());
-		User user = SecurityUserHolder.getCurrentUser();
-		Store store = user.getStore();
-		Integration il = this.is.getObjByProperty("user.id", user.getId());
-		if(il==null){
-			il=new Integration();
-			il.setAddTime(new Date());
-			il.setIntegrals(0);
-			il.setOverdue_integrals(0);
-			il.setUser(user);
-			ilm=1;
-		}
-		ilog.setBe_integrals(il.getIntegrals());
-		String query="from Integration_Child obj where obj.type=0 and obj.user.id=:uid";
-		Map<String,Object> params=new HashMap<String, Object>();
-		params.put("uid", user.getId());
-		List<Integration_Child> ics2 = this.ics.query(query, params, -1, -1);
-		Integration_Child ic;
-		if(ics2.size()==0){
-			ic=new Integration_Child();
-			ic.setAddTime(new Date());
-			ic.setInteg(il);
-			ic.setIntegrals(0);
-			ic.setOverdue_integrals(0);
-			ic.setType(0);
-			ic.setUser(user);
-			icm=1;
-		}else
-			ic=ics2.get(0);
-		//
-		il.setIntegrals(il.getIntegrals()+nd);
-		il.setOverdue_integrals(il.getOverdue_integrals()+gqnd);
-		//
-		ic.setIntegrals(ic.getIntegrals()+nd);
-		ic.setOverdue_integrals(ic.getOverdue_integrals()+gqnd);
-		//		
-		ilog.setAf_integrals(il.getIntegrals());
-		ilog.setGettype(ilm==1?1:-1);
-		ilog.setInteg(il);
-		ilog.setIntegrals(nd>0?nd:(nd*-1));
-		ilog.setOverdue_integrals(gqnd>0?gqnd:(gqnd*-1));
-		ilog.setType(js2);
-		ilog.setUser(user);
-		if(icm==0)
-			this.is.update(il);
-		else
-			this.is.save(il);
-		if(ilm==0)
-			this.ics.update(ic);
-		else
-			this.ics.save(ic);
-		this.ils.save(ilog);
-	}
-
 }

@@ -153,40 +153,48 @@ public class GoodsCartServiceImpl implements IGoodsCartService {
 	@Override
 	public String remove_goods_cart(HttpServletRequest request,
 			HttpServletResponse response, String id, String store_id) {
-				GoodsCart gc = getObjById(CommUtil.null2Long(id));
-				StoreCart the_sc = gc.getSc();
-				gc.getGsps().clear();
-				// the_sc.getGcs().remove(gc);
-				delete(CommUtil.null2Long(id));
-				if (the_sc.getGcs().size() == 0) {
-					delete(the_sc.getId());
-				}
-				List<StoreCart> cart = this.orderFormService.cart_calc(request);
-				double total_price = 0;
-				double sc_total_price = 0;
-				double count = 0;
-				for (StoreCart sc2 : cart) {
-					for (GoodsCart gc1 : sc2.getGcs()) {
-						total_price = CommUtil.null2Double(gc1.getPrice())
-								* gc1.getCount() + total_price;
-						count++;
-						if (store_id != null && !store_id.equals("")
-								&& sc2.getStore().getId().toString().equals(store_id)) {
-							sc_total_price = sc_total_price
-									+ CommUtil.null2Double(gc1.getPrice())
-									* gc1.getCount();
-							sc2.setTotal_price(BigDecimal.valueOf(sc_total_price));
-						}
+		GoodsCart gc = getObjById(CommUtil.null2Long(id));
+		StoreCart the_sc = gc.getSc();
+		gc.getGsps().clear();
+		// the_sc.getGcs().remove(gc);
+		delete(CommUtil.null2Long(id));
+		if (the_sc.getGcs().size() == 0) {
+			delete(the_sc.getId());
+		}
+		List<StoreCart> cart = this.orderFormService.cart_calc(request);
+		double total_price = 0;
+		double sc_total_price = 0;
+		double count = 0;
+		for (StoreCart sc2 : cart) {
+			List<GoodsCart> goodsCartList = new ArrayList<GoodsCart>();
+			for (GoodsCart gc1 : sc2.getGcs()) {
+				GoodsCart temp_gc =getObjById(gc1
+						.getId());
+				if (temp_gc != null) {
+					goodsCartList.add(temp_gc);
+					total_price = CommUtil.null2Double(gc1.getPrice())
+							* gc1.getCount() + total_price;
+					count++;
+					if (store_id != null && !store_id.equals("")
+							&& sc2.getStore().getId().toString().equals(
+									store_id)) {
+						sc_total_price = sc_total_price
+								+ CommUtil.null2Double(gc1.getPrice())
+								* gc1.getCount();
+						sc2.setTotal_price(BigDecimal.valueOf(sc_total_price));
 					}
-					this.storeCartDao.update(sc2);
 				}
-				request.getSession(false).setAttribute("cart", cart);
-				Map map = new HashMap();
-				map.put("count", count);
-				map.put("total_price", total_price);
-				map.put("sc_total_price", sc_total_price);
-				String ret=Json.toJson(map, JsonFormat.compact());
-				return ret;
+			}
+			sc2.setGcs(goodsCartList);
+			this.storeCartDao.update(sc2);
+		}
+		request.getSession(false).setAttribute("cart", cart);
+		Map map = new HashMap();
+		map.put("count", count);
+		map.put("total_price", total_price);
+		map.put("sc_total_price", sc_total_price);
+		String ret = Json.toJson(map, JsonFormat.compact());
+		return ret;
 	}
 
 	@Override

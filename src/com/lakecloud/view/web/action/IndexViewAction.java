@@ -20,6 +20,7 @@ import com.lakecloud.core.mv.JModelAndView;
 import com.lakecloud.core.security.support.SecurityUserHolder;
 import com.lakecloud.core.tools.CommUtil;
 import com.lakecloud.core.tools.Md5Encrypt;
+import com.lakecloud.core.tools.SendMessageUtil;
 import com.lakecloud.foundation.domain.Article;
 import com.lakecloud.foundation.domain.ArticleClass;
 import com.lakecloud.foundation.domain.Goods;
@@ -28,6 +29,7 @@ import com.lakecloud.foundation.domain.GoodsClass;
 import com.lakecloud.foundation.domain.GoodsFloor;
 import com.lakecloud.foundation.domain.GoodsFloorGoods;
 import com.lakecloud.foundation.domain.Message;
+import com.lakecloud.foundation.domain.MobileVerifyCode;
 import com.lakecloud.foundation.domain.Store;
 import com.lakecloud.foundation.domain.SysConfig;
 import com.lakecloud.foundation.domain.User;
@@ -45,6 +47,7 @@ import com.lakecloud.foundation.service.IGoodsService;
 import com.lakecloud.foundation.service.IGroupGoodsService;
 import com.lakecloud.foundation.service.IGroupService;
 import com.lakecloud.foundation.service.IMessageService;
+import com.lakecloud.foundation.service.IMobileVerifyCodeService;
 import com.lakecloud.foundation.service.INavigationService;
 import com.lakecloud.foundation.service.IPartnerService;
 import com.lakecloud.foundation.service.IRoleService;
@@ -122,6 +125,8 @@ public class IndexViewAction {
 	private GoodsFloorViewTools gf_tools;
 	@Autowired
 	private IGoodsFloorGoodsService goodsFloorGoodsService;
+	@Autowired
+	private IMobileVerifyCodeService mobileverifycodeService;
 
 	/**
 	 * 前台公用顶部页面，使用自定义标签httpInclude.include("/top.htm")完成页面读取
@@ -681,34 +686,42 @@ public class IndexViewAction {
 	 */
 	@RequestMapping("/find_pws.htm")
 	public ModelAndView find_pws(HttpServletRequest request,
-			HttpServletResponse response, String userName, String email,
-			String code) {
+			HttpServletResponse response, String telephone,String mobile_verify_code,String code) {
 		ModelAndView mv = new JModelAndView("success.html", configService
 				.getSysConfig(), this.userConfigService.getUserConfig(), 1,
 				request, response);
 		HttpSession session = request.getSession(false);
 		String verify_code = (String) session.getAttribute("verify_code");
-		if (code.toUpperCase().equals(verify_code)) {
-			User user = this.userService.getObjByProperty("userName", userName);
-			if (user.getEmail().equals(email.trim())) {
+		String db_mobile_verify_code="";
+		//验证码是否有误
+		MobileVerifyCode mvc = this.mobileverifycodeService.getObjByProperty("mobile", telephone);
+		if( mvc != null){
+			db_mobile_verify_code = mvc.getCode();
+		}
+				
+		if (code.toUpperCase().equals(verify_code) && mobile_verify_code.equals(db_mobile_verify_code)) {
+			User user = this.userService.getObjByProperty("telephone", telephone);
+			if (user!=null) {
 				String pws = CommUtil.randomString(6).toLowerCase();
 				String subject = this.configService.getSysConfig().getTitle()
 						+ "密码找回邮件";
 				String content = user.getUsername() + ",您好！您通过密码找回功能重置密码，新密码为："
 						+ pws;
-				boolean ret = this.msgTools.sendEmail(email, subject, content);
-				if (ret) {
+				SendMessageUtil sendmessage = new SendMessageUtil();
+				try{
+					sendmessage.sendHttpPost(user.getTelephone(), content);	
 					user.setPassword(Md5Encrypt.md5(pws));
 					this.userService.update(user);
-					mv.addObject("op_title", "新密码已经发送到邮箱:<font color=red>"
-							+ email + "</font>，请查收后重新登录");
+					mv.addObject("op_title", "新密码已经发送到手机号码<font color=red>"
+							+ telephone + "</font>中，请查收后重新登录");
 					mv.addObject("url", CommUtil.getURL(request)
 							+ "/user/login.htm");
-				} else {
+				}catch (Exception e) {
+					// TODO: handle exception
 					mv = new JModelAndView("error.html", configService
 							.getSysConfig(), this.userConfigService
 							.getUserConfig(), 1, request, response);
-					mv.addObject("op_title", "邮件发送失败，密码暂未执行重置");
+					mv.addObject("op_title", "短信发送失败，密码暂未执行重置");
 					mv.addObject("url", CommUtil.getURL(request)
 							+ "/forget.htm");
 				}
@@ -717,7 +730,7 @@ public class IndexViewAction {
 						.getSysConfig(),
 						this.userConfigService.getUserConfig(), 1, request,
 						response);
-				mv.addObject("op_title", "用户名、邮箱不匹配");
+				mv.addObject("op_title", "手机号码不匹配");
 				mv.addObject("url", CommUtil.getURL(request) + "/forget.htm");
 			}
 		} else {

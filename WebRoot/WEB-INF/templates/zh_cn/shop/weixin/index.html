@@ -131,7 +131,7 @@ function input_search_special(element){
             	#foreach($slide in $store.slides)
             	<li style='width:-100.0%'>
 	            	<a href="$!slide.url" target="_blank">
-	            		<img src="$!webPath/$!slide.acc.path/$!slide.acc.name"/>
+	            		<img src="$!webPath/$!slide.acc.path/$!slide.acc.name?time=$!imgTime"/>
 	            	</a>
             	</li>
             	#end
@@ -182,7 +182,7 @@ function input_search_special(element){
       <div  class="col-xs-6 col-md-3  $!class">
       <div class="well"> 
       <a class="p_img" href="$!webPath/weixin/goods.htm?goods_id=$!goods.id">
-      <img src="$!imageWebServer/resources/style/common/images/loader.gif" #if($!velocityCount==1) data-original="$!bigimg" #else data-original="$!img" #end onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); "/> 
+      <img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); "/> 
       </a> 
    <span class="p_name"><a href="$!webPath/weixin/goods.htm?goods_id=$!goods.id">$!{goods.goods_name}</a></span>
 <span class="p_price">
