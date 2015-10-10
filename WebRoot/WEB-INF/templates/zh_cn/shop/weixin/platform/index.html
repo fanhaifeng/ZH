@@ -30,6 +30,14 @@ jQuery(document).ready(function($){
 	         placeholder : "$!imageWebServer/resources/style/common/images/loader.gif", //加载图片前的占位图片
 	         effect      : "fadeIn" //加载图片使用的效果(淡入)
 	    });
+	    if(jQuery.cookie('app_city_name')!=null){
+			jQuery("#showCity").html(jQuery.cookie('app_city_name').substring(0,4));
+		}
+	    else{
+			#if($!user)
+				jQuery.cookie('app_city_id',$!user.area.id, {expires: 7, path: "/"});
+			#end
+		}
  });
  //搜索框特殊字符验证
 function input_search_special(element){
@@ -62,20 +70,7 @@ function input_search_special(element){
 #set($logo="$!webPath/$!config.store_weixin_logo.path/$!config.store_weixin_logo.name")
 #end
 <div class="pull-left address" onclick="showChooseCity()"><span id="showCity">#if($!user)$!CommUtil.substring("$!{user.area.areaName}",4) #else 全国 #end</span>
-<script type="text/javascript">
-
-	if(jQuery.cookie('app_city_name')!=null)
-	{
-		jQuery("#showCity").html(jQuery.cookie('app_city_name').substring(0,4));
-	}
-	
-	if(jQuery.cookie('app_city_name') == null){
-		#if($!user)
-			jQuery.cookie('app_city_id',$!user.area.id, {expires: 7, path: "/"});
-		#end
-	}
-	
-</script><i><img src="$!webPath/resources/style/weixin/default/images/downarrow.png" /></i></div>
+<i><img src="$!webPath/resources/style/weixin/default/images/downarrow.png" /></i></div>
     <div style="display:none" class="logo"><img src="$!logo" width="83" height="23" /></div>
     <input class="search" type="text" id="keyword" name="keyword" onchange="input_search_special(this)" onkeyup="input_search_special(this)"/>
     <div class="search_btn"><a href="javascript:void(0);"  onclick="save_search()" ><img src="$!webPath/resources/style/weixin/default/images/grass.png" /></a></div>
@@ -547,5 +542,24 @@ var picCount = $("#idSlider2").find("li").size(); //$("#activity").val()==0?5:$(
 		}
 	 
 </script>
+<!--
+<div>
+	test for android<br/>
+	<a onClick="window.webView.startFunction()">点击调用java代码</a><br/>
+	<a onClick="window.webView.startFunction('hello world')" >点击调用java代码并传递参数</a>
+	<br/>
+	<div id="content">内容显示</div>
+</div>
+<script type="text/javascript">
+function javacalljs(){
+	 document.getElementById("content").innerHTML +=   
+         "<br\>java调用了js函数";
+}
+function javacalljswithargs(arg){
+	 document.getElementById("content").innerHTML +=   
+         ("<br\>"+arg);
+}
+</script>
+-->
 </body>
 </html>

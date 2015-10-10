@@ -45,7 +45,8 @@
           <td align="center">$!gc.spec_info</td>
           <td align="center">￥$!gc.price</td>
           <td align="center">$!gc.count</td>
-          <td align="center"><strong style="color:#F90">¥#if($!gc.goods.group_buy==2)$!{gc.goods.group_goods.gg_price}#else $!{gc.goods.store_price}#end</strong></td>
+          #set($xj=$!{gc.price} * $!{gc.count})
+          <td align="center"><strong style="color:#F90">¥#if($!gc.goods.group_buy==2)$!{gc.goods.group_goods.gg_price}#else $!{xj}#end</strong></td>
         </tr>
         #end
         <tr>

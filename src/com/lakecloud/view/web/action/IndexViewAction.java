@@ -395,7 +395,7 @@ public class IndexViewAction {
 		}
 		return mv;
 	}
-	
+
 	@RequestMapping("/head2.htm")
 	public ModelAndView head2(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -477,10 +477,7 @@ public class IndexViewAction {
 		ModelAndView mv = new JModelAndView("index.html", configService
 				.getSysConfig(), this.userConfigService.getUserConfig(), 1,
 				request, response);
-		/**
-		 * 获取cookies
-		 * */
-		String pc_city_id = CommonUtils.getCityIdFromCookies(request);
+		String pc_city_id = get_pc_city_id(request, mv);
 		Map params = new HashMap();
 		params.put("display", true);
 		List<GoodsClass> gcs = this.goodsClassService
@@ -686,37 +683,40 @@ public class IndexViewAction {
 	 */
 	@RequestMapping("/find_pws.htm")
 	public ModelAndView find_pws(HttpServletRequest request,
-			HttpServletResponse response, String telephone,String mobile_verify_code,String code) {
+			HttpServletResponse response, String telephone,
+			String mobile_verify_code, String code) {
 		ModelAndView mv = new JModelAndView("success.html", configService
 				.getSysConfig(), this.userConfigService.getUserConfig(), 1,
 				request, response);
 		HttpSession session = request.getSession(false);
 		String verify_code = (String) session.getAttribute("verify_code");
-		String db_mobile_verify_code="";
-		//验证码是否有误
-		MobileVerifyCode mvc = this.mobileverifycodeService.getObjByProperty("mobile", telephone);
-		if( mvc != null){
+		String db_mobile_verify_code = "";
+		// 验证码是否有误
+		MobileVerifyCode mvc = this.mobileverifycodeService.getObjByProperty(
+				"mobile", telephone);
+		if (mvc != null) {
 			db_mobile_verify_code = mvc.getCode();
 		}
-				
-		if (code.toUpperCase().equals(verify_code) && mobile_verify_code.equals(db_mobile_verify_code)) {
-			User user = this.userService.getObjByProperty("telephone", telephone);
-			if (user!=null) {
+		if (code.toUpperCase().equals(verify_code)
+				&& mobile_verify_code.equals(db_mobile_verify_code)) {
+			User user = this.userService.getObjByProperty("telephone",
+					telephone);
+			if (user != null) {
 				String pws = CommUtil.randomString(6).toLowerCase();
 				String subject = this.configService.getSysConfig().getTitle()
 						+ "密码找回邮件";
 				String content = user.getUsername() + ",您好！您通过密码找回功能重置密码，新密码为："
 						+ pws;
 				SendMessageUtil sendmessage = new SendMessageUtil();
-				try{
-					sendmessage.sendHttpPost(user.getTelephone(), content);	
+				try {
+					sendmessage.sendHttpPost(user.getTelephone(), content);
 					user.setPassword(Md5Encrypt.md5(pws));
 					this.userService.update(user);
 					mv.addObject("op_title", "新密码已经发送到手机号码<font color=red>"
 							+ telephone + "</font>中，请查收后重新登录");
 					mv.addObject("url", CommUtil.getURL(request)
 							+ "/user/login.htm");
-				}catch (Exception e) {
+				} catch (Exception e) {
 					// TODO: handle exception
 					mv = new JModelAndView("error.html", configService
 							.getSysConfig(), this.userConfigService
@@ -756,10 +756,7 @@ public class IndexViewAction {
 		ModelAndView mv = new JModelAndView("switch_recommend_goods.html",
 				configService.getSysConfig(), this.userConfigService
 						.getUserConfig(), 1, request, response);
-		/**
-		 * 获取cookies
-		 * */
-		String pc_city_id = CommonUtils.getCityIdFromCookies(request);
+		String pc_city_id = get_pc_city_id(request, mv);
 		Map params = new HashMap();
 		params.put("store_recommend", true);
 		params.put("goods_status", 0);
@@ -850,10 +847,7 @@ public class IndexViewAction {
 				.query(
 						"select obj from GoodsFloor obj where obj.gf_display=:gf_display and obj.parent.id is null order by obj.gf_sequence asc",
 						params, -1, -1);
-		/**
-		 * 获取cookies
-		 * */
-		String pc_city_id = CommonUtils.getCityIdFromCookies(request);
+		String pc_city_id = get_pc_city_id(request, mv);
 		// 添加城市筛选
 		if (!"all".equals(pc_city_id) && !"-1".equals(pc_city_id)) {
 			hql = " and obj.goods_store.area.parent.id=:pc_city_id ";
@@ -955,5 +949,23 @@ public class IndexViewAction {
 		mv.addObject("storeViewTools", storeViewTools);
 		mv.addObject("pc_city_id", city_id);
 		return mv;
+	}
+
+	/**
+	 * 判断是否用户登录到达首页 1.用户登录，则首页地区定位到用户注册地区 2.不是用户登录，则从cookie中获取
+	 */
+	private String get_pc_city_id(HttpServletRequest request, ModelAndView mv) {
+		String login_flag = request.getParameter("login_flag");
+		String pc_city_id = "";
+		if (null != login_flag && "1".equals(login_flag)) {
+			mv.addObject("login_flag", login_flag);
+			User user = SecurityUserHolder.getCurrentUser();
+			pc_city_id = user.getArea().getId() == null ? "" : user.getArea()
+					.getId().toString();
+		} else {
+			mv.addObject("login_flag", "0");
+			pc_city_id = CommonUtils.getCityIdFromCookies(request);// 获取cookies
+		}
+		return pc_city_id;
 	}
 }

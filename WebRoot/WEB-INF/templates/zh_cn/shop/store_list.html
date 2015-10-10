@@ -123,7 +123,7 @@ $!httpInclude.include("/top.htm")
   <!--热门分类start-->
   <div class="Hot_cf">
     <h1>热门分类</h1>
-    <div class="Hot_cf_list">
+    <div class="Hot_cf_list clearfix">
       <ul>
         #foreach($storeClass in $scs)
         <li> <span><a href="javascript:void(0);" id="sc_search_$!storeClass.id" sc="$!storeClass.id">$!storeClass.className</a></span> #foreach($child in $storeClass.childs) <a  href="javascript:void(0);" id="sc_search_$!child.id" sc="$!child.id">$!child.className</a> #end </li>
@@ -194,7 +194,7 @@ $!httpInclude.include("/top.htm")
           -->
         </div>
       </div>
-      <div class="Hot_cf_main">
+      <div class="Hot_cf_main clearfix">
         <!--店铺列表开始-->
         #set($store_list_class_count= 0)
         #foreach($obj in $objs)    
@@ -326,6 +326,7 @@ $!httpInclude.include("/top.htm")
         #set($store_list_class_count=0)
         #end 
         #end </div>
+        <div class="clear"></div>
       <div class="fenye">
         <div class="fenyes"> $!gotoPageFormHTML</div>
       </div>

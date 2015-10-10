@@ -219,6 +219,8 @@ public class GoodsManageAction {
 						null, -1, -1);
 		mv.addObject("gcs", gcs);
 		mv.addObject("gbs", gbs);
+		mv.addObject("goodsbrandt", goodsbrandt);
+		mv.addObject("goodsclasst", goodsclasst);
 		return mv;
 	}
 	
@@ -286,6 +288,11 @@ public class GoodsManageAction {
 						null, -1, -1);
 		mv.addObject("gcs", gcs);
 		mv.addObject("gbs", gbs);
+		mv.addObject("goodsnamet", goodsnamet);
+		mv.addObject("uesernamet", uesernamet);
+		mv.addObject("goodsbrandt", goodsbrandt);
+		mv.addObject("goodsclasst", goodsclasst);
+		mv.addObject("recommendt", recommendt);
 	
 		return mv;
 	}

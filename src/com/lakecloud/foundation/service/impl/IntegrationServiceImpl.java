@@ -19,6 +19,7 @@ import com.lakecloud.foundation.domain.Integration;
 import com.lakecloud.foundation.domain.OrderForm;
 import com.lakecloud.foundation.domain.User;
 import com.lakecloud.foundation.service.IIntegrationService;
+import com.lakecloud.weixin.utils.ConstantUtils;
 
 @Service
 @Transactional
@@ -107,16 +108,22 @@ public class IntegrationServiceImpl implements IIntegrationService {
 		return list;
 	}
 
-	public boolean updateByOrderForm(OrderForm of, String money_overdue,
-			Integration integration) {
-		if (null != of.getIntegrationStore()) {
-			integration.setIntegrals(integration.getIntegrals()
-					- of.getIntegrationStore());
-		}
+	/**
+	 * 用于扣减智慧豆，为了公用过期店铺农豆，
+	 * 店铺农豆扣减已经移至OrderFormServiceImpl中的subtract_operations_for_integration
+	 */
+	public boolean updateByOrderForm(OrderForm of, Integration integration,
+			Integer integration_new) {
 		if (null != of.getIntegrationPlatform()) {
-			integration.setIntegrals(integration.getIntegrals()
-					- of.getIntegrationPlatform());
+			if (integration_new >= 0) {
+				integration_new = integration_new - of.getIntegrationPlatform();
+			} else {
+				System.out.println(ConstantUtils
+						._getIntegrationServiceImplFunctions(1, 0)
+						+ "智慧豆<0");
+			}
 		}
+		integration.setIntegrals(integration_new);
 		return update(integration);
 	}
 

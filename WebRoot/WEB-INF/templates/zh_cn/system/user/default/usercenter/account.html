@@ -32,18 +32,13 @@
 						"parent_id":parent_id,
 						"areaMark":areaMark
 						},function(data){
-							if(areaMark=="province"){
-							jQuery("#area_id").html("<option>请选择...</option>");	
-							jQuery("#areas_city").html(data);
-								}
-							if(areaMark=="city"){
-							jQuery("#area_id").html(data);
-								}	
-							},"text");										 
+							if(areaMark=="province"){		
+								jQuery("#area_id").html(data);
+							}
+						},"text");										 
 	  });
 	  #if($!user.area)
-	  jQuery("#areas_province").val("$!user.area.parent.parent.id"); 
-	  jQuery("#areas_city").html("<option value='$!user.area.parent.id'>$!user.area.parent.areaName</option>");
+	  jQuery("#areas_province").val("$!user.area.parent.id"); 
 	  jQuery("#area_id").html("<option value='$!user.area.id'>$!user.area.areaName</option>");
 	  #end
  });
@@ -54,7 +49,7 @@ $!httpInclude.include("/top.htm")
 <div class="main">
   $!httpInclude.include("/buyer/head.htm")
   <div class="user_center">
-    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+    <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
       <tr>
         $!httpInclude.include("/buyer/account_nav.htm?op=account")
         <td id="centerbg" valign="top">
@@ -136,11 +131,6 @@ $!httpInclude.include("/top.htm")
                        <option value="$!area.id">$!area.areaName</option>
                        #end
                        </select>
-                       
-                         <select id="areas_city" areaMark="city">
-                       <option value="">请选择...</option>
-                       </select>
-                       
                         <select id="area_id" name="area_id"> 
                        <option value="">请选择...</option>
                        </select>

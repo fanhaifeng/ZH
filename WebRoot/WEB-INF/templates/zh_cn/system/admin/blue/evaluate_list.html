@@ -15,9 +15,9 @@
     <div class="allmem_search">
       <ul>
         <li> <span>商品名称</span> <span class="allmen size4">
-          <input name="goods_name" type="text" id="goods_name" />
+          <input name="goods_name" type="text" id="goods_name" value="$!goods_name"/>
           </span> <span>买家用户名</span> <span class="allmen size4">
-          <input name="userName" type="text" id="userName" />
+          <input name="userName" type="text" id="userName" value="$!userName"/>
           </span> <span class="btn_search">
           <input name="" type="submit"  value="搜索" style="cursor:pointer;"/>
         </span> </li>
@@ -72,7 +72,11 @@
             #set($status="取消评价")
           #end                    
           <td>$!status</td>
+           #if($!obj.evaluate_status==0)
           <td class="ac8" align="left"><a href="$!webPath/admin/evaluate_edit.htm?id=$!obj.id&currentPage=$!currentPage">编辑</a></td>
+          #else
+           <td class="ac8" align="left"><a href="$!webPath/admin/evaluate_edit.htm?id=$!obj.id&currentPage=$!currentPage">查看</a></td>
+           #end
         </tr>
         #end
         <tr style="background:#F2F2F2;">

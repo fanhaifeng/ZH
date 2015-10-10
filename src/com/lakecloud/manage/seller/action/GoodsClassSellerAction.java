@@ -113,7 +113,7 @@ public class GoodsClassSellerAction {
 			usergoodsclass = (UserGoodsClass) wf.toPo(request, obj);
 		}
 		usergoodsclass.setUser(SecurityUserHolder.getCurrentUser());
-		if (!pid.equals("")) {
+		if (pid!=null&&!pid.equals("")) {
 			UserGoodsClass parent = this.usergoodsclassService.getObjById(Long
 					.parseLong(pid));
 			usergoodsclass.setParent(parent);

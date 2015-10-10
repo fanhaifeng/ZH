@@ -31,7 +31,7 @@ $!httpInclude.include("/top.htm")
 <div class="main"> 
   $!httpInclude.include("/seller/nav_head.htm") 
   <div class="user_center">
-    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+    <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
       <tr>
         $!httpInclude.include("/seller/nav.htm?op=goods_storage")
         <td id="centerbg" valign="top">
@@ -66,11 +66,13 @@ $!httpInclude.include("/top.htm")
               </span><span class="alldel_lb"><label for="all">全选</label></span> <span  class="alldel_lc"><a class="button_common"  href="javascript:void(0);" onclick="cmd('$!webPath/seller/goods_del.htm','')">删除</a></span> <span class="alldel_ld1"><a class="button_common" href="javascript:void(0);" onclick="cmd('$!webPath/seller/goods_sale.htm','')">上架</a></span> </div>
             </div>
             <div class="operation">
-              <table width="790" border="0" cellspacing="0" cellpadding="0" id="opertable" >
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" id="opertable" >
                 <tr id="opertitle">
                   <td class="proname" width="220">商品名称</td>
                   <td width="217" class="proclassify">商品分类</td>
-                  <td width="130" class="promoney">价格</td>
+                  <td width="130" class="promoney">原价</td>
+                  <td width="130" class="promoney2">促销价</td>
+                  <td width="130" class="inventory">库存</td>
                   <td width="51"  class="prorec">推荐</td>
                   <td width="240" align="center">操作</td>
                 </tr>
@@ -85,7 +87,9 @@ $!httpInclude.include("/top.htm")
 					#end
                     </span><span class="imgpro"><a class="p_img" href="goods_out.html"><img src="$!img" width="60" height="63" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg');"/></a></span><span class="nameproduct"><a href="$!webPath/goods_$!{obj.id}.htm" target="_blank">$!obj.goods_name</a></span></td>
                   <td class="proclassify">#if($!obj.gc)$!storeTools.generic_goods_class_info($!obj.gc)#end</td>
-                  <td  class="promoney">$!obj.store_price</td>
+                  <td class="promoney">$!obj.store_price</td>
+                  <td class="promoney2">$!obj.goods_promotion</td>
+                  <td class="inventory">#if($!obj.goods_inventory) $!obj.goods_inventory #else 0 #end</td>
                   <td class="prorec"><img src="$!webPath/resources/style/system/front/default/images/usercenter/$!{obj.goods_recommend}.jpg" width="16" height="14" /></td>
                   <td class="operajt"><span class="sale"><a href="$!webPath/seller/goods_sale.htm?mulitId=$!obj.id">上架</a></span><span class="edit"><a href="$!webPath/seller/goods_edit.htm?id=$!obj.id" target="_blank">编辑</a></span><span class="del"><a href="javascript:if(confirm('删除后不可恢复?'))window.location.href='$!webPath/seller/goods_del.htm?mulitId=$!obj.id&op=storage'">删除</a></span></td>
                 </tr>

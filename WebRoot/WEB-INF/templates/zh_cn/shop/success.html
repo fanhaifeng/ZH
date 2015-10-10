@@ -30,6 +30,11 @@ $!httpInclude.include("/top.htm")
     </div>
   </div>
 <script>
+	var area_name = '$!area_name';
+	if(area_name != ""){
+	 jQuery.cookie('pc_city_id',$!user.area.id, {expires: 7, path: "/"});
+	 jQuery.cookie("pc_city_name",area_name, {expires: 7, path: "/"});
+	}
 	  var count=3;
 	  window.setInterval(go,1000);
 	  function go(){

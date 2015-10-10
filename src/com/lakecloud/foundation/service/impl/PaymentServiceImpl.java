@@ -1,6 +1,7 @@
 package com.lakecloud.foundation.service.impl;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,9 @@ import com.lakecloud.core.query.PageObject;
 import com.lakecloud.core.query.support.IPageList;
 import com.lakecloud.core.query.support.IQueryObject;
 import com.lakecloud.foundation.domain.Payment;
+import com.lakecloud.foundation.domain.Store;
 import com.lakecloud.foundation.service.IPaymentService;
+import com.lakecloud.weixin.utils.ConstantUtils;
 
 @Service
 @Transactional
@@ -55,7 +58,6 @@ public class PaymentServiceImpl implements IPaymentService {
 	}
 
 	public boolean batchDelete(List<Serializable> paymentIds) {
-		// TODO Auto-generated method stub
 		for (Serializable id : paymentIds) {
 			delete((Long) id);
 		}
@@ -93,12 +95,20 @@ public class PaymentServiceImpl implements IPaymentService {
 
 	public List<Payment> query(String query, Map params, int begin, int max) {
 		return this.paymentDao.query(query, params, begin, max);
-
 	}
 
 	@Override
 	public Payment getObjByProperty(String propertyName, String value) {
-		// TODO Auto-generated method stub
 		return this.paymentDao.getBy(propertyName, value);
+	}
+
+	public List<Payment> queryByStore(Store store) {
+		Map params = new HashMap();
+		params.put("store", store);
+		params.put("mark", ConstantUtils._PAYMENT_MARK[1]);
+		List<Payment> list = query(
+				"select obj from Payment obj where obj.store=:store and obj.mark=:mark",
+				params, -1, -1);
+		return list;
 	}
 }

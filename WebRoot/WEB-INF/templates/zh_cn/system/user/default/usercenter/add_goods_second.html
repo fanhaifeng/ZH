@@ -294,7 +294,7 @@ jQuery.validator.addMethod("litter", function(value,element) {
 			 goods_inventory:{
 			    required:true,
 			    number:true,
-				range:[1,1000000000] 
+				range:[0,1000000000] 
 			 },
 			 transport_id:{transportId:true}
 			},
@@ -483,7 +483,7 @@ return false;
   });
    jQuery("#user_class_ids").val(user_class_ids);
    //商品规格
-     var goods_spec_ids="";
+  var goods_spec_ids="";
   jQuery(":radio[id^=spec_][checked=true]").each(function(){
      goods_spec_ids=jQuery(this).val()+","+goods_spec_ids;
   });
@@ -586,7 +586,7 @@ jQuery("#goodsDc_id").val(id);
 			 #end
 			<form action="$!webPath/seller/add_goods_finish.htm" method="post"
 				enctype="multipart/form-data" name="theForm" id="theForm">
-				<table width="1000" border="0" cellspacing="0" cellpadding="0"
+				<table width="1200" border="0" cellspacing="0" cellpadding="0"
 					class="tabledetail">
 					<tr>
 						<td colspan="2" class="tableh1">商品详细信息 <input name="goods_id"
@@ -631,8 +631,8 @@ jQuery("#goodsDc_id").val(id);
 							class="hui2">
 								<ul class="tableli">
 									<li>商品原价必须是0.01~1000000之间的数字</li>
-									<li>若启用了库存配置，请在下方商品库存区域进行管理</li>
-									<li>商品规格库存表中如有价格差异，店铺价格显示为价格区间形式</li>
+									<!-- <li>若启用了库存配置，请在下方商品库存区域进行管理</li>
+									<li>商品规格库存表中如有价格差异，店铺价格显示为价格区间形式</li> -->
 								</ul> </span></td>
 					</tr>
 					<tr>
@@ -693,8 +693,8 @@ jQuery("#goodsDc_id").val(id);
 								name="goods_inventory" id="goods_inventory"
 								value="$!obj.goods_inventory" /> </span> <span class="hui2">
 								<ul class="tableli">
-									<li>商铺库存数量必须为1~1000000000之间的整数</li>
-									<li>若启用了规格配置，则系统自动计算商品的总数，此处无需卖家填写</li>
+									<li>商铺库存数量必须为0~1000000000之间的整数</li>
+									<!-- <li>若启用了规格配置，则系统自动计算商品的总数，此处无需卖家填写</li> -->
 								</ul> </span></td>
 					</tr>
 					<tr>

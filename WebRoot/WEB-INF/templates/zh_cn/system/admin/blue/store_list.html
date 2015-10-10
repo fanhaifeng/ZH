@@ -26,6 +26,17 @@ function ajax_update(id,fieldName,obj){
               }
 	    });
 }
+
+jQuery(document).ready(function($){
+	 jQuery("#store_status").val("$!store_statust");
+	 
+});
+function sendSearch(){
+	var gn = jQuery("#store_name").val();
+	jQuery("#store_namet").val(gn);
+	var gg = jQuery("#store_status").val();
+	jQuery("#store_statust").val(gg);
+}
 </script>
 </head>
 <body>
@@ -36,7 +47,7 @@ function ajax_update(id,fieldName,obj){
   <div class="allmem_search">
     <ul>
       <li> <span>店铺名称</span> <span class="allmen size4">
-        <input name="store_name" type="text" id="store_name" />
+        <input name="store_name" type="text" id="store_name" value="$!store_namet"/>
         </span><!-- 
         <span>店铺等级</span> <span class="allmen size4">
         <select name="store.grade.id" id="store.grade.id">
@@ -55,7 +66,7 @@ function ajax_update(id,fieldName,obj){
         </select>
         </span> 
         <span class="btn_search">
-        <input name="" type="button"  value="搜索" style="cursor:pointer;" onclick="query();"/>
+        <input name="" type="button"  value="搜索" style="cursor:pointer;" onclick="sendSearch();query();"/>
         </span> </li>
     </ul>
   </div>
@@ -111,6 +122,8 @@ function ajax_update(id,fieldName,obj){
   <div class="fenye">
     <input type="hidden" name="mulitId" id="mulitId" />
     <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
+    <input name="store_statust" type="hidden" id="store_statust" value="$!store_statust" /> 
+    <input type="hidden" name="store_namet" id="store_namet" value="$!store_namet" /> 
 	<span id="queryCondition">
 	#foreach($sm in $sms)
 	<input name="$!sm.key" type="hidden" id="$!sm.key" value="$!$!sm.value" />

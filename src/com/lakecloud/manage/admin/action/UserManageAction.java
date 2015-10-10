@@ -147,6 +147,8 @@ public class UserManageAction {
 				"", pList, mv);
 		mv.addObject("userRole", "USER");
 		mv.addObject("storeTools", storeTools);
+		mv.addObject("condition", condition);
+		mv.addObject("value", value);
 		return mv;
 	}
 
@@ -285,7 +287,7 @@ public class UserManageAction {
 							this.goodsService.delete(goods.getId());
 						}
 					}
-					this.userService.delete(parent.getId());
+					this.userService.delete(CommUtil.null2Long(parent.getId()));
 				}
 			}
 		}

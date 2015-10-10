@@ -7,6 +7,18 @@
 <script src="$!webPath/resources/js/jquery.validate.min.js"></script>
 <script src="$!webPath/resources/js/jquery.shop.common.js"></script>
 <script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
+<script>
+jQuery(document).ready(function($){
+	 jQuery("#status").val("$!status");
+	 #if($objs)
+		#foreach($obj in $objs)	
+			jQuery("#view$!obj.id").click(function(){
+				jQuery("#rowimg$!obj.id").toggle();
+			});	
+		#end
+	 #end 
+});
+</script>
 <link
 	href="$!webPath/resources/style/system/manage/$!{config.websiteCss}/template.css"
 	rel="stylesheet" type="text/css" />
@@ -61,15 +73,41 @@
 						<td>$!obj.store_class.getClassName()</td>
 						<td>$!obj.store_area.getAreaName()</td>
 						<td>$!obj.store_addr</td>
-						<td>$!obj.id_card</td> #if($!obj.status=="0") #set($status1="待审核")
-						#end #if($!obj.status=="1") #set($status1="通过") #end
-						#if($!obj.status=="2") #set($status1="不通过") #end
+						<td>$!obj.id_card</td> 
+						#if($!obj.status=="0") 
+							#set($status1="待审核")
+						#end 
+						#if($!obj.status=="1") 
+							#set($status1="通过") 
+						#end
+						#if($!obj.status=="2") 
+							#set($status1="不通过") 
+						#end
 						<td>$!status1</td>
 						<td><input type="text" name="option" id="option$!obj.id"
 							value="$!obj.option" /></td>
-						<td id="edit$!obj.id" class="ac9">#if($!obj.status=="0") 
-						    <a href="javascript:void();" onclick="pass($!obj.id,1);">通过</a> |
-							<a href="javascript:void();" onclick="pass($!obj.id,0);">不通过</a>
+						<td id="edit$!obj.id" class="ac9">
+							#if($!obj.status=="0") 
+							    <a href="javascript:void();" onclick="pass($!obj.id,1);">通过</a> |
+								<a href="javascript:void();" onclick="pass($!obj.id,0);">不通过</a> |
+							#end
+							<a href="javascript:void();" id="view$!obj.id">证件照</a>
+						</td>
+					</tr>
+					<tr id="rowimg$!obj.id" style="display:none;">
+						<td colspan="4">身份证正面<br/>
+							#if($!obj.file1)
+								<img  width="320" height="200" src="$!webPath/$!obj.file1.path/$!obj.file1.name"/>
+							#end 
+						</td>
+						<td colspan="4">身份证反面<br/>
+							#if($!obj.file2)
+								<img  width="320" height="200" src="$!webPath/$!obj.file2.path/$!obj.file2.name"/>
+							#end
+						</td>
+						<td colspan="4">营业执照<br/>
+							#if($!obj.file3)
+								<img  width="320" height="200" src="$!webPath/$!obj.file3.path/$!obj.file3.name"/></td>
 							#end
 						</td>
 					</tr>
@@ -77,10 +115,10 @@
 				</table>
 			</div>
 			<div class="fenye">
-				<input type="hidden" name="mulitId" id="mulitId" /> <input
-					name="currentPage" type="hidden" id="currentPage"
-					value="$!currentPage" /> <input type="hidden" name="status"
-					id="status" value="$!status" /> $!gotoPageFormHTML
+				<input type="hidden" name="mulitId" id="mulitId" /> 
+				<input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" /> 
+				<input type="hidden" name="status" id="status" value="$!status" /> 
+				$!gotoPageFormHTML
 			</div>
 		</form>
 	</div>

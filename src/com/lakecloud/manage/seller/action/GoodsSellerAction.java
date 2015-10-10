@@ -414,11 +414,11 @@ public class GoodsSellerAction {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	// 商品申请
+	}/*
+	  // 商品申请
 		@RequestMapping("/seller/goods_dc_apply.htm")
 		public ModelAndView goods_dc_apply(HttpServletRequest request,
-				HttpServletResponse response,String id) {
+				HttpServletResponse response) {
 			ModelAndView mv = new JModelAndView("error.html",
 					configService.getSysConfig(),
 					this.userConfigService.getUserConfig(), 1, request, response);
@@ -447,6 +447,7 @@ public class GoodsSellerAction {
 			}
 			return mv;
 		}
+*/
 	private String getTrans_fee(BigDecimal mail, BigDecimal express,
 			BigDecimal ems) {
 		StringBuffer sb = new StringBuffer();
@@ -557,8 +558,7 @@ public class GoodsSellerAction {
 				this.userConfigService.getUserConfig(), 1, request, response);
 		User user = this.userService.getObjById(SecurityUserHolder
 				.getCurrentUser().getId());
-		Store store = this.storeService.getObjByProperty("user.id",
-				user.getId());
+		Store store = user.getStore();
 		int store_status = store.getStore_status();
 		String url = this.configService.getSysConfig().getAddress();
 		if (url == null || url.equals("")) {
@@ -605,9 +605,8 @@ public class GoodsSellerAction {
 						"=");
 				qo.addINQueryStart(
 						" obj.goods_serial not in ",
-						"select ob.goods_serial from Goods ob where ob.goods_store.id",
+						"select ob.goods_serial from Goods ob where ob.deleteStatus=false and ob.goods_store.id",
 						new SysMap("storeId", user.getStore().getId()), "=");
-				qo.addQuery("ob.gc.id", new SysMap("gcid", gc.getId()), "=");
 				qo.addINQueryEnd();
 				qo.setOrderBy("goods_name");
 				qo.setOrderType("desc");
@@ -1163,11 +1162,11 @@ public class GoodsSellerAction {
 		goods.setGoods_inventory_detail(Json.toJson(maps, JsonFormat.compact()));
 		// 商品所在店铺分类
 		String[] ugc_ids = user_class_ids.split(",");
+		goods.getGoods_ugcs().removeAll(goods.getGoods_ugcs());
 		for (String ugc_id : ugc_ids) {
 			if (!ugc_id.equals("")) {
 				UserGoodsClass ugc = this.userGoodsClassService.getObjById(Long
 						.parseLong(ugc_id));
-				goods.getGoods_ugcs().removeAll(goods.getGoods_ugcs());
 				goods.getGoods_ugcs().add(ugc);
 			}
 		}
@@ -1453,7 +1452,13 @@ public class GoodsSellerAction {
 	public ModelAndView goods(HttpServletRequest request,
 			HttpServletResponse response, String currentPage, String orderBy,
 			String orderType, String goods_name, String user_class_id) {
-		ModelAndView mv = new JModelAndView(
+		ModelAndView mv = new JModelAndView("error.html",
+				configService.getSysConfig(),
+				this.userConfigService.getUserConfig(), 1, request, response);
+		User user = this.userService.getObjById(SecurityUserHolder
+				.getCurrentUser().getId());
+		if(user.getStore().getStore_status()==2){		
+		mv = new JModelAndView(
 				"user/default/usercenter/goods.html",
 				configService.getSysConfig(),
 				this.userConfigService.getUserConfig(), 0, request, response);
@@ -1461,8 +1466,6 @@ public class GoodsSellerAction {
 		if (url == null || url.equals("")) {
 			url = CommUtil.getURL(request);
 		}
-		User user = this.userService.getObjById(SecurityUserHolder
-				.getCurrentUser().getId());
 		String params = "";
 		GoodsQueryObject qo = new GoodsQueryObject(currentPage, mv, orderBy,
 				orderType);		
@@ -1477,17 +1480,23 @@ public class GoodsSellerAction {
 			qo.addQuery("obj.goods_name", new SysMap("goods_name", "%"
 					+ goods_name + "%"), "like");
 		}
-		if (user_class_id != null && !user_class_id.equals("")) {
-			UserGoodsClass ugc = this.userGoodsClassService.getObjById(Long
-					.parseLong(user_class_id));
-			qo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of");
-		}
+		qo=add_ugc(user_class_id,qo);//添加店铺分类查询
 		IPageList pList = this.goodsService.list(qo);
 		CommUtil.saveIPageList2ModelAndView(url + "/seller/goods.htm", "",
 				params, pList, mv);
 		mv.addObject("storeTools", storeTools);
 		mv.addObject("store",user.getStore());
 		mv.addObject("goodsViewTools", goodsViewTools);
+		}else if (user.getStore().getStore_status() == 0) {
+			mv.addObject("op_title", "您尚未开通店铺，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}else	if (user.getStore().getStore_status() == 1) {
+			mv.addObject("op_title", "您的店铺在审核中，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}else	if (user.getStore().getStore_status() == 3) {
+			mv.addObject("op_title", "您的店铺已被关闭，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}
 		return mv;
 	}
 
@@ -1496,7 +1505,13 @@ public class GoodsSellerAction {
 	public ModelAndView goods_storage(HttpServletRequest request,
 			HttpServletResponse response, String currentPage, String orderBy,
 			String orderType, String goods_name, String user_class_id) {
-		ModelAndView mv = new JModelAndView(
+		ModelAndView mv = new JModelAndView("error.html",
+				configService.getSysConfig(),
+				this.userConfigService.getUserConfig(), 1, request, response);
+		User user = this.userService.getObjById(SecurityUserHolder
+				.getCurrentUser().getId());
+		if(user.getStore().getStore_status()==2){		
+		mv = new JModelAndView(
 				"user/default/usercenter/goods_storage.html",
 				configService.getSysConfig(),
 				this.userConfigService.getUserConfig(), 0, request, response);
@@ -1505,8 +1520,6 @@ public class GoodsSellerAction {
 			url = CommUtil.getURL(request);
 		}
 		String params = "";
-		User user = this.userService.getObjById(SecurityUserHolder
-				.getCurrentUser().getId());
 		GoodsQueryObject qo = new GoodsQueryObject(currentPage, mv, orderBy,
 				orderType);
 		qo.addQuery("obj.deleteStatus", new SysMap("goods_deleteStatus", false), "=");//判断商品是否已经删除
@@ -1520,26 +1533,68 @@ public class GoodsSellerAction {
 			qo.addQuery("obj.goods_name", new SysMap("goods_name", "%"
 					+ goods_name + "%"), "like");
 		}
-		if (user_class_id != null && !user_class_id.equals("")) {
-			UserGoodsClass ugc = this.userGoodsClassService.getObjById(Long
-					.parseLong(user_class_id));
-			qo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of");
-		}
+		qo=add_ugc(user_class_id,qo);//添加店铺分类查询
 		IPageList pList = this.goodsService.list(qo);
 		CommUtil.saveIPageList2ModelAndView(url + "/seller/goods_storage.htm",
 				"", params, pList, mv);
 		mv.addObject("storeTools", storeTools);
 		mv.addObject("store",user.getStore());
 		mv.addObject("goodsViewTools", goodsViewTools);
+		}else if (user.getStore().getStore_status() == 0) {
+			mv.addObject("op_title", "您尚未开通店铺，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}else	if (user.getStore().getStore_status() == 1) {
+			mv.addObject("op_title", "您的店铺在审核中，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}else	if (user.getStore().getStore_status() == 3) {
+			mv.addObject("op_title", "您的店铺已被关闭，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}
 		return mv;
 	}
-
+	/**
+	 * 根据店铺分类id构造店铺分类查询器
+	 * @param id
+	 * @param qo
+	 * @return
+	 */
+	private GoodsQueryObject add_ugc(String id,GoodsQueryObject qo){
+		if (id != null && !id.equals("")) {
+			UserGoodsClass ugc = this.userGoodsClassService.getObjById(Long.parseLong(id));
+			if (ugc != null) {
+					Set<Long> ids = this.genericUserGcIds(ugc);
+					List<UserGoodsClass> ugc_list = new ArrayList<UserGoodsClass>();
+					for (Long g_id : ids) {
+							UserGoodsClass temp_ugc = this.userGoodsClassService.getObjById(g_id);
+							ugc_list.add(temp_ugc);
+					}
+					if(ugc_list.size()>0)//判断该分类是否存在子分类
+							qo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of","and (");
+					else
+							qo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of","and");
+					for (int i = 0; i < ugc_list.size(); i++) {//拼接子分类HQL查询条件
+							if(i==ugc_list.size()-1){
+									qo.addQuery("ugc" + i, ugc_list.get(i), "obj.goods_ugcs)","member of", "or");	
+							}else{
+									qo.addQuery("ugc" + i, ugc_list.get(i), "obj.goods_ugcs","member of", "or");					
+							}
+					}			
+			}
+	}
+		return qo;	
+	}
 	@SecurityMapping(title = "违规下架商品", value = "/seller/goods_out.htm*", rtype = "seller", rname = "违规下架商品", rcode = "goods_out_seller", rgroup = "商品管理")
 	@RequestMapping("/seller/goods_out.htm")
 	public ModelAndView goods_out(HttpServletRequest request,
 			HttpServletResponse response, String currentPage, String orderBy,
 			String orderType, String goods_name, String user_class_id) {
-		ModelAndView mv = new JModelAndView(
+		ModelAndView mv = new JModelAndView("error.html",
+				configService.getSysConfig(),
+				this.userConfigService.getUserConfig(), 1, request, response);
+		User user = this.userService.getObjById(SecurityUserHolder
+				.getCurrentUser().getId());
+		if(user.getStore().getStore_status()==2){		
+		mv = new JModelAndView(
 				"user/default/usercenter/goods_out.html",
 				configService.getSysConfig(),
 				this.userConfigService.getUserConfig(), 0, request, response);
@@ -1547,8 +1602,6 @@ public class GoodsSellerAction {
 		if (url == null || url.equals("")) {
 			url = CommUtil.getURL(request);
 		}
-		User user = this.userService.getObjById(SecurityUserHolder
-				.getCurrentUser().getId());
 		String params = "";
 		GoodsQueryObject qo = new GoodsQueryObject(currentPage, mv, orderBy,
 				orderType);
@@ -1562,19 +1615,25 @@ public class GoodsSellerAction {
 			qo.addQuery("obj.goods_name", new SysMap("goods_name", "%"
 					+ goods_name + "%"), "like");
 		}
-		if (user_class_id != null && !user_class_id.equals("")) {
-			UserGoodsClass ugc = this.userGoodsClassService.getObjById(Long
-					.parseLong(user_class_id));
-			qo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of");
-		}
+		qo=add_ugc(user_class_id,qo);//添加店铺分类查询
 		IPageList pList = this.goodsService.list(qo);
 		CommUtil.saveIPageList2ModelAndView(url + "/seller/goods_out.htm", "",
 				params, pList, mv);
 		mv.addObject("storeTools", storeTools);
 		mv.addObject("store",user.getStore());
 		mv.addObject("goodsViewTools", goodsViewTools);
-		return mv;
-	}
+		}else if (user.getStore().getStore_status() == 0) {
+			mv.addObject("op_title", "您尚未开通店铺，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}else	if (user.getStore().getStore_status() == 1) {
+			mv.addObject("op_title", "您的店铺在审核中，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}else	if (user.getStore().getStore_status() == 3) {
+			mv.addObject("op_title", "您的店铺已被关闭，不能发布商品");
+			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
+		}
+			return mv;
+		}
 
 	@SecurityMapping(title = "商品编辑", value = "/seller/goods_edit.htm*", rtype = "seller", rname = "商品编辑", rcode = "goods_edit_seller", rgroup = "商品管理")
 	@RequestMapping("/seller/goods_edit.htm")
@@ -1889,5 +1948,17 @@ public class GoodsSellerAction {
 			storeCart.setTotal_price(total_price);
 			this.storeCartService.update(storeCart);
 		}
+	}
+	private Set<Long> genericUserGcIds(UserGoodsClass ugc) {
+		Set<Long> ids = new HashSet<Long>();
+		ids.add(ugc.getId());
+		for (UserGoodsClass child : ugc.getChilds()) {
+			Set<Long> cids = genericUserGcIds(child);
+			for (Long cid : cids) {
+				ids.add(cid);
+			}
+			ids.add(child.getId());
+		}
+		return ids;
 	}
 }

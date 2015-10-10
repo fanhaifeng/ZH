@@ -18,6 +18,7 @@ import com.lakecloud.core.query.GenericPageList;
 import com.lakecloud.core.query.PageObject;
 import com.lakecloud.core.query.support.IPageList;
 import com.lakecloud.core.query.support.IQueryObject;
+import com.lakecloud.core.tools.CommUtil;
 import com.lakecloud.foundation.domain.Integration;
 import com.lakecloud.foundation.domain.Integration_Child;
 import com.lakecloud.foundation.domain.OrderForm;
@@ -158,16 +159,45 @@ public class Integration_ChildServiceImpl implements IIntegration_ChildService {
 		return result;
 	}
 
+	/**
+	 * 用于平台农豆扣减，店铺农豆和过期农豆扣减
+	 */
 	private boolean updateByOrderForm(OrderForm of,
 			List<Integration_Child> integrationList, int type) {
 		Integration_Child integrationChild = integrationList.get(0);
 		try {
 			if (ConstantUtils._INTEGRATION_TYPE[1] == type) {
-				integrationChild.setIntegrals(integrationChild.getIntegrals()
-						- of.getIntegrationStore());
+				Integer integrationStore_new = integrationChild.getIntegrals()
+						- of.getIntegrationStore();
+				if (integrationStore_new >= 0) {
+					integrationChild.setIntegrals(integrationStore_new);
+				} else {
+					System.out.println(ConstantUtils
+							._getIntegrationServiceImplFunctions(2, 0)
+							+ "店铺农豆<0");
+				}
+				if (CommUtil.isNotNull(integrationChild.getOverdue_integrals())) {// 是否含过期的店铺农豆
+					Integer overdue_integrals_new = integrationChild
+							.getOverdue_integrals()
+							- of.getIntegrationStore();
+					if (overdue_integrals_new >= 0) {// 判断店铺农豆是否够
+						integrationChild
+								.setOverdue_integrals(overdue_integrals_new);
+					} else {
+						integrationChild.setOverdue_integrals(0);
+					}
+				}
 			} else if (ConstantUtils._INTEGRATION_TYPE[0] == type) {
-				integrationChild.setIntegrals(integrationChild.getIntegrals()
-						- of.getIntegrationPlatform());
+				Integer integrationPlatform_new = integrationChild
+						.getIntegrals()
+						- of.getIntegrationPlatform();
+				if (integrationPlatform_new >= 0) {
+					integrationChild.setIntegrals(integrationPlatform_new);
+				} else {
+					System.out.println(ConstantUtils
+							._getIntegrationServiceImplFunctions(2, 0)
+							+ "智慧豆<0");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -244,22 +274,25 @@ public class Integration_ChildServiceImpl implements IIntegration_ChildService {
 	 * 通过实际所付金额，计算返还的农豆
 	 */
 	public Integer count_integration_by_real_price(XConf xconf, OrderForm of) {
-		XConf xconf_integration_rate_for_money = xconfService
-				.queryByXconfkey(ConstantUtils._INTEGRATION_RATE_FOR_MONEY);
+		// XConf xconf_integration_rate_for_money = xconfService
+		// .queryByXconfkey(ConstantUtils._INTEGRATION_RATE_FOR_MONEY);
 		BigDecimal bigDecimal = of.getTotalPrice();
-		if (null != of.getIntegrationStore()) {
-			bigDecimal = bigDecimal.subtract(new BigDecimal(of
-					.getIntegrationStore()
-					* Double.valueOf(xconf_integration_rate_for_money
-							.getXconfvalue())));
+		// if (null != of.getIntegrationStore()) {
+		// bigDecimal = bigDecimal.subtract(new BigDecimal(of
+		// .getIntegrationStore()
+		// * Double.valueOf(xconf_integration_rate_for_money
+		// .getXconfvalue())));
+		// }
+		// if (null != of.getIntegrationPlatform()) {
+		// bigDecimal = bigDecimal.subtract(new BigDecimal(of
+		// .getIntegrationPlatform()
+		// * Double.valueOf(xconf_integration_rate_for_money
+		// .getXconfvalue())));
+		// }
+		if (null != of.getIntegration_price()) {
+			bigDecimal = bigDecimal.subtract(of.getIntegration_price());// 订单总金额-农豆抵用总金额
 		}
-		if (null != of.getIntegrationPlatform()) {
-			bigDecimal = bigDecimal.subtract(new BigDecimal(of
-					.getIntegrationPlatform()
-					* Double.valueOf(xconf_integration_rate_for_money
-							.getXconfvalue())));
-		}
-		bigDecimal = bigDecimal.setScale(0, BigDecimal.ROUND_DOWN);
+		bigDecimal = bigDecimal.setScale(0, BigDecimal.ROUND_DOWN);// 取整
 		Integer integer = null;
 		try {
 			integer = bigDecimal.intValue()

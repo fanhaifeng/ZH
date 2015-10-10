@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +22,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.nutz.json.Json;
@@ -35,8 +38,10 @@ import com.lakecloud.core.mv.JModelAndView;
 import com.lakecloud.core.query.support.IPageList;
 import com.lakecloud.core.security.support.SecurityUserHolder;
 import com.lakecloud.core.tools.CommUtil;
+import com.lakecloud.core.tools.ExcelUnit;
 import com.lakecloud.core.tools.SendMessageUtil;
 import com.lakecloud.foundation.domain.Charge;
+import com.lakecloud.foundation.domain.ExportAddressInfo;
 import com.lakecloud.foundation.domain.GoodsCart;
 import com.lakecloud.foundation.domain.GoodsReturn;
 import com.lakecloud.foundation.domain.GoodsReturnItem;
@@ -54,6 +59,7 @@ import com.lakecloud.foundation.service.IGoodsCartService;
 import com.lakecloud.foundation.service.IGoodsReturnItemService;
 import com.lakecloud.foundation.service.IGoodsReturnLogService;
 import com.lakecloud.foundation.service.IGoodsReturnService;
+import com.lakecloud.foundation.service.IGoodsServiceDC;
 import com.lakecloud.foundation.service.IOrderFormLogService;
 import com.lakecloud.foundation.service.IOrderFormService;
 import com.lakecloud.foundation.service.IRefundLogService;
@@ -100,6 +106,8 @@ public class OrderSellerAction {
 	private PaymentTools paymentTools;
 	@Autowired
 	private IChargeService chargeService;
+	@Autowired
+	private IGoodsServiceDC goodsServiceDC;
 	
 	@SecurityMapping(title = "卖家订单列表", value = "/seller/order.htm*", rtype = "seller", rname = "订单管理", rcode = "order_seller", rgroup = "交易管理")
 	@RequestMapping("/seller/order.htm")
@@ -113,8 +121,15 @@ public class OrderSellerAction {
 				this.userConfigService.getUserConfig(), 0, request, response);
 		OrderFormQueryObject ofqo = new OrderFormQueryObject(currentPage, mv,
 				"addTime", "desc");
-		ofqo.addQuery("obj.store.user.id", new SysMap("user_id",
-				SecurityUserHolder.getCurrentUser().getId()), "=");
+		
+		if(SecurityUserHolder.getCurrentUser().getParent() != null){
+			ofqo.addQuery("obj.store.user.id", new SysMap("user_id",
+					SecurityUserHolder.getCurrentUser().getParent().getId()), "=");
+		}else{
+			ofqo.addQuery("obj.store.user.id", new SysMap("user_id",
+					SecurityUserHolder.getCurrentUser().getId()), "=");
+		}
+			
 		if (!CommUtil.null2String(order_status).equals("")) {
 			if (order_status.equals("order_submit")) {// 已经提交
 				ofqo.addQuery("obj.order_status",
@@ -971,6 +986,63 @@ public class OrderSellerAction {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+
+	//导出
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/seller/exportAddress.htm")
+	public void goods_referprice_finish(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		response.setCharacterEncoding("utf-8");
+		String starttime=(request.getParameter("starttime")==null || (request.getParameter("starttime")).equals("") || (request.getParameter("starttime")).equals("undefined")? null:(request.getParameter("starttime").toString()+" 00:00:00"));
+		String endtime=(request.getParameter("endtime")==null || request.getParameter("endtime").equals("") || request.getParameter("endtime").equals("undefined") ? null:(request.getParameter("endtime").toString()+" 23:59:59"));
+		String storeid = request.getParameter("storeid").toString();
+		String query ="select LOF.ORDER_ID,LAD.AREA_INFO,LAD.TELEPHONE,LAD.TRUENAME from LAKECLOUD_ORDERFORM LOF LEFT JOIN LAKECLOUD_ADDRESS LAD on LOF.ADDR_ID=LAD.ID " +
+				"where (LOF.ORDER_STATUS=30 or LOF.ORDER_STATUS=40 or LOF.ORDER_STATUS>=50)";
+		if(storeid!=null &&!"".equals(storeid)){
+			query+=" and LOF.STORE_ID="+storeid;
+		}
+		if(starttime!=null){
+			query+=" and LOF.ADDTIME>=to_date('"+starttime+"','yyyy-MM-dd hh24:mi:ss')";
+		}
+		if(endtime!=null){
+			query+=" and LOF.ADDTIME<=to_date('"+endtime+"','yyyy-MM-dd hh24:mi:ss')";
+		}
+		List<Object[]> priceList = this.goodsServiceDC.getPrice(query,null,-1,-1);
+		if(priceList!=null){
+			List<ExportAddressInfo> addList = new ArrayList<ExportAddressInfo>();
+	//		Collection<ExportAddressInfo> addList = new ArrayList<ExportAddressInfo>();
+			for(int j=0;j<priceList.size();j++){
+				List<Object[]> li = new ArrayList();
+				li.add(priceList.get(j));
+				for(Object[] o : li){
+					ExportAddressInfo info=new ExportAddressInfo();
+					info.setField1(o[0].toString());
+					info.setAddInfo( o[1].toString());
+					info.setTelephone(o[2].toString());
+					info.setName(o[3].toString());
+					addList.add(info);
+				}	
+			}
+//			OutputStream out;
+
+//				out = new FileOutputStream("E://订单收货地址信息_"+(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).replace(" ", "-").replace(":", "")+".xls");
+//				String [] headers = {"订单号","收货人详细地址","收货人电话","收货人姓名"};
+//				ExcelUnit.exportExcel(response,"订单收货地址信息",headers,addList,out,"yyyy-MM-dd hh24:mi:ss");
+//				out.close();
+//				//JOptionPane.showMessageDialog(null, "导出成功!");  
+//	            System.out.println("excel导出成功！");
+//	            obj.put("message","订单收货地址信息_"+(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).replace(" ", "-").replace(":", "")+".xls "+"文件导出成功！"); 
+			String [] exportNamesArray = {"订单号","收货人详细地址","收货人电话","收货人姓名"};
+			Workbook wb = new HSSFWorkbook();	
+			response.setCharacterEncoding("UTF-8");
+	        response.setContentType("application/vnd.ms-excel");
+	        response.setHeader("Content-Disposition", "attachment;Filename="
+	                + new String("订单收货地址信息.xls".getBytes("gb2312"), "ISO8859-1"));
+	        ExcelUnit.exportPerspective(wb, exportNamesArray,addList);
+			wb.write(response.getOutputStream());
+			  
 		}
 	}
 }

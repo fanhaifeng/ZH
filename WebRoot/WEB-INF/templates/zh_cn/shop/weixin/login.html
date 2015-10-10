@@ -47,13 +47,14 @@ function returnLogin(){
 <body class="login_bg">
 <hgroup>
   <h3 class="goods_car clearfix">
-  <a href="javascript:void(0);" onclick="forIndex()"><em>&lt;</em></a><span><b>用户登录</b><button class="cmd_regist fr" type="button" onClick="register()">注册</button></span>
+  <a href="javascript:void(0);" onclick="forIndex()"><em>&lt;</em></a><span><b>用户登录</b>
+  </span>
   
   </h3>
 </hgroup>
 <div class="user_center">
-  <section class="user_top">
-  </section>
+ <!-- <section class="user_top">
+  </section>  -->
   </div>
 <form action="$!webPath/iskyshop_login.htm" method="post" name="theForm" id="theForm" class="fff">
 <input type="hidden" value="1" name="mark"/>
@@ -65,9 +66,10 @@ function returnLogin(){
       <input name="password" id="password" type="password" class="input_txt" placeholder="请输入密码">
     </section>
     <div class="cmd">     
- 	  <div class="find_password"><a href="$!webPath/weixin/find_password.htm">忘记密码？</a></div>
+ 	  <div class="find_password"><a href="$!webPath/weixin/find_password.htm">忘记密码？点击这里找回密码</a></div>
       <button class="cmd_login" type="button" onClick="saveForm()">登录</button>
       <button class="cmd_login cmd_regist2" type="button" onClick="register_seller()">免费开店</button>
+      <button class="cmd_login" type="button" onClick="register()">注册</button>
     </div>
   </div>
 </form>

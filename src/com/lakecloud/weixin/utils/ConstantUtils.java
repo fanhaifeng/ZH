@@ -39,7 +39,7 @@ public class ConstantUtils {
 	/**
 	 * 分隔线
 	 */
-	public static String _PAY_THIRD_SEPARATOR = "******************************************************************************************************";
+	public static String _COMMON_SEPARATOR = "******************************************************************************************************";
 	/**
 	 * 银行ID
 	 */
@@ -121,6 +121,23 @@ public class ConstantUtils {
 	 * 消费路径：0:订单 1:注册 2：推荐用户 -1：农技服务
 	 */
 	public static int[] _INTEGRATION_LOG_GETTYPE = { 0, 1, 2, -1 };
+	/**
+	 * 农豆相关接口实现类：0"OrderFormServiceImpl", 1"IntegrationServiceImpl",
+	 * 2"Integration_ChildServiceImpl", 3"Integration_LogServiceImpl"
+	 */
+	public static String[] _INTEGRATION_SERVICE_IMPLS = {
+			"OrderFormServiceImpl", "IntegrationServiceImpl",
+			"Integration_ChildServiceImpl", "Integration_LogServiceImpl" };
+	/**
+	 * 农豆相关接口实现类中的方法
+	 */
+	public static String[] _INTEGRATION_SERVICE_IMPL_FUNCTIONS = {
+			"updateByOrderForm", "setIntegrationPlatformAndIntegrationStore",
+			"subtract_operations_for_integration" };
+	/**
+	 * 日志生产者：0"log_by_bm"
+	 */
+	public static String[] _LOG_AUTHORS = { "logs_by_bm" };
 
 	/**
 	 * 获取打印日志前缀
@@ -133,7 +150,7 @@ public class ConstantUtils {
 	 * 进入打印日志
 	 */
 	public static String _getLogEnter(String str) {
-		System.out.println(_PAY_THIRD_SEPARATOR);
+		_printCommonSeparator(0);
 		return _getLogFront(str) + _PAY_THIRD_LOG_ENTER;
 	}
 
@@ -141,7 +158,7 @@ public class ConstantUtils {
 	 * 退出打印日志
 	 */
 	public static String _getLogExit(String str) {
-		System.out.println(_PAY_THIRD_SEPARATOR);
+		_printCommonSeparator(0);
 		return _getLogFront(str) + _PAY_THIRD_LOG_EXIT;
 	}
 
@@ -182,5 +199,22 @@ public class ConstantUtils {
 		return of.getTotalPrice().subtract(
 				new BigDecimal(CommUtil.null2Long(of.getCharge_Num())))
 				.subtract(of.getIntegration_price()).toString();
+	}
+
+	/**
+	 * 返回农豆相关的接口实现类中，对应方法的日志
+	 */
+	public static String _getIntegrationServiceImplFunctions(int impl,
+			int function) {
+		_printCommonSeparator(0);
+		return "[" + _INTEGRATION_SERVICE_IMPLS[impl] + "]["
+				+ _INTEGRATION_SERVICE_IMPL_FUNCTIONS[function] + "]";
+	}
+
+	/**
+	 * 根据创建者，打印日志分隔线
+	 */
+	public static void _printCommonSeparator(int author) {
+		System.out.println(_LOG_AUTHORS[author] + _COMMON_SEPARATOR);
 	}
 }

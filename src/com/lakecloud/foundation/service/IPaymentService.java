@@ -7,6 +7,7 @@ import java.util.Map;
 import com.lakecloud.core.query.support.IPageList;
 import com.lakecloud.core.query.support.IQueryObject;
 import com.lakecloud.foundation.domain.Payment;
+import com.lakecloud.foundation.domain.Store;
 
 public interface IPaymentService {
 	/**
@@ -76,4 +77,6 @@ public interface IPaymentService {
 	 * @return
 	 */
 	Payment getObjByProperty(String propertyName, String value);
+
+	List<Payment> queryByStore(Store store);
 }

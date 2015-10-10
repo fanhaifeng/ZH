@@ -1,4 +1,4 @@
-﻿package com.lakecloud.lucene;
+package com.lakecloud.lucene;
 
 import java.io.File;
 import java.io.IOException;
@@ -215,7 +215,7 @@ public class LuceneUtil {
 			goods.setAddTime(new Date(vo.getVo_add_time()));//添加时间 
 			vo.setVo_store_price(CommUtil.null2Double(doc
 					.get(LuceneVo.STORE_PRICE)));
-			goods.setStore_price(new BigDecimal(vo.getVo_store_price()));//店铺价格
+			goods.setStore_price(new BigDecimal(vo.getVo_store_price()+""));//店铺价格
 			if(doc.get(LuceneVo.GOODS_SERIAL)==null){
 				continue;
 			}
@@ -289,7 +289,11 @@ public class LuceneUtil {
 			List<GoodsSpecProperty> goods_specs = new ArrayList<GoodsSpecProperty>();
 			goods.setGoods_specs(goods_specs);//规格属性处理
 			vo.setVo_evalutes_num(CommUtil.null2Int(doc.get(LuceneVo.EVALUATES_NUM)));
-			List<Evaluate> evaluates=new ArrayList<Evaluate>(vo.getVo_evalutes_num());
+			List<Evaluate> evaluates=new ArrayList<Evaluate>();
+			Evaluate evaluate = null;
+			for(int j=0;j<vo.getVo_evalutes_num();j++){
+				evaluates.add(evaluate);
+			}
 			goods.setEvaluates(evaluates);//累积评论数
 			vo.setVo_inventory_type(CommUtil.null2String(doc.get(LuceneVo.INVENTORY_TYPE)));
 			goods.setInventory_type(vo.getVo_inventory_type());//库存类型
@@ -297,10 +301,10 @@ public class LuceneUtil {
 			goods.setGoods_inventory(vo.getVo_goods_inventory());//库存数量
 			vo.setVo_goods_price(CommUtil.null2Double(doc
 					.get(LuceneVo.GOODS_PRICE)));
-			goods.setGoods_price(new BigDecimal(vo.getVo_goods_price()));//商品原价格
+			goods.setGoods_price(new BigDecimal(vo.getVo_goods_price()+""));//商品原价格
 			vo.setVo_goods_current_price(CommUtil.null2Double(doc
 					.get(LuceneVo.GOODS_CURRENT_PRICE)));
-			goods.setGoods_current_price(new BigDecimal(vo.getVo_goods_current_price()));//商品现金
+			goods.setGoods_current_price(new BigDecimal(vo.getVo_goods_current_price()+""));//商品现金
 			vo.setVo_goods_status(CommUtil.null2String(doc.get(LuceneVo.GOODS_STATUS)));
 			goods.setGoods_status(vo.getVo_goods_status()==null?0:"".equals(vo.getVo_goods_status())?0:Integer.parseInt(vo.getVo_goods_status()));//商品上架状态
 			vo.setVo_goods_salenum(CommUtil.null2Int(doc.get(LuceneVo.GOODS_SALENUM)));//销量
@@ -867,6 +871,7 @@ public class LuceneUtil {
 		vo.setVo_goods_brand(goods.getGoods_brand()==null?"":goods.getGoods_brand().getName());
 		vo.setVo_goods_sepc(goods.getGoods_property());//属性规格
 		vo.setVo_goods_inventory_detail(goods.getGoods_inventory_detail());//规格库存
+		System.out.println(goods.getGoods_current_price()+"---->"+goods.getGoods_current_price().doubleValue());
 		vo.setVo_goods_current_price(goods.getGoods_current_price().doubleValue());
 		vo.setVo_description_evaluate(goods.getDescription_evaluate());
 		vo.setVo_store_id(goods.getGoods_store().getId()+"");

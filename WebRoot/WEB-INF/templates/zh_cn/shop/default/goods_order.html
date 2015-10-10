@@ -1,4 +1,4 @@
-﻿#if($!rows==0)
+#if($!rows==0)
  <div class="novalue"> 还没有成交记录 </div>
 #else
 <div class="okcode" id="strike_tab" style="margin-top:10px;">
@@ -32,7 +32,7 @@
               #end
               #if($credit>5)#set($credit=5)#end  
           <td class="blue" valign="middle" width="130">$!{obj.of.user.userName} #if($!credit==0) <img src="$!imageWebServer/resources/style/common/images/level_-1.gif"/> #else #foreach($count in [1..$!credit])<img style="margin-left:1px;" src="$!img" />#end #end</td>
-          <td><strong class="orange">¥$!{obj.goods.store_price}</strong></td>
+          <td><strong class="orange">¥$!{obj.price}</strong></td>
           <td>$!obj.spec_info</td>
           <td>$!obj.count</td>
           <td>$!CommUtil.formatLongDate($!obj.of.payTime)</td>

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -87,6 +88,41 @@ public class Audit extends IdEntity {
 	
 	private String branch_code;//分公司代号
 	
+	@OneToOne(fetch = FetchType.LAZY)
+	private Accessory file1;// 认证身份证正面
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	private Accessory file2;// 认证身份证反面
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	private Accessory file3;// 店铺营业执照
+	
+
+	
+	public Accessory getFile1() {
+		return file1;
+	}
+
+	public void setFile1(Accessory file1) {
+		this.file1 = file1;
+	}
+
+	public Accessory getFile2() {
+		return file2;
+	}
+
+	public void setFile2(Accessory file2) {
+		this.file2 = file2;
+	}
+
+	public Accessory getFile3() {
+		return file3;
+	}
+
+	public void setFile3(Accessory file3) {
+		this.file3 = file3;
+	}
+
 	public Branch getBranch() {
 		return branch;
 	}

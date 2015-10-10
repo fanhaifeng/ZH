@@ -89,7 +89,7 @@ $!httpInclude.include("/store_head.htm?store_id=$!{store.id}")
               </b><b>~</b><b class="bran_int">
               <input name="store_price_end" id="store_price_end" type="text" />
               </b><b class="bran_btn">
-              <input name="input" value="提交" style="cursor:pointer;" type="button" id="input" onclick="query_price();" />
+              <input name="input" value="搜索" style="cursor:pointer;" type="button" id="input" onclick="query_price();" />
               </b></span>
               </div>
           </div>
@@ -133,7 +133,7 @@ $!httpInclude.include("/store_head.htm?store_id=$!{store.id}")
               $!gotoPageFormHTML</span> </div>
           </form>
           #else
-          <div class="sigh"> <span><img src="$!imageWebServer/resources/style/system/front/default/images/sigh.png" width="120" height="109" /></span> <b>亲！没有您要找的宝贝呢。</b> </div>
+          <div class="sigh"> <span><img src="$!imageWebServer/resources/style/shop/$!{store.template}/images/sigh.jpg" width="120" height="109" /></span> <b>亲！没有您要找的宝贝呢。</b> </div>
         </div>
         #end </div>
     </div>

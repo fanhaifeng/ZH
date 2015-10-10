@@ -728,6 +728,7 @@ public class OrderFormServiceImpl implements IOrderFormService {
 							// 扣除此次用的赊销额度 并跳转到第三方支付界面
 							update_charge_orderForm(of, charge, chargeNumDec,
 									-1);
+							
 							mv = thirdPay(request, response, payType, order_id);
 						} else {
 							update_charge_orderForm(of, charge, chargeNumDec,
@@ -801,79 +802,104 @@ public class OrderFormServiceImpl implements IOrderFormService {
 		}
 		OrderForm of = getObjById(CommUtil.null2Long(order_id));
 		if (of != null && of.getOrder_status() == 10) {
-			setIntegration_for_OrderForm(of, integrationPlatform,
-					integrationStore);
-			// 获取该用户在该经销商的赊销额度
-			String query = "select obj from Charge obj where store.id=:store_id and user.id=:user_id";
-			Map<String, Long> chargeMap = new HashMap<String, Long>();
-			chargeMap.put("store_id", of.getStore().getId());
-			chargeMap.put("user_id", of.getUser().getId());
-			List<Charge> chargeList = this.chargeService.query(query,
-					chargeMap, -1, -1);
-			if (chargeList != null && chargeList.size() == 1) {
-				BigDecimal ret = BigDecimal.ZERO;// 可用赊销额度
-				Charge charge = chargeList.get(0);
-				// 有赊销金额
-				if ((new BigDecimal(CommUtil.null2Long(of.getCharge_Num())))
-						.compareTo(BigDecimal.ZERO) > 0) {
-					// 将原先的赊销金额退还原处
-					charge.setUsedPayNum(charge.getUsedPayNum().subtract(
-							new BigDecimal(CommUtil.null2Long(of
-									.getCharge_Num()))));
-					of.setCharge_Num(BigDecimal.ZERO);
-				}
-				// 可用赊销额度
-				BigDecimal b1 = charge.getPaymentNum();
-				BigDecimal b2 = charge.getUsedPayNum();
-				ret = b1.subtract(b2);
-				if (chargeNumDec.compareTo(ret) == -1
-						|| chargeNumDec.compareTo(ret) == 0) {
-					if (chargeNumDec.compareTo(of.getTotalPrice()) == -1) {
-						// 扣除此次用的赊销额度 并跳转到第三方支付界面
-						update_charge_orderForm(of, charge, chargeNumDec, -1);
-						mv = pc_thirdPay(request, response, payType, order_id);
-					} else {
-						update_charge_orderForm(of, charge, chargeNumDec,
-								ConstantUtils._ORDERFORM_ORDER_STATUS[3]);
-						if (this.configService.getSysConfig().isSmsEnbale()) {
-							try {
-								String phone = of.getStore().getUser()
-										.getTelephone();
-								this.send_sms(request, of, phone,
-										"sms_toseller_pay_notify_ok");
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+			if (of.getUser().getId().equals(
+					SecurityUserHolder.getCurrentUser().getId())) {
+				setIntegration_for_OrderForm(of, integrationPlatform,
+						integrationStore);
+				// 获取该用户在该经销商的赊销额度
+				String query = "select obj from Charge obj where store.id=:store_id and user.id=:user_id";
+				Map<String, Long> chargeMap = new HashMap<String, Long>();
+				chargeMap.put("store_id", of.getStore().getId());
+				chargeMap.put("user_id", of.getUser().getId());
+				List<Charge> chargeList = this.chargeService.query(query,
+						chargeMap, -1, -1);
+				if (chargeList != null && chargeList.size() == 1) {
+					BigDecimal ret = BigDecimal.ZERO;// 可用赊销额度
+					Charge charge = chargeList.get(0);
+					// 有赊销金额
+					if ((new BigDecimal(CommUtil.null2Long(of.getCharge_Num())))
+							.compareTo(BigDecimal.ZERO) > 0) {
+						// 将原先的赊销金额退还原处
+						charge.setUsedPayNum(charge.getUsedPayNum().subtract(
+								new BigDecimal(CommUtil.null2Long(of
+										.getCharge_Num()))));
+						of.setCharge_Num(BigDecimal.ZERO);
+					}
+					// 可用赊销额度
+					BigDecimal b1 = charge.getPaymentNum();
+					BigDecimal b2 = charge.getUsedPayNum();
+					ret = b1.subtract(b2);
+					if (chargeNumDec.compareTo(ret) == -1
+							|| chargeNumDec.compareTo(ret) == 0) {
+						BigDecimal total_from_web = chargeNumDec;
+						if (CommUtil.isNotNull(integrationPlatform)) {
+							total_from_web = total_from_web.add(new BigDecimal(
+									integrationPlatform));
 						}
-						/**
-						 * 库存扣减现在买家提交订单时触发 wsp.update_goods_inventory(of);
-						 **/
-						mv = new JModelAndView("success.html", configService
-								.getSysConfig(), this.userConfigService
-								.getUserConfig(), 1, request, response);
-						mv.addObject("op_title", "您已经完成了支付！");
+						if (CommUtil.isNotNull(integrationStore)) {
+							total_from_web = total_from_web.add(new BigDecimal(
+									integrationStore));
+						}
+						if (total_from_web.compareTo(of.getTotalPrice()) == -1) {
+							// 扣除此次用的赊销额度 并跳转到第三方支付界面
+							update_charge_orderForm(of, charge, chargeNumDec,
+									-1);		
+							mv = pc_thirdPay(request, response, payType, order_id);
+						} else {
+							update_charge_orderForm(of, charge, chargeNumDec,
+									ConstantUtils._ORDERFORM_ORDER_STATUS[3]);
+							subtract_operations_for_integration(of, request);
+							if (this.configService.getSysConfig().isSmsEnbale()) {
+								try {
+									String phone = of.getStore().getUser()
+											.getTelephone();
+									this.send_sms(request, of, phone,
+											"sms_toseller_pay_notify_ok");
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+							/**
+							 * 库存扣减现在买家提交订单时触发 wsp.update_goods_inventory(of);
+							 **/
+							mv = new JModelAndView("success.html",
+									configService.getSysConfig(),
+									this.userConfigService.getUserConfig(), 1,
+									request, response);
+							mv.addObject("op_title", "您已经完成了支付！");
+							mv.addObject("url", CommUtil.getURL(request)
+									+ "/buyer/order.htm");
+						}
+					} else {
+						mv = new JModelAndView("error.html",
+								configService.getSysConfig(),
+								this.userConfigService.getUserConfig(), 1,
+								request, response);
+						mv.addObject("op_title", "可用赊销额度不足以支付该订单！");
 						mv.addObject("url", CommUtil.getURL(request)
 								+ "/buyer/order.htm");
 					}
-					subtract_operations_for_integration(of, request);
 				} else {
-					mv = new JModelAndView("error.html", configService
-							.getSysConfig(), this.userConfigService
-							.getUserConfig(), 1, request, response);
-					mv.addObject("op_title", "可用赊销额度不足以支付该订单！");
-					mv.addObject("url", CommUtil.getURL(request)
-							+ "/buyer/order.htm");
+					// 没有赊销金额直接跳第三方支付界面
+					
+					mv = pc_thirdPay(request, response, payType, order_id);
 				}
-			} else {
-				// 没有赊销金额直接跳第三方支付界面
-				mv = pc_thirdPay(request, response, payType, order_id);
+			} else {// fix bugs for session
+				mv = new JModelAndView("success.html", configService
+						.getSysConfig(),
+						this.userConfigService.getUserConfig(), 1, request,
+						response);
+				mv.addObject("op_title", "正在为您跳转");
+				mv.addObject("url", CommUtil.getURL(request)
+						+ "/buyer/account.htm");
 			}
 		} else {
-			mv = new JModelAndView("error.html", configService.getSysConfig(),
-					this.userConfigService.getUserConfig(), 1, request,
-					response);
+			mv = new JModelAndView("error.html", configService
+					.getSysConfig(), this.userConfigService.getUserConfig(), 1,
+					request, response);
 			mv.addObject("op_title", "该订单不存在！");
-			mv.addObject("url", CommUtil.getURL(request) + "/buyer/order.htm");
+			mv.addObject("url", CommUtil.getURL(request)
+					+ "/buyer/order.htm");
 		}
 		return mv;
 	}
@@ -920,6 +946,7 @@ public class OrderFormServiceImpl implements IOrderFormService {
 			of.setPayment(payments.get(0));
 			update(of);
 			if (payType.equals(ConstantUtils._PAYMENT_MARK[1])) {
+				subtract_operations_for_integration(of, request);
 				mv = new JModelAndView("third_payment.html", configService
 						.getSysConfig(),
 						this.userConfigService.getUserConfig(), 1, request,
@@ -1438,7 +1465,8 @@ public class OrderFormServiceImpl implements IOrderFormService {
 			obj.setAddTime(new Date());
 			if (CommUtil.null2String(buy_type).equals("")) {
 				obj.setCount(CommUtil.null2Int(count));
-				obj.setPrice(BigDecimal.valueOf(CommUtil.null2Double(price)));
+				obj.setPrice(BigDecimal.valueOf(CommUtil.null2Double(goods
+						.getGoods_current_price())));// fix bug:price
 			}
 			if (CommUtil.null2String(buy_type).equals("combin")) {// 组合销售只添加一件商品
 				obj.setCount(1);// 设置组合销售套数
@@ -2476,6 +2504,31 @@ public class OrderFormServiceImpl implements IOrderFormService {
 	}
 
 	@Override
+	public String order_cofirm_save(HttpServletRequest request,
+			HttpServletResponse response, String id, String currentPage)
+			throws Exception {
+		OrderForm obj = null;
+		if (id != null)
+			obj = getObjById(CommUtil.null2Long(id));
+		if (obj.getUser().getId().equals(
+				SecurityUserHolder.getCurrentUser().getId())) {
+			obj.setOrder_status(40);
+			boolean ret = update(obj);
+			if (ret) {// 订单状态更新成功，更新相关信息
+				OrderFormLog ofl = new OrderFormLog();
+				ofl.setAddTime(new Date());
+				ofl.setLog_info("确认收货");
+				ofl.setLog_user(SecurityUserHolder.getCurrentUser());
+				ofl.setOf(obj);
+				this.orderFormLogService.save(ofl);
+			}
+		}
+		add_operations_for_integration(obj, request);
+		String url = "redirect:/buyer/order.htm?currentPage=" + currentPage;
+		return url;
+	}
+
+	@Override
 	public ModelAndView weixin_order_evaluate_save(HttpServletRequest request,
 			HttpServletResponse response, String id) throws Exception {
 		OrderForm obj = getObjById(CommUtil.null2Long(id));
@@ -2618,7 +2671,8 @@ public class OrderFormServiceImpl implements IOrderFormService {
 		integration.setIntegrals(integration.getIntegrals()
 				+ change_integrationStore);
 		integrationService.update(integration);
-		log_operations_for_integration(of, change_integrationStore, integration);
+		log_operations_for_integration(of, change_integrationStore,
+				integration, null);
 		if (this.configService.getSysConfig().isSmsEnbale()) {
 			SendMessageUtil sendmessage = new SendMessageUtil();
 			try {
@@ -2642,23 +2696,58 @@ public class OrderFormServiceImpl implements IOrderFormService {
 	 */
 	private void subtract_operations_for_integration(OrderForm of,
 			HttpServletRequest request) {
-		if (of.getIntegrationPlatform() > 0 || of.getIntegrationStore() > 0) {
-			integrationChildService.subtractByOrderForm(of);
-			User user = of.getUser();
-			List<Integration> integrationList = integrationService
-					.queryByUser(user);
-			Integration integration = integrationList.get(0);
-			integrationService.updateByOrderForm(of, null, integration);
-			log_operations_for_integration(of, null, integration);
-			if (this.configService.getSysConfig().isSmsEnbale()) {
-				try {
-					String phone = of.getUser().getTelephone();
-					this.send_sms(request, of, phone,
-							"sms_toseller_subtract_integration");
-				} catch (Exception e) {
-					e.printStackTrace();
+		if (CommUtil.isNotNull(of.getStore().getWeixin_token())) {// 判断店铺是否开通农豆折合成金额
+			if (of.getIntegrationPlatform() > 0 || of.getIntegrationStore() > 0) {
+				integrationChildService.subtractByOrderForm(of);
+				User user = of.getUser();
+				List<Integration> integrationList = integrationService
+						.queryByUser(user);
+				Integration integration = integrationList.get(0);
+				Integer overdue_integrals_order = 0;// 即将过期的店铺农豆
+				Integer integration_new = integration.getIntegrals();
+				if (null != of.getIntegrationStore()) {
+					if (integration_new >= 0) {
+						integration_new = integration_new
+								- of.getIntegrationStore();
+						if (CommUtil.isNotNull(integration
+								.getOverdue_integrals())) {// 是否含过期的店铺农豆
+							Integer overdue_integrals_new = integration
+									.getOverdue_integrals()
+									- of.getIntegrationStore();
+							if (overdue_integrals_new >= 0) {// 判断店铺农豆是否够
+								overdue_integrals_order = of
+										.getIntegrationStore();
+								integration
+										.setOverdue_integrals(overdue_integrals_new);
+							} else {
+								overdue_integrals_order = integration
+										.getOverdue_integrals();
+								integration.setOverdue_integrals(0);
+							}
+						}
+					} else {
+						System.out.println(ConstantUtils
+								._getIntegrationServiceImplFunctions(0, 2)
+								+ "店铺农豆<0");
+					}
+				}
+				integrationService.updateByOrderForm(of, integration,integration_new);
+				log_operations_for_integration(of, null, integration,
+						overdue_integrals_order);
+				if (this.configService.getSysConfig().isSmsEnbale()) {
+					try {
+						String phone = of.getUser().getTelephone();
+						this.send_sms(request, of, phone,
+								"sms_toseller_subtract_integration");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
+		} else {
+			System.out.println(ConstantUtils
+					._getIntegrationServiceImplFunctions(0, 2)
+					+ "店铺未设置农豆折合成金额的比例");
 		}
 	}
 
@@ -2666,7 +2755,8 @@ public class OrderFormServiceImpl implements IOrderFormService {
 	 * 农豆日志操作
 	 */
 	private void log_operations_for_integration(OrderForm of,
-			Integer change_integrationStore, Integration integration) {
+			Integer change_integrationStore, Integration integration,
+			Integer overdue_integrals_order) {
 		Integration_Log integrationLog = new Integration_Log();
 		if (null != change_integrationStore) {
 			integrationLog.setIntegrals(0);
@@ -2680,6 +2770,9 @@ public class OrderFormServiceImpl implements IOrderFormService {
 			integrationLog.setIntegrals(of.getIntegrationPlatform());
 			integrationLog.setIntegrals_store(of.getIntegrationStore());
 			integrationLog.setType(ConstantUtils._INTEGRATION_LOG_TYPE[1]);
+		}
+		if (null != overdue_integrals_order) {
+			integrationLog.setOverdue_integrals_order(overdue_integrals_order);// 设置店铺过期农豆
 		}
 		integrationLog.setGettype(ConstantUtils._INTEGRATION_LOG_GETTYPE[0]);
 		integrationLog.setInteg(integration);
@@ -2704,22 +2797,41 @@ public class OrderFormServiceImpl implements IOrderFormService {
 					: 0;
 		}
 		int integrationStore = 0;
-		List<Integration_Child> integrationStoreList = integrationChildService
-				.queryByTypeStoreOrUser(ConstantUtils._INTEGRATION_TYPE[1],
-						user, of.getStore());
-		if (null != integrationStoreList && integrationStoreList.size() > 0) {
-			integrationStore = integrationStoreList.get(0).getIntegrals() != null ? integrationStoreList
-					.get(0).getIntegrals()
-					: 0;
+		String integration_to_money_store = "0";// 店铺农豆兑换成金额的比例
+		if (CommUtil.isNotNull(of.getStore().getWeixin_token())) {// 判断店铺是否开通农豆折合成金额
+			integration_to_money_store = of.getStore().getWeixin_token();
+			try {
+				double rate_store = Double.valueOf(of.getStore()
+						.getWeixin_token());
+				if (rate_store > 0) {
+					List<Integration_Child> integrationStoreList = integrationChildService
+							.queryByTypeStoreOrUser(
+									ConstantUtils._INTEGRATION_TYPE[1], user,
+									of.getStore());
+					if (null != integrationStoreList
+							&& integrationStoreList.size() > 0) {
+						integrationStore = integrationStoreList.get(0)
+								.getIntegrals() != null ? integrationStoreList
+								.get(0).getIntegrals() : 0;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println(ConstantUtils
+					._getIntegrationServiceImplFunctions(0, 1)
+					+ "店铺未设置农豆折合成金额的比例");
 		}
 		mv.addObject("integrationPlatform", integrationPlatform);// 总数
 		mv.addObject("integrationStore", integrationStore);// 总数
 		mv.addObject("integrationTotal", total_price_to_integration(of
-				.getTotalPrice()));// 可用总数
+				.getTotalPrice()));// 总农豆可以抵用的订单总金额
 		XConf xconf_integration_rate_for_money = xconfService
 				.queryByXconfkey(ConstantUtils._INTEGRATION_RATE_FOR_MONEY);
 		mv.addObject("integration_to_money", xconf_integration_rate_for_money
 				.getXconfvalue());// 农豆转金额的比例
+		mv.addObject("integration_to_money_store", integration_to_money_store);// 农豆转金额的比例
 		return mv;
 	}
 
@@ -2750,17 +2862,26 @@ public class OrderFormServiceImpl implements IOrderFormService {
 		XConf xconf_integration_rate_for_money = xconfService
 				.queryByXconfkey(ConstantUtils._INTEGRATION_RATE_FOR_MONEY);
 		BigDecimal integration_price = BigDecimal.ZERO;
-		if (null != of.getIntegrationStore()) {
-			integration_price = integration_price.add(new BigDecimal(of
-					.getIntegrationStore()
-					* Double.valueOf(xconf_integration_rate_for_money
-							.getXconfvalue())));
-		}
-		if (null != of.getIntegrationPlatform()) {
-			integration_price = integration_price.add(new BigDecimal(of
-					.getIntegrationPlatform()
-					* Double.valueOf(xconf_integration_rate_for_money
-							.getXconfvalue())));
+		try {
+			if (null != of.getIntegrationStore()) {
+				// integration_price = integration_price.add(new BigDecimal(of
+				// .getIntegrationStore()
+				// * Double.valueOf(xconf_integration_rate_for_money
+				// .getXconfvalue())));
+				if (CommUtil.isNotNull(of.getStore().getWeixin_token())) {// 判断店铺是否开通农豆折合成金额
+					integration_price = integration_price.add(new BigDecimal(of
+							.getIntegrationStore()).multiply(new BigDecimal(of
+							.getStore().getWeixin_token())));
+				}
+			}
+			if (null != of.getIntegrationPlatform()) {
+				integration_price = integration_price.add(new BigDecimal(of
+						.getIntegrationPlatform()
+						* Double.valueOf(xconf_integration_rate_for_money
+								.getXconfvalue())));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return integration_price;
 	}
@@ -2768,7 +2889,7 @@ public class OrderFormServiceImpl implements IOrderFormService {
 	/**
 	 * 总金额转换成农豆
 	 */
-	private Integer total_price_to_integration(BigDecimal total_price) {
+	private BigDecimal total_price_to_integration(BigDecimal total_price) {
 		XConf xconf_integration_rate_for_order = xconfService
 				.queryByXconfkey(ConstantUtils._INTEGRATION_RATE_FOR_ORDER);
 		BigDecimal price = BigDecimal.ZERO;
@@ -2778,7 +2899,7 @@ public class OrderFormServiceImpl implements IOrderFormService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return price_to_integration(price);
+		return price;
 	}
 
 	/**
@@ -2991,15 +3112,17 @@ public class OrderFormServiceImpl implements IOrderFormService {
 			}
 			of.setOrder_status(16);
 			update(of);
+			subtract_operations_for_integration(of, request);
 			if (this.configService.getSysConfig().isSmsEnbale()) {
-				this.send_sms(request, of, of.getStore().getUser().getMobile(),
-						"sms_toseller_payafter_pay_ok_notify");
+				try {
+					String phone = of.getStore().getUser().getTelephone();
+					this.send_sms(request, of, phone,
+							"sms_toseller_pay_notify_ok");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-			if (this.configService.getSysConfig().isEmailEnable()) {
-				this.send_email(request, of,
-						of.getStore().getUser().getEmail(),
-						"email_toseller_payafter_pay_ok_notify");
-			}
+			
 			// 记录支付日志
 			OrderFormLog ofl = new OrderFormLog();
 			ofl.setAddTime(new Date());

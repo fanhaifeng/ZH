@@ -170,6 +170,15 @@ jQuery(document).ready(function(){
 		}		  
 	});
 	
+	jQuery.validator.addMethod("teleProVerify",function(value,element){
+	    var re =  /(^0?[1][34758][0-9]{9}$)/;
+        if(re.test(jQuery("#promote_tel").val()) || jQuery("#promote_tel").val() == ""){	
+			return true;
+		}else {
+		    return false;
+		}		  
+	});
+	
 	
 	jQuery("#telephone").blur(function(){
 		jQuery.ajax({
@@ -248,6 +257,27 @@ jQuery(document).ready(function(){
 							agree : {
 								required : true
 							},
+							promote_tel : {
+								required : false,
+								teleProVerify :true,
+								remote : {
+									url : "$!webPath/verify_promotion_telephone.htm", //后台处理程序
+									type : "post", //数据发送方式
+									dataType : "json", //接受数据格式   
+									data : { //要传递的数据
+										"promote_tel" : function() {
+											return jQuery(
+													"#promote_tel")
+													.val();
+										},
+										"telephone" : function() {
+											return jQuery(
+													"#telephone")
+													.val();
+										}
+									}
+								}
+							},
 							code : {
 								required : true,
 								remote : {
@@ -267,6 +297,10 @@ jQuery(document).ready(function(){
 								required : "手机号不能为空",
 								remote : "手机号已存在",
 								teleVerify : "手机号不正确"
+							},
+							promote_tel : {						
+								remote : "请输入除自己以外已注册成功的用户手机",
+								teleProVerify : "手机号不正确"
 							},
 							password : {
 								required : "密码不能为空",
@@ -386,6 +420,9 @@ function isMobil(s) {
               <form action="$!webPath/register_next.htm" method="post" name="theForm" id="theForm">
                 <input name="userName" type="hidden" id="userName" />
                 <table width="880" border="0" cellspacing="0" cellpadding="0" class="user_zc_table">
+                  <col width="123px" />
+				  <col width="330px" />
+				  <col   />
                   <tr>
                     <td class="login_nameu">手机号：</td>
                     <td width="320"><span class="login_user_input input_size">
@@ -424,6 +461,16 @@ function isMobil(s) {
                       </span></td>
                     <td class="login_nameu2"><span style="float:left;">再次输入您的密码</span></td>
                   </tr>
+                  
+                  <tr>
+                    <td class="login_nameu">推荐用户手机号：</td>
+                    <td><span class="login_user_input input_size">
+                      <input id="promote_tel" placeholder="选填"
+							name="promote_tel" type="text" class="register_txt">
+                      </span></td>
+                    <td class="login_nameu2"></td>
+                  </tr>
+                  
                   <tr>
                     <td class="login_nameu">区域：</td>
                     <td>

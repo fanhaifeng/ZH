@@ -28,6 +28,7 @@ import com.lakecloud.foundation.service.ISysConfigService;
 import com.lakecloud.foundation.service.IUserConfigService;
 import com.lakecloud.foundation.service.IUserService;
 import com.lakecloud.manage.admin.tools.PaymentTools;
+import com.lakecloud.weixin.utils.ConstantUtils;
 
 @Controller
 public class PaymentSellerAction {
@@ -83,7 +84,7 @@ public class PaymentSellerAction {
 				mv.addObject("obj", objs.get(0));
 			}
 		}
-
+		mv.addObject("bankBeanList", ConstantUtils._getBankIDList());
 		return mv;
 	}
 
@@ -133,6 +134,7 @@ public class PaymentSellerAction {
 						params, -1, -1);
 		if (objs.size() > 0)
 			mv.addObject("obj", objs.get(0));
+		mv.addObject("bankBeanList", ConstantUtils._getBankIDList());
 		return mv;
 	}
 
@@ -149,6 +151,8 @@ public class PaymentSellerAction {
 			Payment obj = this.paymentService
 					.getObjById(CommUtil.null2Long(id));
 			Payment payment = (Payment) wf.toPo(request, obj);
+			String province = request.getParameter("province").split("_")[1];
+			payment.setProvince(province);
 			this.paymentService.update(payment);
 		} else {
 			Payment payment = wf.toPo(request, Payment.class);
@@ -157,6 +161,8 @@ public class PaymentSellerAction {
 			User user = this.userService.getObjById(SecurityUserHolder
 					.getCurrentUser().getId());
 			payment.setStore(user.getStore());
+			String province = request.getParameter("province").split("_")[1];
+			payment.setProvince(province);
 			this.paymentService.save(payment);
 		}
 		mv.addObject("op_title", "支付方式保存成功");

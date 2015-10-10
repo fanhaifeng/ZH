@@ -411,23 +411,33 @@ public class CartViewAction {
 				BigDecimal b1 = charge.getPaymentNum();
 				BigDecimal b2 = charge.getUsedPayNum();
 				ret = b1.subtract(b2);
-				mv.addObject("ret", ret.add(new BigDecimal(CommUtil.null2Double(of.getCharge_Num()))));
+				mv.addObject("ret", ret.add(of.getCharge_Num()));
 			} else {
 				mv.addObject("ret", ret);
 			}
-		
+			int flag_payThird = 0;
+			List<Payment> paymentList = this.paymentService.queryByStore(of
+					.getStore());
+			if (null != paymentList && paymentList.size() > 0) {
+				flag_payThird = 1;
+			}
+			mv.addObject("flag_payThird", flag_payThird);
+			mv = orderFormService.setIntegrationPlatformAndIntegrationStore(of,
+					mv);
 		} else if (of.getOrder_status() < 10) {
-			mv = new JModelAndView("error.html", configService.getSysConfig(),
-					this.userConfigService.getUserConfig(), 1, request,
-					response);
+			mv = new JModelAndView("weixin/error.html", configService
+					.getSysConfig(), this.userConfigService.getUserConfig(), 1,
+					request, response);
 			mv.addObject("op_title", "该订单已经取消！");
-			mv.addObject("url", CommUtil.getURL(request) + "/index.htm");
+			mv.addObject("url", CommUtil.getURL(request)
+					+ "/weixin/index.htm?store_id=" + store_id);
 		} else {
-			mv = new JModelAndView("error.html", configService.getSysConfig(),
-					this.userConfigService.getUserConfig(), 1, request,
-					response);
+			mv = new JModelAndView("weixin/error.html", configService
+					.getSysConfig(), this.userConfigService.getUserConfig(), 1,
+					request, response);
 			mv.addObject("op_title", "该订单已经付款！");
-			mv.addObject("url", CommUtil.getURL(request) + "/index.htm");
+			mv.addObject("url", CommUtil.getURL(request)
+					+ "/weixin/index.htm?store_id=" + store_id);
 		}
 		return mv;
 	}

@@ -61,6 +61,22 @@ jQuery.validator.addMethod("store_ower_card",function(value,element){
 	var num=jQuery("#store_ower_card").val();
 	return isIdCardNo(num); 
 });
+//初始化配送方式
+var transport_type=eval($!store.transport_type);
+/* jQuery.each(transport_type,function(index,item){
+	if(item.type=="00"){
+		if(item.value==0)
+			jQuery("#transport_0").attr("checked","checked");
+		else
+			jQuery("#transport_0").removeAttr("checked");
+	}
+	if(item.type=="01"){
+		if(item.value==0)
+			jQuery("#transport_1").attr("checked","checked");
+	    else
+	        jQuery("#transport_1").removeAttr("checked")
+	}
+}); */
 //电话校验
 jQuery.validator.addMethod("store_telephone",function(value,element){
    if(jQuery("#store_telephone").val() == "" || jQuery("#store_telephone").val() == "-"){
@@ -74,17 +90,28 @@ jQuery.validator.addMethod("store_telephone",function(value,element){
 	   }	
    }	  
 });
+//农豆比例校验
+jQuery.validator.addMethod("mybean",function(value,element){
+	var reg=/^\d+(\.{0,1}\d+){0,}/;
+	if(!reg.test(value))
+	return false;
+	if(parseFloat(value)<=0)
+	return false;
+	return true; 
+});
 //表单校验
 jQuery("#theForm").validate({
     rules:{
 	  store_ower_card:{required :true,store_ower_card:true},
 	  store_name:{required :true},
-	  store_telephone:{required :true,store_telephone:true}
+	  store_telephone:{required :true,store_telephone:true},
+	  weixin_token:{required :true,mybean :true}
 	 },
 	messages:{
 	  store_ower_card:{required:"身份证号码不能为空",store_ower_card:"请输入正确的身份证号码"},
 	  store_name:{required :"店铺名称不能为空"},
-	  store_telephone:{required:"手机号不能为空",store_telephone:"请输入正确的手机号"}
+	  store_telephone:{required:"手机号不能为空",store_telephone:"请输入正确的手机号"},
+	  weixin_token:{required :true,mybean :"请输入一个大于0的正数"}
 	}
   });
 //身份证校验
@@ -120,18 +147,18 @@ function isIdCardNo(num){
 	return true; 
 }   				
   editor = KindEditor.create('#store_info',options); 									
-  jQuery("select").change(function(){
+  jQuery("select[id^=area]").change(function(){
      var level=jQuery(this).attr("level");
 	 var id=jQuery(this).val();
 	 if(id!=""){
-	  jQuery.post("$!webPath/load_area.htm",{"pid":id},function(data){
+		 jQuery.post("$!webPath/load_area.htm",{"pid":id},function(data){
 	     jQuery("#area"+level).empty();
 		 jQuery("#area"+level).append("<option value=''>请选择</option>");
 	     jQuery.each(data, function(index,item){
 		   jQuery("#area"+level).append("<option value='"+item.id+"'>"+item.areaName+"</option>");
 		 });
 		 jQuery("#area"+level).show();
-	  },"json");
+	  },"json");	 
 	 }else{
 	   for(var i=level;i<=3;i++){
 	    jQuery("#area"+i).empty();
@@ -144,8 +171,47 @@ function isIdCardNo(num){
    jQuery("#area_id").val(id);
   });
 });
+function transport_validator(type){
+	if(type=="show"){
+		jQuery("#specs_tip").css("display","inline");
+		jQuery("#specs_style").css("border","2px solid #ff0000");	
+	}else{
+		jQuery("#specs_tip").css("display","none");
+		jQuery("#specs_style").css("border","2px none #ff0000");
+	}
+}
+function isckecked(){
+	var transport_0=jQuery("#transport_0").attr("checked");
+	var transport_1=jQuery("#transport_1").attr("checked");
+	if(transport_0!="checked"&&transport_1!="checked")
+		transport_validator("show");
+	else
+		transport_validator("none");
+}
 function save_form(){
-   jQuery("#theForm").submit();
+	var transport_0=jQuery("#transport_0").attr("checked");
+	var transport_1=jQuery("#transport_1").attr("checked");
+	var transport_type="[";
+	var mark=false;
+	if(transport_0=="checked"){
+	    transport_type=transport_type+'{"type":"00","name":"货到付款","value":"0"}';
+		mark=true;
+	}else{
+		transport_type=transport_type+'{"type":"00","name":"货到付款","value":"1"}';
+	}
+	if(transport_1=="checked"){
+	    transport_type=transport_type+',{"type":"01","name":"现货自提","value":"0"}';
+		mark=true;
+	}else{
+	    transport_type=transport_type+',{"type":"01","name":"现货自提","value":"1"}';
+	}
+	transport_type=transport_type+"]";
+	if(mark==false){
+		transport_validator("show");
+		return;
+	}
+	jQuery("#transport_type").val(transport_type);
+   	jQuery("#theForm").submit();
 }
 </script>
 </head>
@@ -214,6 +280,52 @@ $!httpInclude.include("/top.htm")
                         <input name="store_name" type="text" id="store_name" value="$!store.store_name" />
                         </span><!-- <a href="$!webPath/store.htm?id=$!user.store.id" target="_blank" class="blue2 px20">我的店铺首页</a> --></td>
                     </tr>
+                <script>
+                //农豆比例输入框（输入框屏蔽输入法，禁止粘贴,只能输数字）
+				function countCkeck(e){
+				    var reg=/^[\d\.]/;
+					if(window.event){// IE
+						var keynum = e.keyCode;
+					}else if(e.which){ // Netscape/Firefox/Opera	
+						var keynum = e.which;
+					}
+					if(keynum==8)
+					return true;
+					if(keynum==46){//小数点处理
+						var value=jQuery("#weixin_token").val();
+						if(value=="")
+						    return false;
+						if(value.indexOf(".")>0)
+							return false;
+					}
+					var charValue=String.fromCharCode(keynum);
+					if(!reg.test(charValue))
+					return false;
+					return true;
+				}
+                  </script>
+                    <tr>
+                      <td width="98" align="right" valign="top">农豆比例：</td>
+                      <td style="padding-left:30px;"><ul class="setmybean">
+                          <li><span class="setinput">
+                            <input name="weixin_token" type="text" id="weixin_token" value="$!store.weixin_token" onkeypress="return countCkeck(event)" onpaste="return false" style = "ime-mode:disabled"/>
+                            </span></li>
+                          <li>用于设置用户每个农豆可抵扣的金额</li>
+                        </ul></td>
+                    </tr>
+                    <tr style="display: none">
+                      <td width="98" align="right" valign="top"><span style="margin-top: 100px">配送方式：</span></td>
+                      <td style="padding-left:30px;">
+                      <div style="width: 128px;float: left;border: 2px none #ff0000;" id="specs_style">
+                      <input type="checkbox" checked="checked" name="transport_0" value="货到付款" id="transport_0" onclick="isckecked()"/><span>货到付款</span>
+                      <input type="checkbox" name="transport_1" checked="none" value="现货自提" id="transport_1" onclick="isckecked()"/>现货自提
+                      </div>
+                      <div style="color: #ff0000;margin-left: 3px;display: none;float: left;" id="specs_tip">
+                      	请至少选择一种配送方式
+                      </div>
+                      	<input type="hidden" value="" name="transport_type" id="transport_type"/>
+                      </td>
+                    </tr>
                     <!-- #if($!config.second_domain_open)
                     <tr>
                       <td align="right">二级域名：</td>
@@ -230,10 +342,15 @@ $!httpInclude.include("/top.htm")
                       <td align="right">店铺等级： </td>
                       <td style="padding-left:30px; color:#666"><span>$!store.grade.gradeName#if($!store.update_grade)　升级审核中... #else<a href="$!webPath/seller/store_grade.htm" target="_blank" class="blue2 px20">升级店铺</a> #end</span></td>
                     </tr> -->
+                    <script>
+                    function load_area(){
+                    	jQuery('#area1').show();
+                    }
+                    </script>
                     <tr>
                       <td width="98" align="right">所在地区：</td>
                       <td style="padding-left:30px; color:#666">$!areaViewTools.generic_area_info("$!store.area.id") <span class="setedit">
-                        <input name="input" type="button"  value="编辑" onclick="javascript:jQuery('#area1').show();" id="modify"/>
+                        <input name="input" type="button"  value="编辑" onclick="load_area()" id="modify"/>
                         <select name="area1" id="area1" level="2" style="width:80px;display:none;">
                           <option value="" selected="selected">请选择地区</option>          
    				           #foreach($area in $areas)                 
@@ -284,7 +401,7 @@ $!httpInclude.include("/top.htm")
                           <li><span class="setinput">
                             <input name="store_seo_keywords" type="text" id="store_seo_keywords" value="$!store.store_seo_keywords" />
                             </span></li>
-                          <li style="color:#666">用于店铺搜索引擎的优化，关键字之间请用英文逗号分隔</li>
+                          <li style="line-height:30px;">用于店铺搜索引擎的优化，关键字之间请用英文逗号分隔</li>
                         </ul></td>
                     </tr>
                     <tr>
@@ -293,7 +410,7 @@ $!httpInclude.include("/top.htm")
                           <li><span class="setinput">
                             <textarea name="store_seo_description" cols="45" rows="5" id="store_seo_description">$!store.store_seo_description</textarea>
                             </span></li>
-                          <li style="color:#666">用于店铺搜索引擎的优化，关键字之间请用英文逗号分隔</li>
+                          <li>用于店铺搜索引擎的优化，关键字之间请用英文逗号分隔</li>
                         </ul></td>
                     </tr>
                     <tr>
@@ -302,7 +419,7 @@ $!httpInclude.include("/top.htm")
                           <li><span class="setinput">
                             <textarea name="store_info" cols="45" rows="5" id="store_info">$!store.store_info</textarea>
                             </span></li>
-                          <li style="color:#666">详细介绍店铺，为买家提供更多的了解</li>
+                          <li>详细介绍店铺，为买家提供更多的了解</li>
                         </ul></td>
                     </tr>
                     <tr>

@@ -230,8 +230,8 @@ left:-50%; z-index:0;}
 .shopf ul li{margin-top:10px; margin-left:10px;}
 
 
-.regoods{ width:947px; overflow:hidden; margin-top:10px; width:100%;}
-.regoods h1 {  border-bottom: 2px solid #069;  color: #000;  height: 40px;  line-height: 40px;  width: 100%;}
+.regoods{ width:947px; overflow:hidden;   width:100%;}
+.regoods h1 {background-color:#f9f9f9; text-indent: 1em; border-bottom: 2px solid #069;  color: #000;  height: 40px;  line-height: 40px;  width: 100%;}
 .regoods h1 span {  font-size: 16px;}
 .regoods h1 a {  color: #999;  float: right;  font-weight: 400;  margin-right: 10px;}
 .regoodsshop{ width:947px; overflow:hidden; margin-top:10px;}

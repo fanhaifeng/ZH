@@ -27,11 +27,7 @@
   </div>
   <div class="hot_store clearfix" style="display:none;">
   <ul>
-  <li>
-  <a class="P_store" href="$!store_url" target="_blank"><img src="$!img_store" /></a>
-  <a class="store_name" href="$!store_url" target="_blank">$!{star_store.store_name}</a> 
-  </li>
-  #foreach($star_store in $!storeViewTools.query_recommend_store(9,$!{pc_city_id}))
+  #foreach($star_store in $!storeViewTools.query_recommend_store(5,$!{pc_city_id}))
 	  #if($!star_store.store_logo)
 	  	#set($img_store="$!webPath/$!{star_store.store_logo.path}/$!{star_store.store_logo.name}")
 	  #else
@@ -47,12 +43,11 @@
   <div class="store_info">
   <h1>店铺信息</h1>
 			<ul>
-				<li>创店时间：2015-07-22</li>
-				<li>所在地区：江苏省 无锡市 滨湖区 </li>
-				 
-				<li>商品数量：<strong class="blue">0</strong>件商品</li>
-				<li>店铺收藏：<strong class="blue">1</strong>人收藏</li>
-				<li>联系电话：15467654678</li>
+				<li>创店时间：$!CommUtil.formatShortDate($!{star_store.addTime})</li>
+				<li>所在地区：$!{star_store.store_address}</li>
+				<li>商品数量：<strong class="blue">$!{star_store.onSaleAmount}</strong>件商品</li>
+				<li>店铺收藏：<strong class="blue">$!{star_store.favorite_count}</strong>人收藏</li>
+				<li>联系电话：$!{star_store.store_telephone}</li>
 			</ul>
   </div>
   </li>

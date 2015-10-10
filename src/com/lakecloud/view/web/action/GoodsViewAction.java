@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +53,7 @@ import com.lakecloud.foundation.domain.GoodsSpecProperty;
 import com.lakecloud.foundation.domain.Group;
 import com.lakecloud.foundation.domain.GroupGoods;
 import com.lakecloud.foundation.domain.Store;
+import com.lakecloud.foundation.domain.StoreCart;
 import com.lakecloud.foundation.domain.StoreClass;
 import com.lakecloud.foundation.domain.UserGoodsClass;
 import com.lakecloud.foundation.domain.query.ConsultQueryObject;
@@ -166,16 +168,21 @@ public class GoodsViewAction {
 				Set<Long> ids = this.genericUserGcIds(ugc);
 				List<UserGoodsClass> ugc_list = new ArrayList<UserGoodsClass>();
 				for (Long g_id : ids) {
-					UserGoodsClass temp_ugc = this.userGoodsClassService
-							.getObjById(g_id);
-					ugc_list.add(temp_ugc);
+						UserGoodsClass temp_ugc = this.userGoodsClassService.getObjById(g_id);
+						ugc_list.add(temp_ugc);
 				}
-				gqo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of");
-				for (int i = 0; i < ugc_list.size(); i++) {
-					gqo.addQuery("ugc" + i, ugc_list.get(i), "obj.goods_ugcs",
-							"member of", "or");
-				}
-			} else {
+				if(ugc_list.size()>0)//判断该分类是否存在子分类edit by CH
+						gqo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of","and (");
+				else
+						gqo.addQuery("ugc", ugc, "obj.goods_ugcs", "member of","and");
+				for (int i = 0; i < ugc_list.size(); i++) {//拼接子分类HQL查询条件
+						if(i==ugc_list.size()-1){
+								gqo.addQuery("ugc" + i, ugc_list.get(i), "obj.goods_ugcs)","member of", "or");	
+						}else{
+								gqo.addQuery("ugc" + i, ugc_list.get(i), "obj.goods_ugcs","member of", "or");					
+						}
+				}			
+		} else {
 				ugc = new UserGoodsClass();
 				ugc.setClassName("全部商品");
 				mv.addObject("ugc", ugc);
@@ -276,7 +283,7 @@ public class GoodsViewAction {
 					configService.getSysConfig(),
 					this.userConfigService.getUserConfig(), 1, request,
 					response);
-			//obj.setGoods_click(obj.getGoods_click() + 1);
+			obj.setGoods_click(obj.getGoods_click() + 1);
 			/*
 			if (this.configService.getSysConfig().isZtc_status()
 					&& obj.getZtc_status() == 2) {
@@ -292,11 +299,14 @@ public class GoodsViewAction {
 				}
 			}
             */
-			//this.goodsService.update(obj);
+			this.goodsService.update(obj);
 			Store store = obj.getGoods_store();
 			if (store.getStore_status() == 2) {
 				mv.addObject("obj", obj);
 				mv.addObject("store", store);
+				double rest=obj.getGoods_price().subtract(obj.getGoods_current_price()).doubleValue();
+				DecimalFormat df = new DecimalFormat("0.00");
+				mv.addObject("rest",df.format(rest));
 				/*
 				Map params = new HashMap();
 				params.put("user_id", obj.getGoods_store().getUser().getId());
@@ -395,8 +405,6 @@ public class GoodsViewAction {
 	public ModelAndView goods_recommend_list(HttpServletRequest request,
 			HttpServletResponse response, String store_id,String goods_id) {
 		Goods obj = this.goodsService.getObjById(Long.parseLong(goods_id));
-		obj.setGoods_click(obj.getGoods_click() + 1);
-		this.goodsService.update(obj);
 		ModelAndView mv = null;
 		Store store = this.storeService.getObjById(CommUtil.null2Long(store_id));
 		List<Goods> user_viewed_goods = (List<Goods>) request
@@ -1115,6 +1123,7 @@ public class GoodsViewAction {
 		Map map = new HashMap();
 		int count = 0;
 		double price = 0;
+		double rest = 0;
 		if (goods.getGroup() != null && goods.getGroup_buy() == 2) {// 团购商品统一按照团购价格处理
 			for (GroupGoods gg : goods.getGroup_goods_list()) {
 				if (gg.getGroup().getId().equals(goods.getGroup().getId())) {
@@ -1141,9 +1150,12 @@ public class GoodsViewAction {
 					}
 				}
 			}
-		}
+		}		
+		rest= goods.getGoods_price().subtract(new BigDecimal(price)).doubleValue();
+		DecimalFormat df = new DecimalFormat("0.00");
 		map.put("count", count);
-		map.put("price", price);
+		map.put("rest", df.format(rest));
+		map.put("price", df.format(price));
 		response.setContentType("text/plain");
 		response.setHeader("Cache-Control", "no-cache");
 		response.setCharacterEncoding("UTF-8");

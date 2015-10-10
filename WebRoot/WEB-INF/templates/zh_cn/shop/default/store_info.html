@@ -78,9 +78,7 @@ $!httpInclude.include("/store_head.htm?store_id=$!{store.id}")
                 <dt><img src="$!store_logo" width="90" height="90" /></dt>
                 <dd>
                 <em>店铺名称：$!{store.store_name}</em>
-                <em>店铺等级：
-                $!store.grade.gradeName
-                </em>
+                
                 <!-- <em>认证信息：
                <i>
               #if("$!{store.card_approve}"=="true") #set($card_title="已通过身份证认证") #else  #set($card_title="未通过身份证认证") #end

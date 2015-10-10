@@ -646,9 +646,13 @@ dd.p_bar.pr{height: 20px;}
 .regBar > div{line-height: 40px; text-align: center; cursor: pointer; width:50%;}
 .regBar .active{background: #116ac8 none repeat scroll 0 0;color:#fff;}
 .register ul li{border-bottom: 1px solid #eee; line-height: 60px;}
-.register ul li .error{color: #e10000; font-size: 1em; font-weight: 400;}
+.register ul li label.error{color: #e10000; font-size: 1em; font-weight: 400;display:block;}
+.register_check {
+  float: left;
+  margin-top: 23px;
+}
 .find_password{color: #116ac8; text-align: right;}
-.find_password a{color: #116ac8;}
+.find_password a{color: #116ac8;text-decoration: underline;}
 .Form_con li{line-height: 50px; border-bottom: 1px solid #eee;}
 .Form_con li input{border: none; color: #b0b0b0;}
 .Form_con li input.cmd_login{color: #fff;}
@@ -684,4 +688,8 @@ dd.p_bar.pr{height: 20px;}
   border-radius: 10px;
   padding: 0 10px;
   color:#fff;
+}
+.line_con span {
+  display: inline-block;
+  white-space: nowrap;
 }

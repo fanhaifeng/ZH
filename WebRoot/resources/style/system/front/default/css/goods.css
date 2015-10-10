@@ -26,7 +26,12 @@ left:-50%; z-index:1;}
 .login_user_in{  margin:10px; _margin-left:5px;}
 .login_user_in h1{ border-bottom:1px solid #EBEBEB; line-height:30px; height:30px; color:#3E3E3E;font-family: "微软雅黑"; font-size:16px;}
 .login_user_in h1 span{ color:#e10000;font-family: Verdana,Geneva,sans-serif; font-size:10px; margin-left:10px;}
-.login_user_bottom{ overflow:hidden; margin-top:10px;}
+.login_user_bottom{ overflow:hidden; margin-top:10px; width:800px;}
+.sub_con {
+  clear: both;
+  height: auto;
+  width: 668px;
+}
 .login_user_table{ border-collapse:collapse;  float:left;}
 .login_user_table td{ padding-left:10px;padding-top:7px; padding-bottom:7px;}
 .login_user_table span{ float:left; display:block}
@@ -71,6 +76,7 @@ h1.login_user_h {
   margin-top: 25px;
   overflow: hidden; 
   width:280px;
+  *width:276px;
   border:1px solid #f3f3f3;
   padding:10px;
 }
@@ -119,7 +125,9 @@ p.login_user_h {
   border: 1px solid #ddd;
   line-height: 34px;
   padding: 0 10px;
-}.line_con {  clear: right;  float: left;  width: 500px;}.line_con > span {  display: block;  float: left;  margin-bottom: 20px;  margin-right: 10px;}.line_con > span > input {  margin-right: 5px;  vertical-align: middle;}
+}
+.line_con {   margin-left: 63px;  width: 500px;}
+.line_con > span {min-width:42px; width: 100px;  display: block;  float: left;  padding-bottom:15px;padding-right:5px;height:15px;}.line_con > span > input {  margin-right: 5px;  vertical-align: middle;}
 .user_zc_table{ border-collapse:collapse; float:left;}
 .user_zc_table td {  font-family: 宋体;  padding-bottom: 7px;  padding-left: 10px;  padding-top: 7px;}
 .user_zc_table span.s_title {  clear: left;  display: block;  float: left;  width: 59px;}
@@ -154,11 +162,15 @@ p.login_user_h {
   width: 290px;
 }
 .login_usrin ul{  }
-.login_usrin ul li{ margin-bottom:10px;}
+.login_usrin ul li{margin-bottom: 10px;}
 .login_usrin .login_usertxt {
   border: 1px solid #e6e6e6;
   height: 38px;
-  margin-bottom: 10px;
+  
+}
+.login_usercheck.clearfix {
+  line-height: 30px;
+  height:30px;
 }
 .login_usrin .login_usertxt b{ display:block; line-height:24px; font-size:14px; color:#666; width:70px; float:left;}
 .forgetpsw{ color:#666; float:left; margin-right:10px; font-weight:lighter; font-size:12px;}
@@ -213,14 +225,16 @@ p.msg {
 h1 .user_regist {
   background: url("../images/arrow.png") no-repeat scroll 0 50%;
   color: #e4393c;
-  float: right;
+  float:right;
+  float: none\9;
   font-size: 14px;
   font-weight: 400;
   padding-left: 18px;
+  margin-left:130px\9; 
 }
 .login_b a{ display:block; float:left; margin-left:4px;}
 .login_b b{ display:block; float:left;font-size:12px; color:#666; margin-bottom:5px; line-height:20px; width:102px;  font-weight:lighter;}
-.login_error_sp { display:block; width:250px;  height:20px; line-height:20px; color:#F00;  margin-top:5px; clear:both;}
+.login_error_sp { display:block; width:250px;   color:#F00;   clear:both;}
 .login_usrin .login_usercode b{display:block; line-height:24px; font-size:14px; color:#666; width:70px; float:left;}
 
 .login_usrin .login_usertxt.login_name b,.login_usrin .login_usertxt.login_password b {
@@ -753,11 +767,31 @@ left:-50%; }
 .web_class {  border: 1px solid #dedede;  overflow: hidden;}
 .web_class h1 {  background: #f9f9f9 none repeat scroll 0 0;  border-bottom: 1px solid #e6e6e6;  color: #000;  height: 40px;  line-height: 45px;  padding-left: 10px;}
 .webclsbox{   padding:10px;   overflow:hidden; padding-bottom:20px}
-.class_a{ width:960px; background:#FFF6F6; padding:10px; float:left; margin-top:10px; padding-top:5px;}
-.class_a h2{ width:960px; height:25px; line-height:25px; float:left; } 
-.class_b{ width:960px;  float:left; background:#EEEEEE; margin-top:5px;}
-.class_b h3{ height:25px; width:950px; line-height:25px; float:left; padding-left:10px;}
-.class_c{ width:950px; background:#fff; float:left; padding:5px; line-height:25px;}
+.class_a {
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #e6e6e6;
+  float: left;
+  margin: 0 12px 20px;
+  padding: 5px 10px 10px;
+  width: 543px;
+}
+.class_a h2 {
+  border-bottom: 1px solid #ddd;
+  line-height: 36px;
+}
+.class_b{  background:#EEEEEE; margin-top:5px;}
+.class_b h3, .class_b h3 a {
+  color: #e10000;
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  padding-left: 10px;
+}
+.class_a h2 a {
+  border-left: 3px solid #e10000;
+  padding-left: 12px;
+}
+.class_c{   background:#fff;  padding:5px; line-height:25px;}
 .class_c a{ white-space:nowrap; margin-right:10px; margin-left:10px; display:inline; float:left;}
 .class_c b{ color:#CCC; font-family:"宋体"; font-weight:lighter; float:left;}
 .class_a a{ color:#666;} 

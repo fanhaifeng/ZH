@@ -1,17 +1,17 @@
  #foreach($obj in $objs)		    
 				#if($!obj.gettype==0)
-			    	#set($gettype="è®¢å•")
+			    	#set($gettype="¶©µ¥")
 			    #end
 			    #if($!obj.gettype==1)
-			    	#set($gettype="æ³¨å†Œ")
+			    	#set($gettype="×¢²á")
 			    #end
 			    #if($!obj.gettype==2)
-			    	#set($gettype="æ¨èç”¨æˆ·")
+			    	#set($gettype="ÍÆ¼öÓÃ»§")
 			    #end
 			    #if($!obj.gettype==-1)
-			    	#set($gettype="å†œæŠ€æœåŠ¡")
+			    	#set($gettype="Å©¼¼·şÎñ")
 			    #end
-			    <!-- å†œè±†å˜åŒ–è®¡ç®— -->
+			    <!-- Å©¶¹±ä»¯¼ÆËã -->
 			    #if($!{obj.integrals})
 			    #set($integrals=$!{obj.integrals})  
 			    #else 
@@ -27,9 +27,9 @@
 			    #set($change=$!integrals+$!integrals_store)  
 				<div class="container">
 					<div class="order_totalprice">
-						<span>å†œè±†æ¥æºï¼š<i>$!gettype#if($!obj.gettype==0)($!obj.orderForm.order_id)#end</i></span> 
-						<span>å†œè±†å˜åŒ–ï¼š<i #if($!obj.type==1) class="fxt-02" >  + #else  class="fxt-2"> - #end $!change</i></span>
-						<span>æ—¥æœŸï¼š<i>$!CommUtil.formatLongDate($!obj.addTime)</i></span>
+						<span>Å©¶¹À´Ô´£º<i>$!gettype#if($!obj.gettype==0)($!obj.orderForm.order_id)#end</i></span> 
+						<span>Å©¶¹±ä»¯£º<i #if($!obj.type==1) class="fxt-02" >  + #else  class="fxt-2"> - #end $!change</i></span>
+						<span>ÈÕÆÚ£º<i>$!CommUtil.formatLongDate($!obj.addTime)</i></span>
 					</div>
 				</div> 
 			#end 

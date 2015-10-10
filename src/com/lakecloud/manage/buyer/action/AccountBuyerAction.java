@@ -40,14 +40,22 @@ import com.lakecloud.core.tools.SendMessageUtil;
 import com.lakecloud.core.tools.WebForm;
 import com.lakecloud.foundation.domain.Accessory;
 import com.lakecloud.foundation.domain.Area;
+import com.lakecloud.foundation.domain.Integration;
+import com.lakecloud.foundation.domain.Integration_Child;
+import com.lakecloud.foundation.domain.Integration_Log;
 import com.lakecloud.foundation.domain.MobileVerifyCode;
 import com.lakecloud.foundation.domain.SnsFriend;
 import com.lakecloud.foundation.domain.Template;
 import com.lakecloud.foundation.domain.User;
+import com.lakecloud.foundation.domain.query.FavoriteQueryObject;
+import com.lakecloud.foundation.domain.query.Integration_LogQueryObject;
 import com.lakecloud.foundation.domain.query.SnsFriendQueryObject;
 import com.lakecloud.foundation.domain.query.UserQueryObject;
 import com.lakecloud.foundation.service.IAccessoryService;
 import com.lakecloud.foundation.service.IAreaService;
+import com.lakecloud.foundation.service.IIntegrationService;
+import com.lakecloud.foundation.service.IIntegration_ChildService;
+import com.lakecloud.foundation.service.IIntegration_LogService;
 import com.lakecloud.foundation.service.IMobileVerifyCodeService;
 import com.lakecloud.foundation.service.ISnsFriendService;
 import com.lakecloud.foundation.service.ISysConfigService;
@@ -83,6 +91,15 @@ public class AccountBuyerAction {
 	private IAreaService areaService;
 	@Autowired
 	private MsgTools msgTools;
+	@Autowired
+	private IIntegrationService integrationService;
+	@Autowired
+	private IIntegration_LogService integration_logService;
+	
+	@Autowired
+	private IIntegration_ChildService integration_ChildService;
+	
+	
 	/** 默认的头像文件扩展名 */
 	private static final String DEFAULT_AVATAR_FILE_EXT = ".jpg";
 	/** 解码器 */
@@ -92,6 +109,57 @@ public class AccountBuyerAction {
 	/** 上传失败 */
 	public static final String OPERATE_RESULT_CODE_FAIL = "400";
 
+	
+	/**
+	 * 我的农豆页
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@SecurityMapping(title = "农豆使用情况", value = "/buyer/mybean.htm*", rtype = "buyer", rname = "用户中心", rcode = "user_center", rgroup = "用户中心")
+	@RequestMapping("/buyer/mybean.htm")
+	public ModelAndView mybean(HttpServletRequest request,
+			HttpServletResponse response,String currentPage, String orderBy,
+			String orderType) {
+		ModelAndView mv = new JModelAndView("user/default/usercenter/mybean.html",
+				configService.getSysConfig(), this.userConfigService
+						.getUserConfig(), 0, request, response);
+		User user = this.userService.getObjById(SecurityUserHolder
+				.getCurrentUser().getId());
+		//查询用户智慧豆
+		String query="from Integration_Child obj where obj.user.id=:uid and obj.type=0";
+		Map<String,Object> params=new HashMap<String, Object>();
+		params.put("uid", user.getId());
+		List<Integration_Child> list_zh = this.integration_ChildService.query(query, params, -1, -1);
+		if(list_zh!=null&&list_zh.size()==1){
+			mv.addObject("integration_zh",list_zh.get(0).getIntegrals());
+		}
+	  //查询用户农豆
+		query="from Integration_Child obj where obj.user.id=:uid and obj.type=1";
+		params.clear();
+		params.put("uid", user.getId());
+		Integer total=0;
+		Integer total_over=0;
+		List<Integration_Child> list_dp = this.integration_ChildService.query(query, params, -1, -1);
+		if(list_dp!=null&&list_dp.size()>0){
+			for (Integration_Child integration_Child : list_dp) {
+			total+=integration_Child.getIntegrals();
+			total_over+=integration_Child.getOverdue_integrals()==null?0:integration_Child.getOverdue_integrals();
+        }
+			mv.addObject("integration_dp_total",total);
+			mv.addObject("integration_dp_over",total_over);
+		}		
+		//查询当前用户积分
+		query="from Integration_Log obj where obj.user.id=:uid order by obj.addTime desc";
+		params.clear();
+		params=new HashMap<String, Object>();
+		params.put("uid", user.getId());
+		List<Integration_Log> list = this.integration_logService.query(query, params, 0, 6);
+		mv.addObject("objs",list);
+		return mv;
+	}
+
+	
 	@SecurityMapping(title = "个人信息导航", value = "/buyer/account_nav.htm*", rtype = "buyer", rname = "用户中心", rcode = "user_center", rgroup = "用户中心")
 	@RequestMapping("/buyer/account_nav.htm")
 	public ModelAndView account_nav(HttpServletRequest request,

@@ -37,7 +37,7 @@
 												jQuery("#plant1").append("<div class='line_con' id='con" + i + "'></div>");
 												console.log(child);
 												jQuery.each(child,function(j,m){
-													jQuery("#con" + i).append("<input type='checkbox' name='plant' value="+m.id+">"+m.cropName+"</input>  ");
+													jQuery("#con" + i).append("<span><input type='checkbox' name='plant' value="+m.id+">"+m.cropName+"</input> </span> ");
 												});
 												jQuery("#crop1").append("<option value="+n.id+">"+n.cropName+ "</option>");
 											}

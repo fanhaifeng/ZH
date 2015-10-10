@@ -14,31 +14,14 @@ jQuery(document).ready(function(){
 });
 </script>
 <form action="$!webPath/search.htm" method="post" id="SearchForm"><input name="type" type="hidden" id="type" value="goods" />
-<div class="head">
-<div class="logo">
-#if($!config.websiteLogo) <a href="$!webPath/index.htm"><img src="$!imageWebServer/$!config.websiteLogo.path/$!config.websiteLogo.name" border="0" /></a>#else<a href="$!webPath/index.htm"><img src="$!imageWebServer/resources/style/system/front/default/images/logo.png"  border="0" /></a>#end
-
+  <div class="head main pt20 ">
+    <div class="fl">  #if($!config.websiteLogo) <a href="$!webPath/index.htm"> <img src="$!webPath/resources/images/logo.png" border="0" /> </a> #else <a href="$!webPath/index.htm"><img src="$!imageWebServer/resources/style/system/front/default/images/logo.png" border="0" /> </a> #end </div>
+<span class="my_txt">卖家中心</span>
 </div>
-<div class="head_sellercenter"></div>   
-   <!-- <div class="bigsearch">
-      <ul class="bgsear">
-        <li class="this" type="goods">商品</li>
-        <li type="store">店铺</li>
-      </ul>
-      <div class="sear"><span class="sear_txt">
-        <input name="keyword" type="text" id="keyword" x-webkit-speech lang="zh-CN" onwebkitspeechchange="jQuery('#SearchForm').submit()" />
-      </span><span class="sear_btn">
-        <input name="input" type="submit" value="" style="cursor:pointer;"/>
-        </span></div>
-      <div class="keyword">
-      #foreach($info in $CommUtil.splitByChar("$!config.hotSearch",","))
-      #set($keyword=$!CommUtil.encode("$!info"))
-      <a href="$!webPath/search.htm?keyword=$!keyword" target="_blank">$!info</a>
-      #end</div>
-    </div> -->
-  </div>
 </form>
-<div class="seller_nav" #if(!$!user.store) style="height:auto;"#end> <i class="seller_navr"></i> <i class="seller_navl"></i>
+<div class="seller_nav clearfix"
+ #if(!$!user.store) style="height:auto;"#end> 
+  
   <ul>
     <li class="this"><span><a href="$!webPath/seller/index.htm">卖家中心</a></span>
     <!-- 

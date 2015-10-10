@@ -32,7 +32,7 @@ $!httpInclude.include("/top.htm")
 <div class="main"> $!httpInclude.include("/buyer/head.htm")
   <form method="post" id="ListForm">
     <div class="user_center">
-      <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+      <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
         <tr> $!httpInclude.include("/buyer/account_nav.htm?op=friend")
           <td id="centerbg" valign="top">
           <div class="buyer_position"><div class="buyer_p_box"><a href="$!webPath/buyer/account.htm">我的账户</a> > <span>好友列表</span></div></div>
@@ -42,7 +42,7 @@ $!httpInclude.include("/top.htm")
                 <div class="right"><a href="$!webPath/buyer/friend_add.htm"  class="button_common">添加好友</a></div>
               </div>
               #foreach($obj in $objs)
-              <div class="operation">
+              <div class="operation clear">
                 <div class="addrien">
                   <div class="addfriend">
                     <div class="friendadd"> 

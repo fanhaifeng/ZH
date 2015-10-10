@@ -84,7 +84,7 @@ function editOrSave(obj,tag,userId){
     		
     		     },
     		     error:function(data){
-    				alert("出错了");
+    		    	 alert("表单数据格式不对,请重新填写");
     				jQuery("#num"+userId).show();
     				jQuery("#day"+userId).show();
     				jQuery("#labelnum"+userId).hide();
@@ -109,7 +109,7 @@ $!httpInclude.include("/top.htm")
   $!httpInclude.include("/seller/nav_head.htm")
   <div class="user_center">
   <form action="$!webPath/seller/charge_sell.htm" name="ListForm" id="ListForm" method="post">
-    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+    <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
       <tr>
         $!httpInclude.include("/seller/nav.htm?op=charge_sell")
         <td id="centerbg" valign="top">
@@ -132,7 +132,7 @@ $!httpInclude.include("/top.htm")
 				</ul>
 			</div>
             <div class="operation">
-              <table width="790" border="0" cellspacing="0" cellpadding="0" id="opertable" >
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" id="opertable" >
                 <tr id="opertitle">
 			        <td>用户名</td>
 			        <td>区域</td>

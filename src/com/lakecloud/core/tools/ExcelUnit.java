@@ -2,13 +2,18 @@ package com.lakecloud.core.tools;
 
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.record.formula.functions.T;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -22,6 +27,18 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import com.lakecloud.foundation.domain.ExportAddressInfo;
+import com.lakecloud.pay.alipay.util.httpClient.HttpResponse;
+import com.sun.mail.iap.Response;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 /**
  * 
@@ -40,6 +57,9 @@ import org.apache.poi.hssf.util.HSSFColor;
 * @version LakeCloud_C2C 1.3
  */
 public class ExcelUnit {
+	private static String arg0;
+
+
 	public static void exportExcel(String title, String[] headers,
 			Collection<T> dataset, OutputStream out, String pattern) {
 		// 声明一个工作薄
@@ -271,4 +291,67 @@ public class ExcelUnit {
 		}
 
 	}
+
+	//导出报表
+	public static void exportPerspective( Workbook wb,String[] exportNamesArray,List<ExportAddressInfo> exportModelsArray) 
+					throws IllegalArgumentException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	    
+		Sheet  sheet = wb.createSheet("订单收货地址信息");
+        // 设置表格默认列宽度为15个字节
+        sheet.setDefaultColumnWidth((short) 16);
+        
+        CreationHelper createHelper = wb.getCreationHelper();
+        CellStyle cellStyle1 = wb.createCellStyle();
+        cellStyle1.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+
+        CellStyle cellStyle2 = wb.createCellStyle();
+        DataFormat format = wb.createDataFormat();
+        cellStyle2.setDataFormat(format.getFormat("@"));
+        sheet.setColumnWidth(1, 22 * 2 * 256); // 设置列的宽度
+     // 产生表格标题行
+		Row row = sheet.createRow(0);
+		for (int i = 0; i < exportNamesArray.length; i++) {
+
+			Cell cell = row.createCell(i);
+			cell.setCellStyle(cellStyle2);
+			cell.setCellValue(new HSSFRichTextString(exportNamesArray[i]));
+		}
+		Cell c = null;
+        Row r = null;
+        int rowNum;
+		ExportAddressInfo no = new ExportAddressInfo();
+		//判断是否有数据，无数据 则导出空的excel
+		if(exportModelsArray.size()<=1){
+			//行
+            r = sheet.createRow((short)1);
+            //列（单元格）
+            for (short cellnum = (short) 0; cellnum < 4; cellnum++)
+            {
+            	 c = r.createCell(cellnum);
+                 c.setCellStyle(cellStyle2);
+                 c.setCellValue(String.valueOf(" "));
+            }
+               
+          
+		}else{
+        for (rowNum = (short) 1; rowNum < exportModelsArray.size()+1; rowNum++)
+        {
+        	//行
+            r = sheet.createRow((short)rowNum);
+            no = exportModelsArray.get((short)rowNum-1);
+            Field[] fields = no.getClass().getDeclaredFields();
+            //列（单元格）
+            for (short cellnum = (short) 0; cellnum < 4; cellnum++)
+            {
+                c = r.createCell(cellnum);
+                c.setCellStyle(cellStyle2);  
+                Field field = fields[cellnum];
+				String fieldName = field.getName();
+                String methodNameString = fieldName.substring(0, 1).toUpperCase()+ fieldName.substring(1);
+                c.setCellValue(String.valueOf(no.getClass().getMethod("get"+methodNameString).invoke(no, null)));
+            }
+        }       
+	}
+	}
+
+
 }

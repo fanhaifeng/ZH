@@ -301,7 +301,7 @@ public class StoreManageAction {
 	@RequestMapping("/admin/store_list.htm")
 	public ModelAndView store_list(HttpServletRequest request,
 			HttpServletResponse response, String currentPage, String orderBy,
-			String orderType) {
+			String orderType, String store_namet,String store_statust) {
 		ModelAndView mv = new JModelAndView("admin/blue/store_list.html",
 				configService.getSysConfig(),
 				this.userConfigService.getUserConfig(), 0, request, response);
@@ -323,6 +323,8 @@ public class StoreManageAction {
 		IPageList pList = this.storeService.list(qo);
 		CommUtil.saveIPageList2ModelAndView(url + "/admin/store_list.htm", "",
 				params, pList, mv);
+		mv.addObject("store_namet", store_namet);
+		mv.addObject("store_statust", store_statust);
 		return mv;
 	}
 

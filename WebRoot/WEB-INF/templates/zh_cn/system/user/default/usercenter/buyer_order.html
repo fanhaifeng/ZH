@@ -19,8 +19,6 @@
 <script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
 <script>
 jQuery(document).ready(function(){
-	jQuery("#beginTime").val("");
-	jQuery("#endTime").val("");
   jQuery('#beginTime').datepicker({
 	  dateFormat:"yy-mm-dd",
 	  changeMonth: true,
@@ -109,7 +107,7 @@ $!httpInclude.include("/top.htm")
 <div class="main"> $!httpInclude.include("/buyer/head.htm")
   <div class="user_center">
     <form action="$!webPath/buyer/order.htm" method="post" id="ListForm">
-      <table width="1200" border="0" cellspacing="0" cellpadding="0" class="user_table">
+      <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
         <tr> $!httpInclude.include("/buyer/nav.htm?op=order")
           <td id="centerbg" valign="top"><div class="buyer_position">
               <div class="buyer_p_box">买家中心 > <span>订单列表</span></div>
@@ -132,7 +130,7 @@ $!httpInclude.include("/top.htm")
                   <option value="order_needpay">待发货</option>
                   <option value="order_shipping">已发货</option>
                   <option value="order_receive">已收货</option>
-                  <option value="order_finish">已完成</option>
+                  <option value="order_finish">已结束</option>
                   <option value="order_cancel">已取消</option>
                 </select>
                 </span> <span class="orderbtn">
@@ -287,8 +285,14 @@ $!httpInclude.include("/top.htm")
                               #end
                             --> </td>
                           <td style="text-align:center;">                              
-                              <div style="color:#999;">¥$!{obj.totalPrice}</div>
-                              <div style="color:#59cfff;">(含运费:¥$!CommUtil.null2Float($!{obj.ship_price}))</div>
+                              <div style="color:#222;">订单金额：¥$!{obj.totalPrice}</div>
+                             #if($!{obj.charge_Num}!=0)
+                              <div style="color:#999;">赊销金额：¥$!{obj.charge_Num}</div>
+                              <div style="color:#999;">赊销账期：$!{obj.charge_Day}</div>
+                              #end
+                             #if($!{obj.integration_price}!=0)
+                              <div style="color:#999;">抵扣金额：¥$!{obj.integration_price}</div>
+                              #end
                             </td>
                           <td style="border:none;text-align:center;">
                              
@@ -370,7 +374,7 @@ $!httpInclude.include("/top.htm")
                               #end
                               #end
                              
-                              #if($!obj.order_status>=40 && $!obj.order_status!=47 && $!obj.order_status!=50 && $!obj.order_status!=60 && $!obj.order_status!=65)
+                              #if($!obj.order_status==40)
                               <div class="li_09"><a href="$!webPath/buyer/order_evaluate.htm?id=$!obj.id">我要评价</a></div>
                               #end
                              </td>

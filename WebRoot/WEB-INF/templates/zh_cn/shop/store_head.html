@@ -32,7 +32,7 @@
               #if($credit>5)#set($credit=5)#end
              <span>#if($!credit==0) <img src="$!imageWebServer/resources/style/common/images/level_-1.gif"/> #else
              #foreach($count in [1..$!credit])<img style="margin-left:1px;" src="$!img" />#end #end</span>
-            <!--<div class="top_sear_star"><a href="javascript:void(0);" class="top_sc"><b class="check_login" data-check_login='{"nl":".not_login","hl":".top_scl"}'>点击收藏</b></a><span>#if($!credit==0) <img src="$!imageWebServer/resources/style/common/images/level_-1.gif"/> #else #foreach($count in [1..$!credit])<img style="margin-left:1px;" src="$!img" />#end #end</span></div>
+                <!--<div class="top_sear_star"><a href="javascript:void(0);" class="top_sc"><b class="check_login" data-check_login='{"nl":".not_login","hl":".top_scl"}'>点击收藏</b></a><span>#if($!credit==0) <img src="$!imageWebServer/resources/style/common/images/level_-1.gif"/> #else #foreach($count in [1..$!credit])<img style="margin-left:1px;" src="$!img" />#end #end</span></div>
           <a style="display: none;" class="top_scl"></a>
           -->
           </div>
@@ -83,7 +83,7 @@
                 </ul>
               <dd>
             </dl>
-            <!-- 
+                        <!-- 
             <dl class="top_dl">
               <dt>店铺认证</dt>
               <dd><span>
@@ -116,7 +116,7 @@
               <dd class="clearfix"><span class="top_dl_width">商品数量：$!{goods_count}件</span><span class="top_dl_width">好评率：$!store_evaluate1</span><span class="top_dl_width">创店时间：$!CommUtil.formatShortDate($!{store.addTime})</span><span class="top_dl_width">收藏人气：$!{store.favorite_count}</span></dd>
             </dl>
             <div class="top_sear_star">
-            <a class="top_shop" href=""><i>&nbsp;</i>进入店铺</a>
+            <a class="top_shop" href="$!webPath/store_$!{store.id}.htm"><i>&nbsp;</i>进入店铺</a>
             <a href="javascript:void(0);" class="top_sc" #if(!$!user)dialog_uri="$!store_second_url/user_dialog_login.htm" dialog_title="会员登录" dialog_width="450" dialog_height="100" dialog_id="user_login"#end><i>&nbsp;</i>点击收藏</a>
             
              </div>
@@ -141,9 +141,7 @@
     </div>
   </div>
 </div>
-<!--   #if($!user)
-  $!httpInclude.include("/chatting.htm") 
-  #end -->  
+
 <script>
 jQuery(function(jQuery){
   jQuery(".top_sc").click(function(){

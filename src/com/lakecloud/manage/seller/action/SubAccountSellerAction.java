@@ -113,7 +113,8 @@ public class SubAccountSellerAction {
 			mv.addObject("url", CommUtil.getURL(request) + "/seller/index.htm");
 		}
 
-		if (user.getChilds().size() >= store.getGrade().getAcount_num()) {
+	   /*	
+	    if (user.getChilds().size() >= store.getGrade().getAcount_num()) {
 			mv = new JModelAndView("error.html", configService.getSysConfig(),
 					this.userConfigService.getUserConfig(), 1, request,
 					response);
@@ -121,6 +122,7 @@ public class SubAccountSellerAction {
 			mv.addObject("url", CommUtil.getURL(request)
 					+ "/seller/store_grade.htm");
 		}
+		*/
 		mv.addObject("store", store);
 		Map params = new HashMap();
 		params.put("type", "SELLER");
@@ -210,73 +212,67 @@ public class SubAccountSellerAction {
 	@SecurityMapping(title = "子账户保存", value = "/seller/sub_account_save.htm*", rtype = "seller", rname = "子账户管理", rcode = "sub_account_seller", rgroup = "店铺设置")
 	@RequestMapping("/seller/sub_account_save.htm")
 	public void sub_account_save(HttpServletRequest request,
-			HttpServletResponse response, String id, String userName,
+			HttpServletResponse response, String id,
 			String trueName, String sex, String birthday, String QQ,
-			String telephone, String mobile, String password, String role_ids) {
+			String telephone,String password, String role_ids) {
 		boolean ret = true;
 		String msg = "保存成功";
 		User parent = this.userService.getObjById(SecurityUserHolder
 				.getCurrentUser().getId());
 		Store store = parent.getStore();
-		userName = this.clearContent(userName);
-		if (parent.getChilds().size() >= store.getGrade().getAcount_num()) {
-			ret = false;
-			msg = "已经超过子账户上线";
-		} else {
-			if (CommUtil.null2String(id).equals("")) {
-				User user = new User();
-				user.setAddTime(new Date());
-				user.setUserName(userName);
-				user.setTrueName(trueName);
-				user.setSex(CommUtil.null2Int(sex));
-				user.setBirthday(CommUtil.formatDate(birthday));
-				user.setQQ(QQ);
-				user.setMobile(mobile);
-				user.setTelephone(telephone);
-				user.setParent(parent);
-				user.setUserRole("BUYER_SELLER");
-				user.setPassword(Md5Encrypt.md5(password).toLowerCase());
-				Map params = new HashMap();
-				params.put("type", "BUYER");
-				List<Role> roles = this.roleService.query(
-						"select obj from Role obj where obj.type=:type",
-						params, -1, -1);
-				user.getRoles().addAll(roles);
-				for (String role_id : role_ids.split(",")) {
-					if (!role_id.equals("")) {
-						Role role = this.roleService.getObjById(CommUtil
-								.null2Long(role_id));
-						user.getRoles().add(role);
-					}
+
+		if (CommUtil.null2String(id).equals("")) {
+			User user = new User();
+			user.setAddTime(new Date());
+			user.setUserName(telephone);
+			user.setTrueName(trueName);
+			user.setSex(CommUtil.null2Int(sex));
+			user.setBirthday(CommUtil.formatDate(birthday));
+			user.setQQ(QQ);
+			user.setTelephone(telephone);
+			user.setParent(parent);
+			user.setUserRole("BUYER_SELLER");
+			user.setPassword(Md5Encrypt.md5(password).toLowerCase());
+			Map params = new HashMap();
+			params.put("type", "BUYER");
+			List<Role> roles = this.roleService.query(
+					"select obj from Role obj where obj.type=:type",
+					params, -1, -1);
+			user.getRoles().addAll(roles);
+			for (String role_id : role_ids.split(",")) {
+				if (!role_id.equals("")) {
+					Role role = this.roleService.getObjById(CommUtil
+							.null2Long(role_id));
+					user.getRoles().add(role);
 				}
-				ret = this.userService.save(user);
-			} else {
-				User user = this.userService.getObjById(CommUtil.null2Long(id));
-				user.setUserName(userName);
-				user.setTrueName(trueName);
-				user.setSex(CommUtil.null2Int(sex));
-				user.setBirthday(CommUtil.formatDate(birthday));
-				user.setQQ(QQ);
-				user.setMobile(mobile);
-				user.setTelephone(telephone);
-				user.getRoles().clear();
-				Map params = new HashMap();
-				params.put("type", "BUYER");
-				List<Role> roles = this.roleService.query(
-						"select obj from Role obj where obj.type=:type",
-						params, -1, -1);
-				user.getRoles().addAll(roles);
-				for (String role_id : role_ids.split(",")) {
-					if (!role_id.equals("")) {
-						Role role = this.roleService.getObjById(CommUtil
-								.null2Long(role_id));
-						user.getRoles().add(role);
-					}
-				}
-				ret = this.userService.update(user);
-				msg = "更新成功";
 			}
+			ret = this.userService.save(user);
+		} else {
+			User user = this.userService.getObjById(CommUtil.null2Long(id));
+			user.setUserName(telephone);
+			user.setTrueName(trueName);
+			user.setSex(CommUtil.null2Int(sex));
+			user.setBirthday(CommUtil.formatDate(birthday));
+			user.setQQ(QQ);
+			user.setTelephone(telephone);
+			user.getRoles().clear();
+			Map params = new HashMap();
+			params.put("type", "BUYER");
+			List<Role> roles = this.roleService.query(
+					"select obj from Role obj where obj.type=:type",
+					params, -1, -1);
+			user.getRoles().addAll(roles);
+			for (String role_id : role_ids.split(",")) {
+				if (!role_id.equals("")) {
+					Role role = this.roleService.getObjById(CommUtil
+							.null2Long(role_id));
+					user.getRoles().add(role);
+				}
+			}
+			ret = this.userService.update(user);
+			msg = "更新成功";
 		}
+	
 
 		Map map = new HashMap();
 		map.put("ret", ret);

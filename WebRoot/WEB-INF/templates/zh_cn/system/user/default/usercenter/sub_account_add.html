@@ -19,21 +19,34 @@
 <script src="$!webPath/resources/js/jquery.zh.cn.js"></script>
 <script src="$!webPath/resources/js/jquery.form.js"></script>
 <script>
- jQuery(document).ready(function(){
-  //
- jQuery("#theForm").validate({
-	  rules:{
-	    userName:{
-		  required:true,
-          remote:{
-		    url: "$!webPath/verify_username.htm",     //后台处理程序
-            type: "post",               //数据发送方式
-            dataType: "json",           //接受数据格式   
-            data: {                     //要传递的数据
-                  "userName": function(){return jQuery("#userName").val();},
-				  "id":function(){return jQuery("#id").val()}
-		     }
-			}
+jQuery(document).ready(function(){
+	jQuery.validator.addMethod("teleVerify",function(value,element){
+	    var re =  /(^0?[1][34758][0-9]{9}$)/;
+        if(re.test(jQuery("#telephone").val())){	
+        	jQuery("#userName").val(jQuery("#telephone").val());
+			return true;
+		}else {
+		    return false;
+		}		  
+	});
+	
+ 	jQuery("#theForm").validate({
+	  rules : {
+	  	telephone : {
+			required : true,
+			teleVerify : true,
+			remote : {
+				url : "$!webPath/verify_telephone.htm", //后台处理程序
+				type : "post", //数据发送方式
+				dataType : "json", //接受数据格式   
+				data : { //要传递的数据
+					"telephone" : function() {
+						return jQuery("#telephone").val();
+					}#if($!obj.trueName)
+					,"id" : $!obj.id
+					#end
+				}
+			} 
 		},
         password:{
 		  required:true,
@@ -43,24 +56,13 @@
 		repassword:{
 		  required:true,
 		  equalTo:"#password" 
-		},
-		email:{
-		  required:true,
-		  email:true,
-		  remote:{
-		    url: "$!webPath/verify_email.htm",     //后台处理程序
-            type: "post",               //数据发送方式
-            dataType: "json",           //接受数据格式   
-            data: {                     //要传递的数据
-                  "email": function(){return jQuery("#email").val();}
-		     }
-		  }
 		}
 	  },
 	  messages:{
-	    userName:{
-		  required:"用户名不能为空",
-		  remote:"用户名已存在"
+		telephone : {
+		  required : "手机号不能为空",
+		  remote : "手机号已存在",
+		  teleVerify : "手机号不正确"
 		},
         password:{
 		  required:"密码不能为空",
@@ -70,23 +72,44 @@
 		repassword:{
 		  required:"重复密码不能为空",
 		  equalTo:"两次输入密码不一致"
-		},
-		email:{
-		  required:"email不能为空",
-		  email:"email格式不正确",
-		  remote:"该email已经存在"
 		}
+	  },
+	  submitHandler: function(form) {  //通过之后回调 
+		 var roles="";
+	     jQuery(":checkbox:checked").each(function(){
+		      if(jQuery(this).val()!=""){
+		         roles=roles+","+jQuery(this).val();
+			  } 
+	     });
+	     jQuery("#role_ids").val(roles); 
+	     var options = { 
+	       // target:        '#output1',   // target element(s) to be updated with server response 
+	       beforeSubmit:  before_ajax,  // pre-submit callback 
+	       success:       success_ajax,  // post-submit callback  
+	       // other available options: 
+	       //url:       url         // override for form's 'action' attribute 
+	       //type:      type        // 'get' or 'post', override for form's 'method' attribute 
+	        dataType:  "json",       // 'xml', 'script', or 'json' (expected server response type) 
+	       //clearForm: true        // clear all form fields after successful submit 
+	        resetForm: true        // reset the form after successful submit 
+	       //timeout:   3000 
+	     };	
+		 jQuery("#theForm").ajaxSubmit(options);
+	  },
+	  invalidHandler: function(form, validator) {  //不通过回调 
+	     return false; 
 	  }
-	});
- //
-  //
+  });
+
   jQuery(":checkbox[id^=rg_ck_]").click(function(){
      var val=jQuery(this).attr("id").substring(6);
 	 var ck=jQuery(this).attr("checked");
 	 var expr="ul[id=rg_"+val+"] :checkbox";
 	 if(ck=="checked"){
 	   jQuery(expr).attr("checked",true);
-	 }else jQuery(expr).attr("checked",false);
+	 }else{
+		 jQuery(expr).attr("checked",false);
+	 }
   });
   								 
   jQuery('#birthday').datepicker({
@@ -97,34 +120,38 @@
 		});
   
 	jQuery(":radio[value=$!obj.sex]").attr("checked",true);	
-
-	
  });
+ 
+ 
  function saveForm(){
-	  var roles="";
-      jQuery(":checkbox:checked").each(function(){
-      if(jQuery(this).val()!=""){
-         roles=roles+","+jQuery(this).val();
-	  } 
+	 var roles="";
+     jQuery(":checkbox:checked").each(function(){
+	      if(jQuery(this).val()!=""){
+	         roles=roles+","+jQuery(this).val();
+		  } 
      });
-    jQuery("#role_ids").val(roles);
-	   var options = { 
+     
+     jQuery("#role_ids").val(roles);
+     
+     var options = { 
        // target:        '#output1',   // target element(s) to be updated with server response 
-        beforeSubmit:  before_ajax,  // pre-submit callback 
-        success:       success_ajax,  // post-submit callback  
-        // other available options: 
-        //url:       url         // override for form's 'action' attribute 
-        //type:      type        // 'get' or 'post', override for form's 'method' attribute 
-         dataType:  "json",       // 'xml', 'script', or 'json' (expected server response type) 
-        //clearForm: true        // clear all form fields after successful submit 
-         resetForm: true        // reset the form after successful submit 
-        //timeout:   3000 
-    };	
+       beforeSubmit:  before_ajax,  // pre-submit callback 
+       success:       success_ajax,  // post-submit callback  
+       // other available options: 
+       //url:       url         // override for form's 'action' attribute 
+       //type:      type        // 'get' or 'post', override for form's 'method' attribute 
+        dataType:  "json",       // 'xml', 'script', or 'json' (expected server response type) 
+       //clearForm: true        // clear all form fields after successful submit 
+        resetForm: true        // reset the form after successful submit 
+       //timeout:   3000 
+     };	
 	 jQuery("#theForm").ajaxSubmit(options);
-	 };	 
+ };	 
+ 
  function before_ajax(formData, jqForm, options){ 
    return true;
  }
+ 
  function success_ajax(data){
    	 showDialog("share_sns","系统提示",data.msg,0,"succeed",3);
  }
@@ -134,7 +161,7 @@
 $!httpInclude.include("/top.htm")
 <div class="main"> $!httpInclude.include("/seller/nav_head.htm")
   <div class="user_center">
-    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+    <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
       <tr> $!httpInclude.include("/seller/nav.htm?op=sub_account")
         <td id="centerbg" valign="top"><div class="buyer_position">
             <div class="buyer_p_box"><a href="$!webPath/seller/index.htm">卖家中心</a> > <span>子账户添加</span></div>
@@ -155,14 +182,8 @@ $!httpInclude.include("/top.htm")
                       <td class="px10">$!{store.store_name}</td>
                     </tr>
                     <tr>
-                      <td width="20%" align="right">用户名称：</td>
+                      <td  align="right">真实姓名：</td>
                       <td width="80%" class="px10"><span class="setinput">
-                        <input name="userName" type="text" id="userName" value="$!obj.userName" />
-                        </span></td>
-                    </tr>
-                    <tr>
-                      <td align="right">真实姓名：</td>
-                      <td class="px10"><span class="setinput">
                         <input name="trueName" type="text" id="trueName" value="$!obj.trueName" />
                         </span></td>
                     </tr>
@@ -186,24 +207,21 @@ $!httpInclude.include("/top.htm")
                         <input name="birthday" type="text" id="birthday" value="$!CommUtil.formatShortDate($!obj.birthday)" readonly="true"/>
                         </span></td>
                     </tr>
+                    
                     <tr>
                       <td align="right" valign="top">QQ：</td>
                       <td  class="px10"><span class="setinput">
                         <input name="QQ" type="text" id="QQ" value="$!obj.QQ" />
                         </span></td>
                     </tr>
+                   
                     <tr>
-                      <td align="right" valign="top">联系电话：</td>
+                      <td align="right" valign="top">手机号码：</td>
                       <td  class="px10"><span class="setinput">
                         <input name="telephone" type="text" id="telephone" value="$!obj.telephone" />
                         </span></td>
                     </tr>
-                    <tr>
-                      <td align="right" valign="top">手机号码：</td>
-                      <td  class="px10"><span class="setinput">
-                        <input name="mobile" type="text" id="mobile" value="$!obj.mobile" />
-                        </span></td>
-                    </tr>
+                    
                     #if(!$!obj)
                     <tr>
                       <td align="right" valign="top">密码：</td>
@@ -248,8 +266,8 @@ $!httpInclude.include("/top.htm")
                     <tr>
                       <td>&nbsp;</td>
                       <td class="px10"><span class="setsub">
-                       <input name="role_ids" type="hidden" id="role_ids" value="" />
-                        <input name="" type="button" onclick="saveForm()"  value="提交" style="cursor:pointer;"/>
+                        <input name="role_ids" type="hidden" id="role_ids" value="" />
+                        <input name="" type="submit" value="提交" style="cursor:pointer;"/>
                         <input name="id" type="hidden" id="id" value="$!obj.id" />
                       </span></td>
                     </tr>

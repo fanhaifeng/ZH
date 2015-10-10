@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>商品收藏 -  Powered by LakeCloudl</title>
+<meta name="keywords" content="$!config.keywords" />
+<meta name="description" content="$!config.description" />
+<meta name="generator" content="LakeCloud 1.5" />
+<meta name="author" content="www.chinacloud.net">
+<meta name="copyright" content="LakeCloud Inc. All Rights Reserved">
+<link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
+<script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
+<script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
+</head>
+<body>
+$!httpInclude.include("/top.htm")
+<div class="main"> $!httpInclude.include("/buyer/head.htm")
+  <div class="user_center">
+    <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
+      <tr>
+          $!httpInclude.include("/buyer/nav.htm?op=favorite") 
+        <td id="centerbg" valign="top">
+        <div class="buyer_position"><div class="buyer_p_box">买家中心 > <span>使用详情</span></div></div>
+        <div class="productmain">
+            <div style="width:990px;margin: 0 auto;"> 
+				<h5 class="hgroup_h5 col-xs-12" style="height: auto; line-height: 43px; color: #000;">
+					<span>智慧豆：#if($!integration_zh)  <i class="fxt-02" >$!integration_zh</i> #else  <i class="fxt-02" >0 </i>#end</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span>可用农豆：#if($!integration_dp_total)  <i class="fxt-02" >$!integration_dp_total</i> #else  <i class="fxt-02" >0 </i>#end</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span>将过期农豆：#if($!integration_dp_over) <i class="fxt-2" >$!integration_dp_over</i> #else <i class="fxt-2" >0</i> #end </span>
+				</h5>
+			</div>
+            <form action="$!webPath/buyer/mybean.htm" method="post" id="ListForm">
+            <div class="ordercon">
+              <div class="operation">
+                <table width="990" border="0" cellspacing="0" cellpadding="0" id="opertable" >
+                  <tr id="opertitle">
+					<td width="200" align="center">农豆来源</td>
+					<td width="300" align="center">智慧豆变化</td>
+                    <td width="300" align="center">农豆变化</td>
+                    <td align="center">日期</td>
+                  </tr>
+                </table>
+                #foreach($obj in $objs)   
+                
+              #if($!obj.gettype==0)
+			    	#set($gettype="订单")
+			    #end
+			    #if($!obj.gettype==1)
+			    	#set($gettype="注册")
+			    #end
+			    #if($!obj.gettype==2)
+			    	#set($gettype="推荐用户")
+			    #end
+			    #if($!obj.gettype==-1)
+			    	#set($gettype="农技服务")
+			    #end
+			    <!-- 农豆变化计算 -->
+			    #if($!{obj.integrals})
+			    #set($integrals=$!{obj.integrals})  
+			    #else 
+			    #set($integrals=0)
+			    #end
+			    
+			    #if($!{obj.integrals_store})
+			    #set($integrals_store=$!{obj.integrals_store})  
+			    #else 
+			    #set($integrals_store=0)
+			    #end
+			    
+			   #set($change=$!integrals+$!integrals_store)
+                 <table width="990" border="0" cellspacing="0" cellpadding="0">
+                  	<tr>
+                        <td width="200" align="center"><i>$!gettype#if($!obj.gettype==0)($!obj.orderForm.order_id)#end</i></td> 
+						<td width="300" align="center">
+						#if($!integrals!=0)
+							<i #if($!obj.type==1) class="fxt-02" >  + #else  class="fxt-2"> - #end $!integrals</i>
+						#end</td>
+						<td width="300" align="center">#if($!integrals_store!=0)
+						<i #if($!obj.type==1) class="fxt-02" >  + #else  class="fxt-2"> - #end $!integrals_store</i>
+						#end</td>
+						<td align="center"><i>$!CommUtil.formatLongDate($!obj.addTime)</i></td>
+                    </tr>
+                  </table>
+            
+                #end
+              </div>
+              <div class="alldel">
+                <div  class="userfenye">$!gotoPageFormHTML</div>   
+            </div>
+            </form>
+          </div></td>
+      </tr>
+    </table>
+  </div>
+  $!httpInclude.include("/footer.htm")
+</div>
+</body>
+</html>

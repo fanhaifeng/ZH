@@ -124,7 +124,48 @@ jQuery(document).ready(function(){
   jQuery("#coupon_id").val("0");
   jQuery("#ship_price").find("option:first").attr("selected",true);
   jQuery(":radio[id^=addr_id]:first").attr("checked",true);
+  
+  //處理收貨方式  0 開啟 1 關閉
+  var transport_type = [{"type":"00", "name":"货到付款", "value":"0"},{"type":"01", "name":"现货自提", "value":"1"}];
+  
+  #if($!{sc.store.transport_type})
+ 	 transport_type = $!{sc.store.transport_type};
+  #end
+  
+  var jsonStr = eval(transport_type);
+  var flag = true;
+  jQuery.each(jsonStr, function(p1, p2){
+	  var type = jsonStr[p1].type;
+	  if(jsonStr[p1].value == 0){
+		  //显示该选项下的类型
+		  jQuery("#tran"+type).show();
+		  if(flag){
+			  jQuery("#tran"+type+"-block").show();
+			  jQuery("#tran"+type+" input:first-child").attr("checked",true);
+			  flag = false;
+		  }
+	  }else{
+		  jQuery("#tran"+type).hide();
+		  jQuery("#tran"+type+"-block").hide();
+		  jQuery("#tran"+type+" input:first-child").attr("checked",false);
+	  }
+  });
+  
+  jQuery('input[name="transport"]').change(function(){
+	 var trans = jQuery('input[name="transport"]:checked').val();
+	 if(trans==0){
+		 jQuery("#tran00-block").show();
+		 jQuery("#tran01-block").hide();
+		 jQuery(":radio[id^=addr_id]:first").attr("checked",true);
+	 }else if(trans == 1){
+ 		 jQuery("#tran00-block").hide();
+		 jQuery("#tran01-block").show();
+		 //jQuery("#addr_id").val("");
+		 jQuery(":radio[id^=addr_id]").attr("checked",false);
+	 }
+   });
 });
+
 function save_order(sc_id){
 	var url="$!webPath/weixin/check_goods.htm";
 	jQuery.ajax( {
@@ -161,15 +202,14 @@ $!httpInclude.include("/top.htm")
         <li class="last">5.评价</li>
       </ul>
     </div>
+
     <form action="$!webPath/goods_cart3.htm" method="post" enctype="$!webPath/goods_cart3.htm" id="cart_form">
-      
       <div class="sendadress">
       <div class="h1"> <span class="h1_l">店铺名称：<a href="$!webPath/store_$!{sc.store.id}.htm" target="_blank">$!{sc.store.store_name}</a>
         <input name="store_id" type="hidden" id="store_id" value="$!{sc.store.id}" />
         </span> </div>
       <div class="table">
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
-    
           <tr>
             <td width="57%" align="center" class="title">店铺商品</td>
             <td width="10%" align="center" class="title">单价</td>
@@ -221,26 +261,40 @@ $!httpInclude.include("/top.htm")
           #end
         </table>
       </div>
-        <h1>
-          <div class="sendhright"> <span class="sendperbtn"> <a href="javascript:void(0);" dialog_uri="$!webPath/cart_address.htm?store_id=$!store_id" dialog_title="新增地址" dialog_width="480" dialog_height="100" dialog_id="cart_address">新增地址</a> </span> <span class="sendperbtn"><a href="$!webPath/buyer/address.htm" target="_blank">管理收货地址</a></span> </div>
-          <span class="sendperadr">收货人地址</span> </h1>
-        <div class="writeok">
-          <ul>
-            #set($addr_id="")
-            #foreach($addr in $addrs)
-              #if($!velocityCount==1)
-                #set($default_address_info="$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}")
-                #set($addr_id="$!{addr.area.id}")
-                #set($default_person_info="$!{addr.trueName} $!{addr.mobile}")
-              #end
-            <li>
-              <label> <strong>
-                <input type="radio" name="addr_id" id="addr_id" value="$!addr.id" #if($!velocityCount==1) checked="checked" #end/>
-                </strong><span id="address">$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}</span><span id="person">$!{addr.trueName}</span><span id="mobile">$!{addr.mobile}</span> </label>
-            </li>
-            #end
-          </ul>
-        </div>
+      <div id="tran-radio">
+	      <span id="tran00"><input type="radio"  name="transport" value="0">商家送货</input> </span>   
+	      <span id="tran01"><input type="radio"  name="transport" value="1">买家自提</input></span>
+      </div>
+      <div id="tran-block">
+	      <div id="tran00-block" style="display:none">
+	        <h1>
+	          <div class="sendhright"> <span class="sendperbtn"> <a href="javascript:void(0);" dialog_uri="$!webPath/cart_address.htm?store_id=$!store_id" dialog_title="新增地址" dialog_width="480" dialog_height="100" dialog_id="cart_address">新增地址</a> </span> <span class="sendperbtn"><a href="$!webPath/buyer/address.htm" target="_blank">管理收货地址</a></span> </div>
+	          <span class="sendperadr">收货人地址</span> 
+	        </h1>
+	        <div class="writeok">
+	          <ul>
+	            #set($addr_id="")
+	            #foreach($addr in $addrs)
+	              #if($!velocityCount==1)
+	                #set($default_address_info="$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}")
+	                #set($addr_id="$!{addr.area.id}")
+	                #set($default_person_info="$!{addr.trueName} $!{addr.mobile}")
+	              #end
+	            <li>
+	              <label> <strong>
+	                <input type="radio" name="addr_id" id="addr_id" value="$!addr.id" #if($!velocityCount==1) checked="checked" #end/>
+	                </strong><span id="address">$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}</span><span id="person">$!{addr.trueName}</span><span id="mobile">$!{addr.mobile}</span> </label>
+	            </li>
+	            #end
+	          </ul>
+	        </div>
+	      </div>
+	      <div id="tran01-block" style="display:none">
+	      	
+	      </div>
+       </div>  
+       
+       
         <h1><span class="sendperadr margin10">发票信息</span></h1>
         <div class="sendmethod">
           <ul>

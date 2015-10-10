@@ -1,6 +1,8 @@
 package com.lakecloud.view.web.action;
 
+import java.awt.Font;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,9 +27,14 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.json.simple.JSONObject;
+import org.nutz.json.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.lakecloud.core.mv.JModelAndView;
@@ -37,6 +44,8 @@ import com.lakecloud.core.tools.Formatter;
 import com.lakecloud.core.tools.LoginFlag;
 import com.lakecloud.core.tools.Md5Encrypt;
 import com.lakecloud.core.tools.SendMessageUtil;
+import com.lakecloud.core.tools.WebForm;
+import com.lakecloud.foundation.domain.Accessory;
 import com.lakecloud.foundation.domain.Album;
 import com.lakecloud.foundation.domain.Area;
 import com.lakecloud.foundation.domain.Audit;
@@ -50,6 +59,8 @@ import com.lakecloud.foundation.domain.Store;
 import com.lakecloud.foundation.domain.StoreClass;
 import com.lakecloud.foundation.domain.Template;
 import com.lakecloud.foundation.domain.User;
+import com.lakecloud.foundation.domain.WaterMark;
+import com.lakecloud.foundation.service.IAccessoryService;
 import com.lakecloud.foundation.service.IAlbumService;
 import com.lakecloud.foundation.service.IAreaService;
 import com.lakecloud.foundation.service.IAuditService;
@@ -66,6 +77,8 @@ import com.lakecloud.foundation.service.ISysConfigService;
 import com.lakecloud.foundation.service.ITemplateService;
 import com.lakecloud.foundation.service.IUserConfigService;
 import com.lakecloud.foundation.service.IUserService;
+import com.lakecloud.foundation.service.impl.UserServiceImpl;
+import com.lakecloud.manage.admin.tools.StoreTools;
 import com.lakecloud.uc.api.UCClient;
 import com.lakecloud.uc.api.UCTools;
 import com.lakecloud.view.web.tools.ImageViewTools;
@@ -135,13 +148,16 @@ public class LoginViewAction {
 	private ITemplateService templateService;
 	@Autowired
 	private IIntegrationService iIntegrationService;
-	
+	@Autowired
+	private IAccessoryService accessoryService;
+	@Autowired
+	private StoreTools storeTools;
 	
 	
 	@RequestMapping("/register_next.htm")
 	public ModelAndView register_next(HttpServletRequest request,
 			HttpServletResponse response,String userName,String password,
-			String telephone,String area,String mobile_verify_code,String code){
+			String telephone,String area,String mobile_verify_code,String code,String promote_tel){
 		ModelAndView mv = new JModelAndView("register_next.html",
 				configService.getSysConfig(),
 				this.userConfigService.getUserConfig(), 1, request, response);
@@ -149,6 +165,7 @@ public class LoginViewAction {
 		mv.addObject("code",code);
 		mv.addObject("password",password);
 		mv.addObject("telephone",telephone);
+		mv.addObject("promote_tel",promote_tel);
 		mv.addObject("area",area);
 		mv.addObject("mobile_verify_code",mobile_verify_code);
 		return mv;
@@ -333,15 +350,17 @@ public class LoginViewAction {
 			String true_name,String store_name,String sc_id,
 			String store_area,String store_address,
 			String store_ower_card,String mobile_verify_code,String code,
-			String care,String plant,String cul_area) throws Exception{
-		
+			String care,String plant,String cul_area,String promote_tel,
+			String file1,String file2,String file3) throws Exception{
+	
 		boolean reg = true;// 防止机器注册，如后台开启验证码则强行验证验证码
 		ModelAndView mv = null;
 		
 		if(userName=="" || password=="" || telephone=="" ||
 		   area=="" || mobile_verify_code=="" ||true_name=="" || 
 		   store_name=="" || sc_id=="" || store_area=="" || 
-		   store_address=="" || store_ower_card=="" || mobile_verify_code==""){
+		   store_address=="" || store_ower_card=="" || mobile_verify_code=="" ||
+		   file1== "" || file2=="" || file3 == ""){
 			reg=false;
 		}
 			
@@ -388,6 +407,13 @@ public class LoginViewAction {
 			audit.setTelephone(telephone);
 			
 			
+			//推荐用户手机号存在mobile字段
+			if(promote_tel!=null && !"".equals(promote_tel)){
+				if(UserServiceImpl.isPhone(promote_tel)==true){
+					audit.setMobile(promote_tel);
+				}
+			}
+			
 			Area a1 = new Area();
 			a1.setId(Long.parseLong(area));
 			audit.setArea(a1);
@@ -399,6 +425,13 @@ public class LoginViewAction {
 			StoreClass cls = new StoreClass();
 			cls.setId(Long.parseLong(sc_id));
 			audit.setStore_class(cls);
+			
+			Accessory  accessory1 = this.accessoryService.getObjById(CommUtil.null2Long(file1));
+			audit.setFile1(accessory1);
+			Accessory  accessory2 = this.accessoryService.getObjById(CommUtil.null2Long(file2));
+			audit.setFile2(accessory2);
+			Accessory  accessory3 = this.accessoryService.getObjById(CommUtil.null2Long(file3));
+			audit.setFile3(accessory3);
 			
 			//区级
 			Area store_aArea =  this.areaService.getObjById(Long.parseLong(store_area));
@@ -457,7 +490,8 @@ public class LoginViewAction {
 			String telephone,String area, 
 			String true_name,String store_name,String sc_id,
 			String store_area,String store_address,String code,
-			String store_ower_card,String mobile_verify_code){
+			String store_ower_card,String mobile_verify_code,String promote_tel,
+			String file1,String file2,String file3){
 		ModelAndView mv = new JModelAndView("register_seller_next.html",
 				configService.getSysConfig(),
 				this.userConfigService.getUserConfig(), 1, request, response);
@@ -473,6 +507,10 @@ public class LoginViewAction {
 		mv.addObject("store_address",store_address);
 		mv.addObject("store_ower_card",store_ower_card);
 		mv.addObject("mobile_verify_code",mobile_verify_code);
+		mv.addObject("promote_tel",promote_tel);	
+		mv.addObject("file1",file1);
+		mv.addObject("file2",file2);
+		mv.addObject("file3",file3);
 		return mv;
 	}
 	
@@ -530,7 +568,7 @@ public class LoginViewAction {
 		String url=(String) request.getSession().getAttribute("refererUrl");
 		if(url!=null&&url!=""){			
 		}else			
-		url = CommUtil.getURL(request) + "/index.htm";
+		url = CommUtil.getURL(request) + "/index.htm?login_flag=1";// TODO 与生产不同，是否需要跳转原页面？
 		String iskyshop_view_type = CommUtil.null2String(request.getSession(
 				false).getAttribute("iskyshop_view_type"));
 		if (iskyshop_view_type != null && !iskyshop_view_type.equals("")) {
@@ -541,11 +579,14 @@ public class LoginViewAction {
 						configService.getSysConfig(),
 						this.userConfigService.getUserConfig(), 1, request,
 						response);
-				url=CommUtil.getURL(request) + "/weixin/platform/index.htm";
+				url=CommUtil.getURL(request) + "/weixin/platform/index.htm?login_flag=1";
 				/*url = CommUtil.getURL(request) + "/weixin/index.htm?store_id="
 						+ store_id;*/
 			}
 		}
+		Area area  = areaService.getObjById(SecurityUserHolder.getCurrentUser()
+				.getArea().getId());
+		mv.addObject("area_name", area.getAreaName());
 		HttpSession session = request.getSession(false);
 		if (session.getAttribute("refererUrl") != null
 				&& !session.getAttribute("refererUrl").equals("")) {
@@ -749,6 +790,48 @@ public class LoginViewAction {
 
 	}
 
+	
+	@RequestMapping("/register/swf_upload.htm")
+	public void swf_upload(HttpServletRequest request,HttpServletResponse response) {
+		String path = this.storeTools.createRegisterFolder(request,this.configService.getSysConfig());
+		String url = this.storeTools.createRegisterFolderURL(
+				this.configService.getSysConfig());		
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		CommonsMultipartFile file = (CommonsMultipartFile) multipartRequest.getFile("imgFile");
+		Map json_map = new HashMap();
+		try {
+			Map map = CommUtil.saveFileToServer(request, "imgFile", path,
+					null, null);
+			Accessory image = new Accessory();
+			image.setAddTime(new Date());
+			image.setExt((String) map.get("mime"));
+			image.setPath(url);
+			image.setWidth(CommUtil.null2Int(map.get("width")));
+			image.setHeight(CommUtil.null2Int(map.get("height")));
+			image.setName(CommUtil.null2String(map.get("fileName")));
+			this.accessoryService.save(image);
+			System.out.println(CommUtil.getURL(request) + "/" + url + "/"+ image.getName());
+			json_map.put("url", CommUtil.getURL(request) + "/" + url + "/"
+					+ image.getName());
+			json_map.put("id", image.getId());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		response.setContentType("text/plain");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter writer;
+		try {
+			writer = response.getWriter();
+			writer.print(Json.toJson(json_map));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	@RequestMapping("/init_test_data.htm")
 	public ModelAndView init_test_data(HttpServletRequest request,
 			HttpServletResponse response) {

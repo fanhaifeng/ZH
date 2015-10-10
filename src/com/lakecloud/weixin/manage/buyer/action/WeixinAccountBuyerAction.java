@@ -33,6 +33,7 @@ import com.lakecloud.foundation.domain.Favorite;
 import com.lakecloud.foundation.domain.Goods;
 import com.lakecloud.foundation.domain.GoodsCart;
 import com.lakecloud.foundation.domain.Integration;
+import com.lakecloud.foundation.domain.Integration_Child;
 import com.lakecloud.foundation.domain.Integration_Log;
 import com.lakecloud.foundation.domain.OrderForm;
 import com.lakecloud.foundation.domain.Store;
@@ -42,6 +43,7 @@ import com.lakecloud.foundation.service.ICouponInfoService;
 import com.lakecloud.foundation.service.IFavoriteService;
 import com.lakecloud.foundation.service.IGoodsService;
 import com.lakecloud.foundation.service.IIntegrationService;
+import com.lakecloud.foundation.service.IIntegration_ChildService;
 import com.lakecloud.foundation.service.IIntegration_LogService;
 import com.lakecloud.foundation.service.IOrderFormService;
 import com.lakecloud.foundation.service.IStoreService;
@@ -85,6 +87,10 @@ public class WeixinAccountBuyerAction {
 	private IIntegrationService integrationService;
 	@Autowired
 	private IIntegration_LogService integration_logService;
+	@Autowired
+	private IIntegration_ChildService integration_ChildService;
+	
+	
 
 	private int orderGoodsCount(List<OrderForm> OrderForms) {
 		int goods_count = 0;
@@ -199,14 +205,36 @@ public class WeixinAccountBuyerAction {
 						.getUserConfig(), 1, request, response);
 		User user = this.userService.getObjById(SecurityUserHolder
 				.getCurrentUser().getId());
-		//查询当前用户积分
-		Integration integration = this.integrationService.getObjByProperty("user.id", user.getId());
-		String query="from Integration_Log obj where obj.user.id=:uid order by obj.addTime desc";
+		//查询用户智慧豆
+		String query="from Integration_Child obj where obj.user.id=:uid and obj.type=0";
 		Map<String,Object> params=new HashMap<String, Object>();
+		params.put("uid", user.getId());
+		List<Integration_Child> list_zh = this.integration_ChildService.query(query, params, -1, -1);
+		if(list_zh!=null&&list_zh.size()==1){
+			mv.addObject("integration_zh",list_zh.get(0).getIntegrals());
+		}
+	  //查询用户农豆
+		query="from Integration_Child obj where obj.user.id=:uid and obj.type=1";
+		params.clear();
+		params.put("uid", user.getId());
+		Integer total=0;
+		Integer total_over=0;
+		List<Integration_Child> list_dp = this.integration_ChildService.query(query, params, -1, -1);
+		if(list_dp!=null&&list_dp.size()>0){
+			for (Integration_Child integration_Child : list_dp) {
+			total+=integration_Child.getIntegrals();
+			total_over+=integration_Child.getOverdue_integrals()==null?0:integration_Child.getOverdue_integrals();
+      }
+			mv.addObject("integration_dp_total",total);
+			mv.addObject("integration_dp_over",total_over);
+		}		
+		//查询当前用户积分
+		query="from Integration_Log obj where obj.user.id=:uid order by obj.addTime desc";
+		params.clear();
+		params=new HashMap<String, Object>();
 		params.put("uid", user.getId());
 		List<Integration_Log> list = this.integration_logService.query(query, params, 0, 6);
 		mv.addObject("objs",list);
-		mv.addObject("integration",integration);
 		return mv;
 	}
 	/**

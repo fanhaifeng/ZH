@@ -8,6 +8,7 @@ function switch_reason(){
   }
 }
 </script>
+#if($!obj.order_status==30)
 <form action="$!webPath/buyer/order_cofirm_save.htm" method="post" id="theForm">
   <table style="float:left;" width="390" border="0" cellspacing="0" cellpadding="0" class="box_table">
     <tr>
@@ -29,3 +30,19 @@ function switch_reason(){
     </tr>
   </table>
 </form>
+#else
+<form action="$!webPath/buyer/order.htm" method="post" id="theForm">
+  <table style="float:left;" width="390" border="0" cellspacing="0" cellpadding="0" class="box_table">
+   
+    <tr>
+      <td align="center" valign="top">订单号为$!obj.order_id的订单已经确认收货，无法重复操作。</td>
+    </tr>
+    
+    <tr>
+      <td align="center"><span class="inputbtn">
+        <input type="submit" value="确认" style="cursor:pointer;"/>
+      </span></td>
+    </tr>
+  </table>
+</form>
+#end

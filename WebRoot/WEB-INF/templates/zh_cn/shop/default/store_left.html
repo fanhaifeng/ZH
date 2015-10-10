@@ -1,4 +1,8 @@
 <script>
+#set($store_second_url="$!webPath")
+#if($!second_domain_view)
+	#set($store_second_url="http://$!{store.store_second_domain}.$!{domainPath}")
+#end
 jQuery(function(jQuery){
   jQuery(".collection a").click(function(){
     #if($!user)

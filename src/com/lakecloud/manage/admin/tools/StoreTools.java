@@ -106,6 +106,63 @@ public class StoreTools {
 		return path;
 	}
 
+	public String createRegisterFolder(HttpServletRequest request,
+			SysConfig config) {
+		String path = "";
+		String uploadFilePath = config.getUploadFilePath();
+		if (config.getImageSaveType().equals("sidImg")) {// 按照文件名存放(例:/register/图片)
+			path = request.getSession().getServletContext().getRealPath("/")+File.separator
+					+ uploadFilePath + File.separator + "register";
+
+		}
+		if (config.getImageSaveType().equals("sidYearImg")) {// 按照年份存放(例:/register/年/图片)
+			path = request.getSession().getServletContext().getRealPath("/")+File.separator
+					+ uploadFilePath + File.separator + "register"
+					+ File.separator + CommUtil.formatTime("yyyy", new Date());
+		}
+		if (config.getImageSaveType().equals("sidYearMonthImg")) {// 按照年月存放(例:/register/年/月/图片)
+			path = request.getSession().getServletContext().getRealPath("/")+File.separator
+					+ uploadFilePath + File.separator + "register" 
+					+ File.separator + CommUtil.formatTime("yyyy", new Date()) 
+					+ File.separator + CommUtil.formatTime("MM", new Date());
+		}
+		if (config.getImageSaveType().equals("sidYearMonthDayImg")) {// 按照年月日存放(例:/register/年/月/日/图片)
+			path = request.getSession().getServletContext().getRealPath("/")+File.separator
+					+ uploadFilePath + File.separator + "register" 
+					+ File.separator + CommUtil.formatTime("yyyy", new Date()) 
+					+ File.separator + CommUtil.formatTime("MM", new Date())
+					+ File.separator + CommUtil.formatTime("dd", new Date());
+		}
+		CommUtil.createFolder(path);
+		return path;
+	}
+	
+	public String createRegisterFolderURL(SysConfig config) {
+		String path = "";
+		String uploadFilePath = config.getUploadFilePath(); //upload文件夹
+		if (config.getImageSaveType().equals("sidImg")) {// 按照文件名存放(例:/店铺id/图片)
+			path = uploadFilePath + File.separator + "register";
+
+		}
+		if (config.getImageSaveType().equals("sidYearImg")) {// 按照年份存放(例:/店铺id/年/图片)
+			path = uploadFilePath + File.separator + "register"
+					+ File.separator + CommUtil.formatTime("yyyy", new Date());
+		}
+		if (config.getImageSaveType().equals("sidYearMonthImg")) {// 按照年月存放(例:/店铺id/年/月/图片)
+			path = uploadFilePath + File.separator + "register" 
+					+ File.separator + CommUtil.formatTime("yyyy", new Date()) 
+					+ File.separator + CommUtil.formatTime("MM", new Date());
+		}
+		if (config.getImageSaveType().equals("sidYearMonthDayImg")) {// 按照年月日存放(例:/店铺id/年/月/日/图片)
+			path = uploadFilePath + File.separator + "register" 
+					+ File.separator + CommUtil.formatTime("yyyy", new Date()) 
+					+ File.separator + CommUtil.formatTime("MM", new Date())
+					+ File.separator + CommUtil.formatTime("dd", new Date());
+		}
+		return path;
+	}
+
+	
 	public String createUserFolderURL(SysConfig config, Store store) {
 		String path = "";
 		String imgSRC="goods/images";

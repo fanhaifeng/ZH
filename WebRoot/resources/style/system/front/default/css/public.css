@@ -2,6 +2,9 @@
 /* CSS Document default*/
 body{ background:#fff;}
 .mt20{margin-top:20px;}
+.pt20 {
+  padding-top: 20px;
+}
 .clear {
   clear: both;
 }
@@ -26,14 +29,14 @@ dt,dd,dl{ padding:0px; margin:0px;}
 .green{ color:#09B331;}
 .px20{ padding-left:20px;}
 .px10{ padding-left:10px;}
-.red{ color:#F00}
+.red{ color:#d31010}
 .right{ float:right;}
 .through{ text-decoration:line-through}
 .center{ text-align:center}
 i{ font-style:normal;}
 
 
-.top{ height:26px; line-height:26px; border-bottom:1px solid #D8D8D8; width:100%; background:#fff; float:left; position:relative; z-index:10001;}
+.top{ height:26px; line-height:26px; border-bottom:1px solid #D8D8D8; width:100%;min-width:1202px; background:#fff; position:relative; z-index:10001;}
 .page{ width:1202px; margin-left:auto; margin-right:auto; height:25px; line-height:25px;}
 .page_shop_cart .page {  width: 1002px;}
 .pageleft{ float:left; height:26px; overflow:hidden} 
@@ -48,7 +51,7 @@ i{ font-style:normal;}
 .search .menu-hd s { BACKGROUND:url(../images/mbg.png) no-repeat left center;}
 .quick-menu li {PADDING-RIGHT: 10px; BACKGROUND-POSITION: right 6px; PADDING-LEFT: 10px; FLOAT: left; PADDING-BOTTOM: 0px; MARGIN-LEFT: -1px; PADDING-TOP: 2px}
 .quick-menu li.menu-item {PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; POSITION: relative; z-index:10001; }
-.menu-hd {PADDING-RIGHT: 22px; DISPLAY: block; PADDING-LEFT: 10px; Z-INDEX: 10002; PADDING-BOTTOM: 0px; MARGIN: 1px 1px 0px; CURSOR: pointer; PADDING-TOP: 0px; POSITION: relative; HEIGHT: 20px}
+.menu-hd {PADDING-RIGHT: 22px; DISPLAY: block; PADDING-LEFT: 10px; Z-INDEX: 20; PADDING-BOTTOM: 0px; MARGIN: 1px 1px 0px; CURSOR: pointer; PADDING-TOP: 0px; POSITION: relative; HEIGHT: 20px}
 .mytaobao .menu-hd {WIDTH: 48px; PADDING-TOP: 1px; _padding-top: 1px}
 .search .menu-hd {WIDTH: 90px; PADDING-TOP: 1px; _padding-top: 1px}
 .menu-hd b {FONT-SIZE: 0px; RIGHT: 10px;  WIDTH: 0px; LINE-HEIGHT: 0;  POSITION: absolute; TOP:50%; HEIGHT: 0px; line-height:0px; -webkit-transition: -webkit-transform .2s ease-in; -moz-transition: -webkit-transform .2s ease-in; -o-transition: -webkit-transform .2s ease-in; transition: -webkit-transform .2s ease-in; border:4px solid; border-color:rgb(105,102,102) transparent transparent; _border-color:rgb(102,102,102) tomato tomato;_filter:chroma(color=tomato)}
@@ -72,7 +75,7 @@ i{ font-style:normal;}
   top: 50%;
   width: 19px;
 }
-.menu-bd {BORDER-RIGHT: #e6e6e6 1px solid; BORDER-TOP: #bfbfbf 1px solid; DISPLAY: none; Z-INDEX: 10001; RIGHT: 0px; BACKGROUND: #fff; BORDER-LEFT: #bfbfbf 1px solid; BORDER-BOTTOM: #bfbfbf 1px solid; POSITION: absolute; TOP: 21px}
+.menu-bd {BORDER-RIGHT: #e6e6e6 1px solid; BORDER-TOP: #bfbfbf 1px solid; DISPLAY: none; Z-INDEX: 19; RIGHT: 0px; BACKGROUND: #fff; BORDER-LEFT: #bfbfbf 1px solid; BORDER-BOTTOM: #bfbfbf 1px solid; POSITION: absolute; TOP: 21px}
 .search .menu-bd {_right: -1px}
 .menu-bd-panel {PADDING-RIGHT: 10px; PADDING-LEFT: 10px; PADDING-BOTTOM: 6px; PADDING-TOP: 10px}
 .menu {POSITION: relative}
@@ -114,8 +117,8 @@ i{ font-style:normal;}
   text-align: center;
 }
 
-.main{ width:1202px; margin-left:auto; margin-right:auto; clear:both;}
-.head{ width:1202px; height:110px; position:relative; z-index:10000;}
+.main{ width:1202px; margin-left:auto; margin-right:auto; }
+.head{ width:1202px; height:127px; position:relative; z-index:10000;}
 .logo{width:200px;  float:left; height:90px; padding-top:10px;}
 .logo span{width:200px;
 height:100px;
@@ -155,7 +158,7 @@ left:-50%; }
 
 
 .sannav{ float:right; margin-right:10px; margin-top:20px}
-.nav{ border-bottom:2px solid #069; width:100%; height:40px; position:relative; z-index:9999;}
+.nav{ border-bottom:2px solid #069;  height:40px; position:relative; z-index:9999;width:100%;min-width:1202px; margin:0 auto;}
 .navleft{ width:210px;  position:relative; float:left; height:40px; color:#fff; font-size:12px;}
 .navleft .nav_lefts {
   background: #069 none repeat scroll 0 0;
@@ -182,7 +185,7 @@ left:-50%; }
   float: left;
   font-size: 14px;
   line-height: 30px;
-  padding: 13px 0;
+  padding: 6px 0;
   position: relative;
   width: 210px;
 }
@@ -200,7 +203,7 @@ left:-50%; }
   font-weight: bold;
   height: 57px;
   line-height: 30px;
-  padding:13px 10px 9px 16px;
+  padding:6px 10px 6px 17px;
   position: absolute;
   width: 184px;
   z-index: 2;
@@ -277,7 +280,7 @@ left:-50%; }
 .friendlink .linkimg li{ float:left; margin:8px; border:1px solid #ccc;}
 .friendlink .linka{ width:1000px; float:left; overflow:hidden;}
 .friendlink .linka a{ white-space:nowrap; margin-left:10px; margin-right:5px; line-height:25px;}
-.shopping{   overflow:hidden; margin-top:10px; }
+.shopping{  min-width:1202px; overflow:hidden; margin-top:10px; }
 .shopone{ width:130px; float:left; margin:10px; _margin-left:5px;}
 .shopone h1{   font-size:14px; color:#888; height:30px; line-height:30px;}
 .shopone ul{   }
@@ -309,6 +312,10 @@ left:-50%; }
 /**验证样式**/
 label.error{color:#FF0000; margin-left:3px;}
 input.error{ border:2px solid #FF0000;}
+.login_user_table label.error {
+  line-height: 34px;
+  margin-left: 10px;
+}
 
 
 /*店铺搜索*/
@@ -348,7 +355,7 @@ border-bottom-left-radius:  5px;
 position:absolute; top:0px; z-index:99;
 }
 .filter_z {  height: 50px;  position: relative;  width: 285px;}
-.top_nofilter{ width:320px; height:48px; position:absolute; top:0px; z-index:100;}
+.top_nofilter{ width:320px; height:48px; position:absolute; top:0px; z-index:100;left:0;}
 .top_sear_kf{ width:320px; float:left; font-size:12px; padding-top:5px; line-height:20px;}
 .top_sear_kf a {
   color: #666;
@@ -832,5 +839,13 @@ _top:expression(eval(document.documentElement.scrollTop+document.documentElement
 }
 .box_table select {
   padding: 8px 0;
+}
+.box_table .login_nameu {
+  line-height: 34px;
+}
+.box_table .ipt_txt {
+  border: 1px solid #e6e6e6;
+  height: 34px;
+  line-height: 34px;vertical-align: middle;
 }
 /*e- zhongweining CSS */

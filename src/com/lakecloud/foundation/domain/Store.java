@@ -254,6 +254,13 @@ public class Store extends IdEntity {
 	@Formula("(SELECT COUNT(1) FROM LAKECLOUD_GOODS obj WHERE obj.GOODS_STATUS =0 AND obj.GOODS_STORE_ID=id )")
 	private long onSaleAmount;//在售中的宝贝数量
 	private String branch_code;//分店代号
+	/**
+   *json数据[{"type":"货到付款","value":"0"},{"type":"现货自提","value":"0"}]
+   *value=0 启用 value=1 禁用
+	 */
+	@Lob
+	@Column(length = 1048576)
+	private String transport_type;//配送方式
 
 	public String getBranch_code() {
 		return branch_code;
@@ -806,7 +813,13 @@ public class Store extends IdEntity {
 	public void setOnSaleAmount(long onSaleAmount) {
 		this.onSaleAmount = onSaleAmount;
 	}
-	
-	
 
+	public String getTransport_type() {
+  	return transport_type;
+  }
+
+	public void setTransport_type(String transport_type) {
+  	this.transport_type = transport_type;
+  }
+	
 }

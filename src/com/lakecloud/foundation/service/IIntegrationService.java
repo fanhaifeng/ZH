@@ -73,8 +73,8 @@ public interface IIntegrationService {
 
 	List<Integration> queryByUser(User user);
 
-	boolean updateByOrderForm(OrderForm of, String money_overdue,
-			Integration integration);
+	boolean updateByOrderForm(OrderForm of, Integration integration,
+			Integer integration_new);
 
 	/**
 	 * @param propertyName

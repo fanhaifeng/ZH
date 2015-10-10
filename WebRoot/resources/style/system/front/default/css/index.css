@@ -31,6 +31,17 @@
   height: 150px;
   width: 100px;
 }
+.index{width:1202px;  clear:both;}
+.index2{width:1202px;  clear:both;}
+.indextop {
+  height: 420px;
+  margin: 0 auto;
+  position: relative;
+  width: 100%;
+  min-width:1202px;
+}
+.indextop_adv{width:200px;  float:left; height:532px; display:block; margin-top:5px; overflow:hidden;}
+.indextop_adv a img{ float:left;}
 
 /*公用响应式布局*/
 
@@ -65,14 +76,7 @@
 .indextop_adv { display:none }
 }
 @media screen and (min-width:1024px) {
-.index{width:1202px;  clear:both;}
-.index2{width:1202px;  clear:both;}
-.indextop {
-  height: 420px;
-  position: relative;
-}
-.indextop_adv{width:200px;  float:left; height:532px; display:block; margin-top:5px; overflow:hidden;}
-.indextop_adv a img{ float:left;} 
+
 	}
 
 .index_hdp {
@@ -312,9 +316,11 @@ background:url(../images/slide_right.gif) no-repeat center center; width:40px; h
 
 /*特别推荐*/
 .index_mid {
-	width:1002px;
+	width:1202px;
 	overflow:hidden; 
 	margin-top:10px;
+	margin-left:auto;
+	margin-right:auto;
 }
 .limitime {
 	float:left;
@@ -648,7 +654,7 @@ background:url(../images/slide_right.gif) no-repeat center center; width:40px; h
 
 /*楼层样式0*/
 .floor {
-	width:1002px;
+	width:1202px;
 	overflow:hidden;
 	clear:both;
 	margin-top:20px;
@@ -721,9 +727,9 @@ background:url(../images/slide_right.gif) no-repeat center center; width:40px; h
 
 
 
-.floor .floor_box{ width:1002px; float:left; overflow:hidden}
+.floor .floor_box{ width:1202px; float:left; overflow:hidden}
 .floor .floorclass {
-	width:609px;
+	width:992px;
 	float:left;
 	height:604px;
 	overflow:hidden;
@@ -928,13 +934,13 @@ background:url(../images/slide_right.gif) no-repeat center center; width:40px; h
   color: #005bac;
 }
 .floor.F1 .floor_menu h3 span{color:#069;}
-.floor .flr_m_details{ width:210px; float:left; overflow:hidden;  border-bottom:1px solid #ddd;margin-top:10px;  }
+.floor .flr_m_details{ position: relative;width:210px; float:left; overflow:hidden;  border-bottom:1px solid #ddd;margin-top:10px;  }
 .floor .flr_m_du {
   background:url("../images/menuBG.png") repeat scroll 0 0;
   overflow: hidden;
   padding: 20px;
   position: absolute;
-  width:170px;
+  width:170px; z-index: 9;top:0;left:0;
 }
 .floor .flr_m_du li{ overflow:hidden;  margin-bottom:5px;  } 
 .floor .flr_m_du li h4{ width:177px; clear:both; margin-top:5px; color:#000; margin-bottom:5px; } 
@@ -966,7 +972,7 @@ background:url(../images/slide_right.gif) no-repeat center center; width:40px; h
 .floor .flr_m_du li p span a {
   color: #fff;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 400;
 }
 .floor .flr_m_du li p span a:hover{ color:#fff; text-decoration:underline}
 .floor .flr_advertisment {
@@ -977,26 +983,6 @@ background:url(../images/slide_right.gif) no-repeat center center; width:40px; h
 .floor .floor_brand{  width:1000px;  float:left; overflow:hidden;border:1px solid #ddd;border-top:0px; height:47px}
 .floor .flr_sp_brand{ float:left; display:block; width:1220px; overflow:hidden;}
 .floor .flr_sp_brand a{ display:block; width:98px; height:35px; display:inline; margin:4px; padding:2px; float:left; margin-left:4px; margin-right:5px;}
-
-
-@media screen and (min-widht:800px) and (max-width:1024px){
-.floor { width:1002px;}
-.floor .floor_box{ width:1002px;}
-.floor .floorclass{ width:609px;}
-.floor .floorul_hidden{ width:609px;}
-.floor .productone ul {padding:5px 2px;}
-.floor .floorclass .floorul li {width:122px;}
-.floor .floorclass .floorul .this {width:120px;}
-.floor .ftab {width:609px;}
-.floor .ftabone {width:609px;}
-.floor .classpro {width:619px;}
-.floor .productone { width:153px;}
-.floor .floor_brand{  width:1000px;}
-.floor .flr_sp_brand a{ margin-left:4px; margin-right:5px;}
-
-}
-
-@media screen and (min-width:1024px) {
 .floor { width:1202px;margin:0 auto; margin-top:20px;}
 .floor .floor_box{ width:1202px;}
 .floor .floorclass {
@@ -1020,6 +1006,26 @@ background:url(../images/slide_right.gif) no-repeat center center; width:40px; h
 }
 .floor .floor_brand{  width:1200px;}
 .floor .flr_sp_brand a{ margin-left:3px; margin-right:4px;}
+
+
+@media screen and (min-widht:800px) and (max-width:1024px){
+.floor { width:1002px;}
+.floor .floor_box{ width:1002px;}
+.floor .floorclass{ width:609px;}
+.floor .floorul_hidden{ width:609px;}
+.floor .productone ul {padding:5px 2px;}
+.floor .floorclass .floorul li {width:122px;}
+.floor .floorclass .floorul .this {width:120px;}
+.floor .ftab {width:609px;}
+.floor .ftabone {width:609px;}
+.floor .classpro {width:619px;}
+.floor .productone { width:153px;}
+.floor .floor_brand{  width:1000px;}
+.floor .flr_sp_brand a{ margin-left:4px; margin-right:5px;}
+
+}
+
+@media screen and (min-width:1024px) {
 }
 
 
@@ -1847,7 +1853,9 @@ opacity:0.90; border:2px solid #000;}
 
 
 .floor_three .floor_box_right{ width:809px; float:left;overflow:hidden}
-
+.index_tm {
+  min-width: 1200px;
+}
 @media screen and (min-widht:800px) and (max-width:1024px){
 .floor_three { width:1002px;}
 .floor_three .floor_box_right{ width:809px;}
@@ -2068,6 +2076,7 @@ opacity:0.90; border:2px solid #000;}
 .hot_sale li {
   float: left;
   width: 240px;
+  text-align:center;
 }
 .p_pic, .p_name, .p_price {
   display: block;
@@ -2128,7 +2137,7 @@ opacity:0.90; border:2px solid #000;}
   width: 190px;
 }
 .P_store > img {
-  width: 70px;
+  height: 70px;
 }
 .store_name {
   background-color: #f0f4f7;
@@ -2153,7 +2162,14 @@ opacity:0.90; border:2px solid #000;}
   line-height: 23px;
   text-align: center;
 }
-
+.productone strong.red {
+  font-family: verdana;
+  font-size: 18px;
+  font-weight: 400;
+}
+.productone strong.red i {
+  font-size: 12px;
+}
 @media screen and (min-widht:800px) and (max-width:1024px){
 .floor_four { width:1002px;}
 .floor_four .floor_box_right{ width:809px; }

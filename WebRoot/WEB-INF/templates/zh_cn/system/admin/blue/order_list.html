@@ -23,7 +23,10 @@ jQuery(document).ready(function(){
 	  changeMonth: true,
 	  changeYear: true
   });
-  //
+
+  jQuery("#order_status").val("$!order_status");  
+  jQuery("#type").val("$!type"); 
+  jQuery("#payment").val("$!payment"); 
 });
 </script>
 </head>
@@ -59,7 +62,7 @@ jQuery(document).ready(function(){
           <option value="order">订单号</option>
         </select>
         </span> <span class="order_input size1">
-        <input name="type_data" type="text" id="type_data" />
+        <input name="type_data" type="text" id="type_data" value="$!type_data"/>
       </span> <span>支付方式</span><span>
         <select name="payment" id="payment">
           <option value="">所有支付方式</option>
@@ -68,13 +71,13 @@ jQuery(document).ready(function(){
         </select>
         </span></li>
       <li> <span>下单时间</span><span class="order_input size2">
-        <input name="beginTime" type="text" id="beginTime"  readonly="readonly"/>
+        <input name="beginTime" type="text" id="beginTime"  readonly="readonly" value="$!beginTime"/>
         </span><span>—</span><span class="order_input size2">
-        <input name="endTime" type="text" id="endTime" readonly="readonly" />
+        <input name="endTime" type="text" id="endTime" readonly="readonly" value="$!endTime"/>
         </span> <span>订单金额</span><span class="order_input size2">
-        <input name="begin_price" type="text" id="begin_price" />
+        <input name="begin_price" type="text" id="begin_price" value="$!begin_price"/>
         </span><span>—</span><span class="order_input size2">
-        <input name="end_price" type="text" id="end_price" />
+        <input name="end_price" type="text" id="end_price" value="$!end_price"/>
         </span> <span class="btn_search">
         <input name="" type="submit"  value="搜索" style="cursor:pointer;"/>
       </span> </li>

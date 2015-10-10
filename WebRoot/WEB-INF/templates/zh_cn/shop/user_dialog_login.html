@@ -1,3 +1,4 @@
+<link href="$!webPath/resources/style/common/css/window.css" type="text/css" rel="stylesheet" />
 <style>
 .box_table {
 	border-collapse:collapse;
@@ -29,7 +30,7 @@
 	margin-left:5px;
 }
 .inputbtn input {
-	background:#CCC;
+	background:#dc0000;
 	width:60px;
 }
 </style>
@@ -67,25 +68,22 @@ jQuery(document).ready(function(){
   <table style="float:left;" width="100%" border="0" cellspacing="0" cellpadding="0" class="box_table">
     <tr>
       <td width="100" align="right" valign="top"><span class="login_nameu">用户名：</span></td>
-      <td align="left"> <input name="username" type="text" id="username" size="30" autocomplete="off" /></td>
+      <td align="left"> <input class="ipt_txt" name="username" type="text" id="username" size="30" autocomplete="off" /></td>
     </tr>
     <tr>
       <td align="right" valign="top"><span class="login_nameu">密　码：</span></td>
-      <td align="left"><input name="password" type="password" id="password" size="30"  autocomplete="off" /></td>
+      <td align="left"><input  class="ipt_txt" name="password" type="password" id="password" size="30"  autocomplete="off" /></td>
     </tr>
      #if($!config.securityCodeLogin)
                   <tr align="right" valign="top">
-                    <td>验证码：</td>
-                    <td align="left"><input name="code" type="text" id="code" style="text-transform:uppercase;" size="30"  autocomplete="off"/></td>
-                  </tr>
-                  <tr align="left" valign="top">
-                    <td>&nbsp;</td>
-                    <td><script>
+                    <td><span class="login_nameu">验证码：</span></td>
+                    <td align="left"><input class="ipt_txt" name="code" type="text" id="code" style="text-transform:uppercase;width:80px;" size="30"  autocomplete="off"/>
+                    <script>
                         function refreshCode(){
 	                        jQuery("#code_img").attr("src","$!webPath/verify.htm?d"+new Date().getTime());
                         }
                       </script>
-					  <span class="yzm" #if($!config.securityCodeType=='voice')style="display:none;"#end><img style="cursor:pointer;" src="$!webPath/verify.htm" id="code_img" onclick="refreshCode();" width="59" height="27" /></span><span class="nosee" #if($!config.securityCodeType=='voice')style="display:none;"#end><a href="javascript:void(0);" onclick="refreshCode();">看不清？换一张</a></span>
+					  <span class="yzm" #if($!config.securityCodeType=='voice')style="display:none;"#end><img style="cursor:pointer;vertical-align: middle;" src="$!webPath/verify.htm" id="code_img" onclick="refreshCode();" width="80" height="36" /></span><span class="nosee" #if($!config.securityCodeType=='voice')style="display:none;"#end><a href="javascript:void(0);" onclick="refreshCode();">看不清？换一张</a></span>
 					#if($!config.securityCodeType=="voice")
 					     <span class="yzm"><a href="javascript:void(0);" onclick="readCode('player')" title="朗读验证码">
                    <img src="$!imageWebServer/resources/style/common/images/speaker.gif" border="0" /></a></span><span id="player"></span>
@@ -95,11 +93,13 @@ jQuery(document).ready(function(){
                     jQuery("#"+id).html(s);
                     }
 				   </script>
-					  #end					</td>
-                  </tr>
+					  #end					
+                    </td>
+                  </tr> 
 				  #end
     <tr>
-      <td colspan="2" align="center"><span class="inputbtn">
+    <td align="right" valign="top">&nbsp;</td>
+      <td   align="left"><span class="inputbtn">
         <input name="login" type="submit" style="cursor:pointer;" value="登录"/>
       </span></td>
     </tr>

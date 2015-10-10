@@ -19,6 +19,8 @@ jQuery(document).ready(function(){
   jQuery(".mem_detail[id^=user_detail_]").mouseleave(function(){
     jQuery(this).hide();
   });
+
+  jQuery("#condition").val("$!condition");
 });
 </script>
 <body>
@@ -35,7 +37,7 @@ jQuery(document).ready(function(){
             <option value="trueName">真实姓名</option>
           </select>
           </span> <span class="allmen size4">
-          <input name="value" type="text" id="value" />
+          <input name="value" type="text" id="value" value="$!value"/>
           </span><span class="btn_search">
           <input name="" type="submit"  value="搜索" style="cursor:pointer;" title="搜索会员"/>
           </span> </li>

@@ -42,7 +42,7 @@ public class PageCacheFiler extends SimplePageFragmentCachingFilter {
 
 	private void init() throws CacheException {
 		String patterns = filterConfig.getInitParameter(FILTER_URL_PATTERNS);
-		patterns = "/store_goods_head.htm,/goods_recommend_list.htm,/index_goods_stores.htm,/footer.htm,/city.htm,/floor.htm,/advert_invoke.htm,error.css,groupbuy.css,integral.css,seller.css,sparegoods.css,user_phptp.css,window.css,jcarousellite_1.0.1.min.js,jquery.ad-gallery.js,jquery.bigcolorpicker.js,jquery.cookie.js,jquery.fancybox-1.3.4.pack.js,jquery.form.js,jquery.jqzoom-core.js,jquery.KinSlideshow.min.js,jquery.lazyload.js,jquery.metadata.js,jquery.poshytip.min.js,jquery.rating.pack.js,jquery.shop.base.js,jquery.shop.common.js,jquery.shop.edit.js,jquery.validate.min.js,jquery.zh.cn.js,jquery-1.6.2.js,jquery-ui-1.8.21.js,swfobject.js,swfupload.js,swfupload.queue.js";
+		patterns = "/store_goods_head.htm,/goods_recommend_list.htm,/index_goods_stores.htm,/footer.htm,/city.htm,/floor.htm,/advert_invoke.htm,error.css,groupbuy.css,integral.css,seller.css,sparegoods.css,user_phptp.css,jcarousellite_1.0.1.min.js,jquery.ad-gallery.js,jquery.bigcolorpicker.js,jquery.cookie.js,jquery.fancybox-1.3.4.pack.js,jquery.form.js,jquery.jqzoom-core.js,jquery.KinSlideshow.min.js,jquery.lazyload.js,jquery.metadata.js,jquery.poshytip.min.js,jquery.rating.pack.js,jquery.shop.base.js,jquery.shop.common.js,jquery.shop.edit.js,jquery.validate.min.js,jquery.zh.cn.js,jquery-1.6.2.js,jquery-ui-1.8.21.js,swfobject.js,swfupload.js,swfupload.queue.js";
 		cacheURLs.addAll(Arrays.asList(StringUtils.split(patterns, ",")));
 	}
 

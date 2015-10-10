@@ -92,7 +92,7 @@ jQuery(".check_login").click(function(){
 	},"text");
 });
 jQuery(".collection_goodsl").click(function(){
-    #if($!user.id==$!obj.goods_store.user.id)
+    #if($!user.store.id==$!obj.goods_store.id)
 	  alert("不能收藏自己的商品");
 	#else
 	  jQuery.post("$!webPath/add_goods_favorite.htm",{"id":"$!obj.id"},function(data){
@@ -268,10 +268,7 @@ jQuery("#count_down").click(function(){
 var time=0;
 var time_id;
 function add_cart(){
-
-
-
-	#if($!user.id==$!obj.goods_store.user.id)
+	#if($!user.store.id==$!obj.goods_store.id)
 	 alert("不能购买自己的商品！");
 	#else
 	  var add=true
@@ -327,7 +324,7 @@ function cart_fadeOut(){
   }
 }
 function buy_goods(){
-	#if($!user.id==$!obj.goods_store.user.id)
+	#if($!user.store.id==$!obj.goods_store.id)
 	 alert("不能购买自己的商品！");
 	#else
 	  var add=true
@@ -441,7 +438,7 @@ $!httpInclude.include("/nav1.htm")
             <div class="detailstop">
               <ul>
                 <li><span class="detbt">商城价：</span><span class="through">¥$!{obj.goods_price}</span></li>
-                <li><span class="detbt">零售价：</span><span class="pricedata"><strong class="orange" id="store_price">¥$!{current_price}</strong></span><span class="greenp">(节省：<b id="rest" style="font-weight:normal;">¥$!CommUtil.subtract($!{obj.goods_price},$!{current_price})</b>)</span></li>
+                <li><span class="detbt">零售价：</span><span class="pricedata"><strong class="orange" id="store_price">¥$!{current_price}</strong></span><span class="greenp">(节省：<b id="rest" style="font-weight:normal;">¥$!rest</b>)</span></li>
                 #if($!group==0)
                 <!-- <li><span class="detbt">店铺价格：</span><span class="pricedata"><strong class="orange" id="store_price">¥$!{current_price}</strong></span><span class="greenp">(节省：<b id="rest" style="font-weight:normal;">¥$!CommUtil.subtract($!{obj.goods_price},$!{current_price})</b>)</span></li>
                  -->
@@ -533,9 +530,10 @@ $!httpInclude.include("/nav1.htm")
 				jQuery.post("$!webPath/load_goods_gsp.htm",{"id":"$!obj.id","gsp":gsp},function(data){
 				   goods_inventory=data.count;
 				   store_price=data.price;
+				   rest=data.rest;
 				   jQuery("#goods_inventory").html(goods_inventory);
 				   jQuery("#store_price").html("¥"+store_price);
-				   jQuery("#rest").html("¥"+(goods_price-store_price));
+				   jQuery("#rest").html("¥"+rest);
 				  },"json");
 			    }
 			  }

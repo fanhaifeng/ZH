@@ -14,13 +14,228 @@
 <link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
 <script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
 <script src="$!webPath/resources/js/jquery.validate.min.js"></script>
-<script
-	src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"
+<script src="$!webPath/resources/js/swfupload.js"></script>
+<script src="$!webPath/resources/js/swfupload.queue.js"></script>
+<script src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"
 	type="text/ecmascript"></script>
 <script>
-var flag = true;
-jQuery(document).ready(function(){
 
+var swf_upload;
+var photo_count=0;
+var user_goods_class_count=2;
+  
+var flag = true;
+jQuery(document).ready(function(){	
+	 var settings_object = {//定义参数配置对象
+       	   upload_url : "$!webPath/register/swf_upload.htm",//处理上传文件的服务器端页面的url地址
+           flash_url : "$!webPath/resources/flash/swfupload.swf",
+           file_post_name : "imgFile",//服务器端接收页面通过该名称来获取上传的文件
+      
+           use_query_string : false,//为false时,post_params属性定义的参数会以post方式上传；为true时，则会以get方式上传
+           requeue_on_error : false,
+           file_types : "$!imageSuffix",
+           file_types_description: "商品图片",
+           file_size_limit : "$!config.imageFilesize",
+           file_upload_limit : 0,
+           file_queue_limit : 3,
+           debug : false,
+           prevent_swf_caching : true,//阻止flash影片被缓存
+           preserve_relative_urls : false,
+    
+           button_placeholder_id : "card_file_positive",
+           button_image_url : "$!webPath/resources/style/common/images/upload.jpg",
+           button_width : 160,
+           button_height : 28,
+           button_text : "<b></b><span class='upload_text'>选择身份证正面图片</span>",
+           button_text_style : ".upload_text { color: #666666;font-size:12px;margin-left:40px; }",
+           button_text_left_padding : 3,
+           button_text_top_padding : 5,
+           button_action : SWFUpload.BUTTON_ACTION.SELECT_FILES,
+           button_disabled : false,
+           button_cursor : SWFUpload.CURSOR.HAND,
+           button_window_mode : SWFUpload.WINDOW_MODE.TRANSPARENT,
+		   file_dialog_start_handler:fileDialogStart,
+		   file_dialog_complete_handler:fileDialogComplete,
+          
+		   upload_start_handler:upload_start_handler,//当文件即将上传时会触发该事件
+           upload_success_handler:uploadSuccess,//当一个文件上传成功后会触发该事件
+		   upload_complete_handler:uploadComplete	//当一次文件上传的流程完成时（不管是成功的还是不成功的）会触发该事件		
+    };   
+    swf_upload = new SWFUpload(settings_object);//实例化一个SWFUpload，传入参数配置对象
+		
+    
+	 var settings_object1 = {//定义参数配置对象
+       	   upload_url : "$!webPath/register/swf_upload.htm",//处理上传文件的服务器端页面的url地址
+           flash_url : "$!webPath/resources/flash/swfupload.swf",
+           file_post_name : "imgFile",//服务器端接收页面通过该名称来获取上传的文件
+      
+           use_query_string : false,//为false时,post_params属性定义的参数会以post方式上传；为true时，则会以get方式上传
+           requeue_on_error : false,
+           file_types : "$!imageSuffix",
+           file_types_description: "商品图片",
+           file_size_limit : "$!config.imageFilesize",
+           file_upload_limit : 0,
+           file_queue_limit : 3,
+           debug : false,
+           prevent_swf_caching : true,//阻止flash影片被缓存
+           preserve_relative_urls : false,
+    
+           button_placeholder_id : "card_file_negative",
+           button_image_url : "$!webPath/resources/style/common/images/upload.jpg",
+           button_width : 160,
+           button_height : 28,
+           button_text : "<b></b><span class='upload_text'>选择身份证反面图片</span>",
+           button_text_style : ".upload_text { color: #666666;font-size:12px;margin-left:40px; }",
+           button_text_left_padding : 3,
+           button_text_top_padding : 5,
+           button_action : SWFUpload.BUTTON_ACTION.SELECT_FILES,
+           button_disabled : false,
+           button_cursor : SWFUpload.CURSOR.HAND,
+           button_window_mode : SWFUpload.WINDOW_MODE.TRANSPARENT,
+		   file_dialog_start_handler:fileDialogStart,
+		   file_dialog_complete_handler:fileDialogComplete,
+          
+		   upload_start_handler:upload_start_handler,//当文件即将上传时会触发该事件
+           upload_success_handler:uploadSuccess1,//当一个文件上传成功后会触发该事件
+		   upload_complete_handler:uploadComplete	//当一次文件上传的流程完成时（不管是成功的还是不成功的）会触发该事件		
+    };   
+    swf_upload1 = new SWFUpload(settings_object1);//实例化一个SWFUpload，传入参数配置对象
+    
+    
+    var settings_object2 = {//定义参数配置对象
+        	   upload_url : "$!webPath/register/swf_upload.htm",//处理上传文件的服务器端页面的url地址
+            flash_url : "$!webPath/resources/flash/swfupload.swf",
+            file_post_name : "imgFile",//服务器端接收页面通过该名称来获取上传的文件
+       
+            use_query_string : false,//为false时,post_params属性定义的参数会以post方式上传；为true时，则会以get方式上传
+            requeue_on_error : false,
+            file_types : "$!imageSuffix",
+            file_types_description: "商品图片",
+            file_size_limit : "$!config.imageFilesize",
+            file_upload_limit : 0,
+            file_queue_limit : 3,
+            debug : false,
+            prevent_swf_caching : true,//阻止flash影片被缓存
+            preserve_relative_urls : false,
+     
+            button_placeholder_id : "license_file",
+            button_image_url : "$!webPath/resources/style/common/images/upload.jpg",
+            button_width : 160,
+            button_height : 28,
+            button_text : "<b></b><span class='upload_text'>选择营业执照图片</span>",
+            button_text_style : ".upload_text { color: #666666;font-size:12px;margin-left:40px; }",
+            button_text_left_padding : 3,
+            button_text_top_padding : 5,
+            button_action : SWFUpload.BUTTON_ACTION.SELECT_FILES,
+            button_disabled : false,
+            button_cursor : SWFUpload.CURSOR.HAND,
+            button_window_mode : SWFUpload.WINDOW_MODE.TRANSPARENT,
+ 		    file_dialog_start_handler:fileDialogStart,
+ 		    file_dialog_complete_handler:fileDialogComplete,
+           
+ 		    upload_start_handler:upload_start_handler,//当文件即将上传时会触发该事件
+            upload_success_handler:uploadSuccess2,//当一个文件上传成功后会触发该事件
+ 		    upload_complete_handler:uploadComplete	//当一次文件上传的流程完成时（不管是成功的还是不成功的）会触发该事件		
+     };   
+     swf_upload2 = new SWFUpload(settings_object2);//实例化一个SWFUpload，传入参数配置对象
+     
+     
+    function fileDialogStart(){
+	  	  var stats = this.getStats();
+	  	  stats.successful_uploads=photo_count;
+	  	  this.setStats(stats);
+  	}
+    
+  	function fileDialogComplete(numFilesSelected, numFilesQueued) {
+	  	try {
+	  	    var upload=0;
+	  		var stats = this.getStats();
+	  		var select_count=10000-photo_count;
+	  		if (select_count != 0 && numFilesSelected > select_count) {
+	  		    alert("当前最多上传"+select_count+"张商品图片");	
+	  			this.cancelQueue();
+	  			upload=1;
+	  		}
+	  		if(stats.successful_uploads>=10000){
+	  		    alert("图片已上传");
+	  			this.cancelQueue();
+	  			upload=1;
+	  		}
+	  		if(upload==0){
+	  		   this.startUpload();
+	  		}
+	  	} catch (ex)  {
+	          this.debug(ex);
+	  	}
+    }
+  	
+  	function upload_start_handler(){
+  	  	jQuery("#upload_wait").show();
+  	}
+  	
+  	//单张图片上传结束时使用变量
+  	var picTemp = "";
+  	function uploadSuccess(file, serverData){//单个图片上传成功
+  	  picTemp = ""
+      var obj=eval("("+serverData+")");
+  	  photo_count++;
+  	  var stats = this.getStats(); 
+  	  if(obj.url!=""){
+  	    if(stats.successful_uploads>0){
+  	      jQuery("#goods_image_0").show();
+  	      jQuery("#goods_image_0").attr("src",obj.url);
+  	      jQuery("#file1").val(obj.id);
+  	    }
+  	  }
+  	  picTemp=obj.url;
+  	}
+  	
+  	function uploadSuccess1(file, serverData){//单个图片上传成功
+  	  picTemp = ""
+      var obj=eval("("+serverData+")");
+  	  photo_count++;
+  	  var stats = this.getStats(); 
+  	  if(obj.url!=""){
+  	    if(stats.successful_uploads>0){
+  	      jQuery("#goods_image_1").show();
+  	      jQuery("#goods_image_1").attr("src",obj.url);
+  	      jQuery("#file2").val(obj.id);
+  	    }
+  	  }
+  	  picTemp=obj.url;
+  	}
+  	
+	function uploadSuccess2(file, serverData){//单个图片上传成功
+	  	  picTemp = ""
+	      var obj=eval("("+serverData+")");
+	  	  photo_count++;
+	  	  var stats = this.getStats(); 
+	  	  if(obj.url!=""){
+	  	    if(stats.successful_uploads>0){
+	  	      jQuery("#goods_image_2").show();
+	  	      jQuery("#goods_image_2").attr("src",obj.url);
+	  	      jQuery("#file3").val(obj.id);
+	  	    }
+	  	  }
+	  	  picTemp=obj.url;
+	  	}
+  	
+  	function uploadComplete(file) {
+	  	try {
+	  		if (this.getStats().files_queued == 0) {
+	             jQuery("#upload_wait").hide();
+	  		} else {	
+	  		   if(this.getStats.successful_uploads>=10000){
+	  			   this.cancelQueue();
+	  		   }else{
+	  		       this.startUpload();
+	  		   }
+	  		}
+	  	} catch (ex) {
+	  		this.debug(ex);
+	  	}
+  }   
+		    
 	var province;
 	var city;
 	if(typeof(remote_ip_info) != "undefined"){
@@ -193,6 +408,17 @@ jQuery(document).ready(function(){
 		}		  
 	});
 	
+	
+	jQuery.validator.addMethod("teleProVerify",function(value,element){
+	    var re =  /(^0?[1][34758][0-9]{9}$)/;
+        if(re.test(jQuery("#promote_tel").val()) || jQuery("#promote_tel").val() == ""){	
+			return true;
+		}else {
+		    return false;
+		}		  
+	});
+	
+	
 	jQuery("#telephone").blur(function(){
 		jQuery.ajax({
 			url : "$!webPath/verify_buyer_telephone.htm", //后台处理程序
@@ -263,6 +489,26 @@ jQuery(document).ready(function(){
 							}
 						}
 					},
+					promote_tel : {
+						teleProVerify :true,
+						remote : {
+							url : "$!webPath/verify_promotion_telephone.htm", //后台处理程序
+							type : "post", //数据发送方式
+							dataType : "json", //接受数据格式   
+							data : { //要传递的数据
+								"promote_tel" : function() {
+									return jQuery(
+											"#promote_tel")
+											.val();
+								},
+								"telephone" : function() {
+									return jQuery(
+											"#telephone")
+											.val();
+								}
+							}
+						}
+					},
 					store_name : {
 						required : true,
 						remote : {
@@ -305,6 +551,12 @@ jQuery(document).ready(function(){
 					agree : {
 						required : true
 					},
+				    card_file:{
+				       accept:"$!config.imageSuffix"
+				    },
+				    license_file:{
+				       accept:"$!config.imageSuffix"
+				    },
 					code : {
 						required : true,
 						remote : {
@@ -340,6 +592,10 @@ jQuery(document).ready(function(){
 						minlength : "密码不能小于{0}个字符",
 						maxlength : "密码不能大于{0}个字符"
 					},
+					promote_tel : {
+						remote : "请输入除自己以外已注册成功的用户手机",
+						teleProVerify : "手机号不正确"
+					},
 					mobile_verify_code : {
 						required : "手机验证码不能为空",
 						remote : "手机验证码不正确"
@@ -366,6 +622,8 @@ jQuery(document).ready(function(){
 					agree : {
 						required : "请接受用户协议"
 					},
+					card_file:{accept:"身份证格式不对,只能为$!config.imageSuffix"},
+					license_file:{accept:"营业执照格式不对,只能为$!config.imageSuffix"},
 					code :{
 						required : "请填写验证码",
 						remote : "验证码不正确"
@@ -452,7 +710,7 @@ function isMobil(s) {
 <span class="my_txt">欢迎免费开店</span>
 </div>
 <div class="main">
- 
+           
   <div class="index">
     <div class="index2">
        <div class="navadda"> 
@@ -466,9 +724,16 @@ function isMobil(s) {
             
             <h2>填写用户注册信息</h2>
             <div class="login_user_bottom">
-              <form action="$!webPath/register_seller_next.htm" method="post" name="theForm" id="theForm">
+              <form action="$!webPath/register_seller_next.htm" method="post" enctype="multipart/form-data" name="theForm" id="theForm">
                 <input name="userName" type="hidden" id="userName" />
+                <input name="file1" type="hidden" id="file1" />
+                <input name="file2" type="hidden" id="file2" />
+                <input name="file3" type="hidden" id="file3" />
+
                 <table width="800" border="0" cellspacing="0" cellpadding="0" class="user_zc_table">
+                  <col width="123px" />
+				  <col width="330px" />
+				  <col   />
                   <tr>
                     <td class="login_nameu">手机号：</td>
                     <td width="320"><span class="login_user_input input_size">
@@ -592,6 +857,62 @@ function isMobil(s) {
                 <td>&nbsp;</td>
               </tr>
               
+               <tr>
+                <td class="login_nameu">身份证正面：</td>
+                <td><span><a href="javascript:void(0);">
+	              <span id="card_file_positive"></span>
+	              <img id="upload_wait" style="display:none;" src="$!webPath/resources/style/common/images/loader.gif" />
+	            </a></span>
+              	<span style="margin-left:10px;"></span> </td>
+                <td>支持格式jpg,jpeg,png,gif，请保证图片清晰且文件大小不超过1M</td>
+              </tr>
+              <tr>
+              	<td></td>
+                <td> <img id="goods_image_0" src="$!img" style="display:none;"  width="320" height="200" /></td>
+              </tr>
+              
+                <tr>
+                <td class="login_nameu">身份证反面：</td>
+                <td><span><a href="javascript:void(0);">
+	              <span id="card_file_negative"></span>
+	              <img id="upload_wait" style="display:none;" src="$!webPath/resources/style/common/images/loader.gif" />
+	            </a></span>
+              	<span style="margin-left:10px;"></span> </td>
+                <td>支持格式jpg,jpeg,png,gif，请保证图片清晰且文件大小不超过1M</td>
+              </tr>
+              <tr>
+              	<td></td>
+                <td> <img id="goods_image_1" src="$!img" style="display:none;"  width="320" height="200" /></td>
+              </tr>
+ 
+              
+              <tr>
+                <td class="login_nameu">上传执照：</td>
+                  <td><span><a href="javascript:void(0);">
+	              <span id="license_file"></span>
+	              <img id="upload_wait" style="display:none;" src="$!webPath/resources/style/common/images/loader.gif" />
+	            </a></span>
+              	<span style="margin-left:10px;"></span> </td>
+                <td>支持格式jpg,jpeg,png,gif，请保证图片清晰且文件大小不超过1M</td>  
+              </tr>
+              
+               <tr>
+	              	<td></td>
+	                <td> <img id="goods_image_2" src="$!img" style="display:none;" width="320" height="200" /></td>
+               </tr>
+  
+
+              
+              <tr>
+                <td class="login_nameu">推荐用户手机号：</td>
+                <td><span class="openstxt">
+                 <input id="promote_tel" placeholder="选填"
+							name="promote_tel" type="text" class="register_txt">
+                </span></td>
+                <td>&nbsp;</td>
+              </tr>
+             
+						
                   #if($!config.securityCodeRegister)
                   <tr>
                     <td class="login_nameu">验证码：</td>

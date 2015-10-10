@@ -189,7 +189,16 @@ public class Payment extends IdEntity {
 	private Store store;// 支付方式对应的店铺
 	@OneToMany(mappedBy = "payment")
 	private List<OrderForm> ofs = new ArrayList<OrderForm>();// 对应的订单，反向映射，便于获取订单信息
-
+	/*
+	 * 中金支付需要用到的数据
+	 */
+	private String bankID;//银行ID
+	private String accountName;//账户名称
+	private String accountNumber;//账户号码
+	private String branchName;//开户地址
+	private String province;//开户所在省份
+	private String city;//开户所在城市
+	//
 	public String getPaypal_userId() {
 		return paypal_userId;
 	}
@@ -397,5 +406,53 @@ public class Payment extends IdEntity {
 	public void setTrade_mode(int trade_mode) {
 		this.trade_mode = trade_mode;
 	}
+
+	public String getBankID() {
+  	return bankID;
+  }
+
+	public void setBankID(String bankID) {
+  	this.bankID = bankID;
+  }
+
+	public String getAccountName() {
+  	return accountName;
+  }
+
+	public void setAccountName(String accountName) {
+  	this.accountName = accountName;
+  }
+
+	public String getAccountNumber() {
+  	return accountNumber;
+  }
+
+	public void setAccountNumber(String accountNumber) {
+  	this.accountNumber = accountNumber;
+  }
+
+	public String getBranchName() {
+  	return branchName;
+  }
+
+	public void setBranchName(String branchName) {
+  	this.branchName = branchName;
+  }
+
+	public String getProvince() {
+  	return province;
+  }
+
+	public void setProvince(String province) {
+  	this.province = province;
+  }
+
+	public String getCity() {
+  	return city;
+  }
+
+	public void setCity(String city) {
+  	this.city = city;
+  }
 
 }

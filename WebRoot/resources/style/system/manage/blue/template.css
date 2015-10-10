@@ -2748,23 +2748,45 @@ border-bottom-left-radius:  5px;-moz-box-shadow:2px 2px 2px #666;               
 /*楼层分类*/
 .floor .floor_menu{ width:193px; float:left;}
 .floor .floor_menu h3{  float:left; width:193px; height:39px; overflow:hidden; line-height:39px; font-size:16px; color:#FFF; text-align:center}
-.floor .flr_m_details{ width:193px; float:left; overflow:hidden;  border-bottom:1px solid #ddd; }
-.floor .flr_m_du{ float:left; padding:8px; width:177px; overflow:hidden; height:302px;  }
+.floor .flr_m_details{position: relative; width:193px; float:left; overflow:hidden;  border-bottom:1px solid #ddd; }
+.floor .flr_m_du {
+  background:url("images/menuBG.png") repeat scroll 0 0;
+  box-sizing: border-box;
+  left: 0;
+  overflow: hidden;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  width: 194px;
+  z-index: 9;
+}
 .floor .flr_m_du li{ width:177px; overflow:hidden; float:left;  margin-bottom:5px; float:left; } 
 .floor .flr_m_du li h4{ width:177px; clear:both; margin-top:5px; color:#000; margin-bottom:5px; } 
 .floor .flr_m_du li p{ width:177px;  overflow:hidden; clear:both;}
-.floor .flr_m_du li p span{ margin-right:3px; width:67px; float:left; margin-top:5px; display:block; white-space:nowrap; overflow:hidden;}
-.floor .flr_m_du li p span a{ color:#888;}
+.floor .flr_m_du li p span{ margin-right:3px;  margin-top:5px; display:block; white-space:nowrap; overflow:hidden;}
+.floor .flr_m_du li p span a{ color:#fff;}
 .floor .flr_m_du li p span a:hover{ color:#000; text-decoration:underline}
-.floor .flr_advertisment{ width:193px; float:left; height:193px;  overflow:hidden; position:relative}
+.floor .flr_advertisment{ width:193px; float:left;   overflow:hidden; position:relative}
 .floor .floor_brand{  width:1200px;  float:left; overflow:hidden;border:1px solid #ddd;border-top:0px; height:47px; position:relative;}
 .floor .flr_sp_brand{ float:left; display:block; width:1200px; overflow:hidden;}
 .floor .flr_sp_brand a{ display:block; width:98px; height:35px; display:inline; margin:4px;  float:left; margin-left:3px; margin-right:4px;}
 
 .edfloor{ font-size:12px; font-weight:lighter; margin-left:10px; color:#36C}
-.edfloor:hover{ text-decoration:underline; color:#000}
-.edafloor{ position:absolute; top:0px; left:0px; color:#36C; background:#fff; height:30px; width:193px; line-height:30px; text-align:center;}
-.edafloor:hover{ text-decoration:underline;color:#000; } 
+.edafloor {
+  background-color: #fff;
+  border: 1px solid #fff;
+  color: #069;
+  height: 24px;
+  line-height: 24px;
+  margin-right: -31px;
+  position: absolute;
+  right: 50%;
+  text-align: center;
+  top: 300px;
+  width: 49px;
+  z-index: 9999999;
+}
+ .edafloor:hover{ text-decoration:underline;color:#000; } 
 .afloor{position:absolute; top:0px; left:0px; color:#36C; background:#fff; height:30px; width:205px; line-height:30px; text-align:center;}
 .afloor:hover{ text-decoration:underline;color:#000;}
 .fl_brand_sp{ float:left; display:block; display:block; width:50px;  position:absolute;}

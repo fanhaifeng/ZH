@@ -24,12 +24,12 @@ $!httpInclude.include("/top.htm")
         <h1>商品分类</h1>
         <div class="webclsbox">
         #foreach($gc in $gcs)
-          <div class="class_a">
+          <div class="class_a clearfix">
             <h2><a href="$!webPath/store_goods_list_$!{gc.id}.htm" target="_blank">$!gc.className</a></h2>
             #foreach($c_gc in $gc.childs)
-            <div class="class_b">
+            <div class="class_b clearfix">
               <h3><a href="$!webPath/store_goods_list_$!{c_gc.id}.htm" target="_blank">$c_gc.className</a></h3>
-              <div class="class_c">#foreach($c_c_gc in $c_gc.childs)<a href="$!webPath/store_goods_list_$!{c_c_gc.id}.htm" target="_blank">$!c_c_gc.className</a><b>|</b>#end</div>
+              <div class="class_c clearfix">#foreach($c_c_gc in $c_gc.childs)<a href="$!webPath/store_goods_list_$!{c_c_gc.id}.htm" target="_blank">$!c_c_gc.className</a><b>|</b>#end</div>
             </div>
             #end
           </div>

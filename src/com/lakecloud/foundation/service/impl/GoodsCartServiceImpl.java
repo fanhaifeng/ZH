@@ -201,8 +201,10 @@ public class GoodsCartServiceImpl implements IGoodsCartService {
 	public String add_goods_cart(HttpServletRequest request,
 			HttpServletResponse response, String id, String count,
 			String price, String gsp, String buy_type) {
+		Goods goods = this.goodsService.getObjById(CommUtil.null2Long(id));
+		price=goods.getGoods_current_price().toString();
 		Map<String,Object> map = new HashMap<String,Object>();
-		int inventory = this.goodsService.getObjById(CommUtil.null2Long(id)).getGoods_inventory();
+		int inventory = goods.getGoods_inventory();
 		if(inventory>=CommUtil.null2Int(count)){		
 		String cart_session_id = "";
 		Cookie[] cookies = request.getCookies();
@@ -339,7 +341,6 @@ public class GoodsCartServiceImpl implements IGoodsCartService {
 			}
 		}
 		if (add) {// 排除购物车中没有重复商品后添加该商品到购物车
-			Goods goods = this.goodsService.getObjById(CommUtil.null2Long(id));
 			String type = "save";
 			StoreCart sc = new StoreCart();
 			for (StoreCart sc1 : cart) {

@@ -101,7 +101,7 @@ var time_id;
 
 //添加到购物车
 function add_cart(){
-	#if($!user.id==$!obj.goods_store.user.id)
+	#if($!user.id==$!obj.goods_store.user.id || $!user.store.id==$!obj.goods_store.id)
 	  jQuery("#error_goods_inventory").show().find("span").html("不能购买自己的商品!").parent().fadeOut(3000);
 	#else
 	var add=true
@@ -147,7 +147,7 @@ function add_cart(){
 }
 //购买商品
 function buy_goods(){
-	#if($!user.id==$!obj.goods_store.user.id)
+	#if($!user.id==$!obj.goods_store.user.id || $!user.store.id==$!obj.goods_store.id)
 		jQuery("#error_goods_inventory").show().find("span").html("不能购买自己的商品!").parent().fadeOut(3000);
 	#else
 	var add=true

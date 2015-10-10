@@ -21,6 +21,13 @@
 <script src="$!webPath/resources/js/jquery.shop.common.js"></script>
 <script src="$!webPath/resources/js/jquery.poshytip.min.js"></script>
 <script>
+jQuery(document).ready(function($){
+	 jQuery(".goods_brand").val("$!goodsbrandt");
+	 jQuery(".goods_class").val("$!goodsclasst");  
+	 jQuery("#store_recommend").val("$!recommendt");  
+	 
+ });
+
 //
 function ajax_update(id,fieldName,obj,value){
    var val;
@@ -52,11 +59,6 @@ function ajax_update(id,fieldName,obj,value){
 }
 
 function queryGoods(){
-	jQuery("#goodsNameq").val("");
-	jQuery("#ueser_nameq").val("");
-	jQuery("#goodsbrandq").val("");
-	jQuery("#goodsclassq").val("");
-	jQuery("#recommendq").val("");
 
 	var gn = jQuery("#goods_name").val();
 	jQuery("#goodsnameq").val(gn);
@@ -86,10 +88,10 @@ function queryGoods(){
       <ul>
         <li> 
           <span>商品名称</span> <span class="allmen size4">
-          <input name="goods_name" type="text" id="goods_name" />
+          <input name="goods_name" type="text" id="goods_name" value="$!goodsnamet"/>
           </span> 
           <span>经销商名称</span> <span class="allmen size4">
-          <input name="ueser_name" type="text" id="ueser_name" />
+          <input name="ueser_name" type="text" id="ueser_name" value="$!uesernamet"/>
           </span> 
           <span>品牌名称</span> 
           <select name="goods.goods_brand.id" id="goods.goods_brand.id" class="goods_brand">

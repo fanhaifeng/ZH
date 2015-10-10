@@ -19,37 +19,70 @@
   </div>
   #if($!rows==0)
   <div class="novalue"> 还没有评价内容 </div>
-  #else
-  #foreach($obj in $objs)
-  <div class="evalone">
-    <ul>
-      #if($!{obj.description_evaluate}==0)
-      #set($description_evaluate="买家未评分")
-      #end
-      #if($!{obj.description_evaluate}>0)
-      #set($description_evaluate="非常不满意")
-      #end
-      #if($!{obj.description_evaluate}>1)
-      #set($description_evaluate="不满意")
-      #end
-      #if($!{obj.description_evaluate}>2)
-      #set($description_evaluate="一般")
-      #end
-      #if($!{obj.description_evaluate}>3)
-      #set($description_evaluate="满意")
-      #end
-      #if($!{obj.description_evaluate}>4)
-      #set($description_evaluate="非常满意")
-      #end
-      #if($!{obj.evaluate_info}!='null'&&$!{obj.evaluate_info}=="")
-      #set($evaluate_info="买家很懒什么都没留下！")
-      #else
-      #set($evaluate_info=$!{obj.evaluate_info})
-      #end
-      <li><span class="blue evalonesp" style="width: 150px">$!{obj.evaluate_user.userName}</span><span style="width: 150px">$!description_evaluate</span><span style="width: 150px">$!CommUtil.formatShortDate($!obj.addTime)</span><span style="width:510px">$!evaluate_info</span></li>
-    </ul>
-  </div>
-  #end
+  #else  
+  <div class="okcode" id="strike_tab" style="margin-top:10px;">
+  <ul>
+     <li>
+      <table width="797" border="0" cellspacing="0" cellpadding="0" class="okcodetable">
+        <tr style=" background:#EEEDED; font-weight:bold">
+          <td width="80">买家</td>
+          <td width="80">买家评分</td>
+          <td width="230">评价信息</td>
+          <td width="80">时间</td>
+        </tr>
+        #foreach($obj in $objs)
+        <tr>
+          #if($!{obj.description_evaluate}==0)
+	      #set($description_evaluate="买家未评分")
+	      #end
+	      #if($!{obj.description_evaluate}>0)
+	      #set($description_evaluate="非常不满意")
+	      #end
+	      #if($!{obj.description_evaluate}>1)
+	      #set($description_evaluate="不满意")
+	      #end
+	      #if($!{obj.description_evaluate}>2)
+	      #set($description_evaluate="一般")
+	      #end
+	      #if($!{obj.description_evaluate}>3)
+	      #set($description_evaluate="满意")
+	      #end
+	      #if($!{obj.description_evaluate}>4)
+	      #set($description_evaluate="非常满意")
+	      #end
+	      #if($!{obj.evaluate_info}!='null'&&$!{obj.evaluate_info}=="")
+	      #set($evaluate_info="买家很懒什么都没留下！")
+	      #else
+	      #set($evaluate_info=$!{obj.evaluate_info})
+	      #end
+	      <!-- 卖家信用 -->
+          #set($credit=$!storeViewTools.generic_user_credit("$!obj.evaluate_user.id"))
+          #set($img="$!imageWebServer/resources/style/common/images/level_0.gif")
+          #if($credit<10 && $credit>0)
+          #set($credit=${credit} / 2)
+          #set($credit=$credit+1)
+          #end
+          #if($credit>=20)
+          #set($img="$!imageWebServer/resources/style/common/images/level_2.gif") 
+          #set($credit=($credit - 20)/2) 
+          #set($credit=$credit+1)
+          #end
+          #if($credit>=10)
+          #set($img="$!imageWebServer/resources/style/common/images/level_1.gif") 
+          #set($credit=($credit - 10)/2)
+          #set($credit=$credit+1)
+          #end
+          #if($credit>5)#set($credit=5)#end  
+          <td class="blue" valign="middle">$!{obj.evaluate_user.userName}#if($!credit==0) <img src="$!imageWebServer/resources/style/common/images/level_-1.gif"/> #else #foreach($count in [1..$!credit])<img style="margin-left:1px;" src="$!img" />#end #end</td>
+          <td><strong class="orange">$!description_evaluate</strong></td>
+          <td>$!evaluate_info</td>
+          <td>$!CommUtil.formatShortDate($!obj.addTime)</td>
+        </tr>
+        #end
+      </table>
+    </li>
+  </ul>
+</div>
   <div class="fenye">
     <div class="fenyes">$!gotoPageAjaxHTML</div>
   </div>

@@ -277,8 +277,10 @@ background:-o-linear-gradient(top,#302c2d,#121210);background:-moz-linear-gradie
 .icon-store{background-color: #116ac8; border-radius: 100px; float: left; padding: 10px;}
 .p_info{color: #fff; font-size: 1.2em; line-height: 24px; margin-left: 63px; font-family: 黑体;}
 .on_save,.on_save:hover{background-color: #e10000; border-radius: 5px; color: #fff; font-size: 1.2em; line-height: 40px; padding: 0 20px; text-decoration: none;}
-.save{background:url("../images/puls.png") no-repeat scroll 0 0; border: 1px solid #999; border-radius: 4px; color: #999; line-height: 24px; padding-left: 28px; padding-right: 4px;}
-.save:hover{background:url("../images/onpuls.png") no-repeat scroll 0 0;border: 1px solid #e10000; text-decoration: none; cursor: pointer; color:#e10000;}
+.save,.welcome_s{background:url("../images/puls.png") no-repeat scroll 0 0; border: 1px solid #999; border-radius: 4px; color: #999; line-height: 24px; padding-left: 28px; padding-right: 4px;}
+.welcome_s{background-image:url("../images/shop.jpg");margin-right:10px;}
+.save:hover,.welcome_s:hover{background:url("../images/onpuls.png") no-repeat scroll 0 0;border: 1px solid #e10000; text-decoration: none; cursor: pointer; color:#e10000;}
+.welcome_s:hover{background-image:url("../images/shop_hover.jpg");}
 .store_info{padding-top: 70px;}
 .all_msg .item span{color: #6e6e6e; display: block; font-size: 1.2em; text-align: center; font-family: 黑体;}
 .all_msg{padding-top:10px;padding-bottom:10px; background-color: #fff;}

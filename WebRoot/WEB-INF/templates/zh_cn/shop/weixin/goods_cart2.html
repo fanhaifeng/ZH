@@ -169,6 +169,48 @@ jQuery(document).ready(function(){
 	 var transport=text.substring(0,text.indexOf("["));
 	 jQuery("#transport").val(transport);
   });
+  
+  //處理收貨方式  0 開啟 1 關閉
+  var transport_type = [{"type":"00", "name":"货到付款", "value":"0"},{"type":"01", "name":"现货自提", "value":"1"}];
+  
+  #if($!{sc.store.transport_type})
+ 	 transport_type = $!{sc.store.transport_type};
+  #end
+  
+  var jsonStr = eval(transport_type);
+  var flag = true;
+  jQuery.each(jsonStr, function(p1, p2){
+	  var type = jsonStr[p1].type;
+	  if(jsonStr[p1].value == 0){
+		  //显示该选项下的类型
+		  jQuery("#tran"+type).show();
+		  if(flag){
+			  jQuery("#tran"+type+"-block").show();
+			  jQuery("#tran"+type+" input:first-child").attr("checked",true);
+			  flag = false;
+		  }
+	  }else{
+		  jQuery("#tran"+type).hide();
+		  jQuery("#tran"+type+"-block").hide();
+		  jQuery("#tran"+type+" input:first-child").attr("checked",false);
+	  }
+  });
+  
+  jQuery('input[name="transport"]').change(function(){
+	 var trans = jQuery('input[name="transport"]:checked').val();
+	 if(trans==0){
+		 jQuery("#tran00-block").show();
+		 jQuery("#tran01-block").hide();
+		 jQuery(":radio[id^=addr_id]:first").attr("checked",true);
+	 }else if(trans == 1){
+ 		 jQuery("#tran00-block").hide();
+		 jQuery("#tran01-block").show();
+		 //jQuery("#addr_id").val("");
+		 jQuery(":radio[id^=addr_id]").attr("checked",false);
+	 }
+   });
+  
+  
 });
 
 
@@ -212,29 +254,46 @@ function fmoney(s, n) {
 <form action="$!webPath/weixin/goods_cart3.htm" method="post" enctype="$!webPath/weixin/goods_cart3.htm" id="cart_form">
   <input name="store_id" type="hidden" id="store_id" value="$!{sc.store.id}" />
   <div id="cart_address"> </div>
+  
+     <div id="tran-radio">
+      <span id="tran00"><input type="radio"  name="transport" value="0">商家送货</input> </span>   
+      <span id="tran01"><input type="radio"  name="transport" value="1">买家自提</input></span>
+     </div>
+      
+      
   <div id="order_infor">
-    <div class="order_address">
-      <h3><span>收货信息</span></h3>
-      #set($addr_id="")
-      #foreach($addr in $addrs)
-      #if($!velocityCount==1)              #set($default_address_info="$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}")
-      #set($addr_id="$!{addr.area.id}")
-      #set($default_person_info="$!{addr.trueName} $!{addr.mobile}")
-      #end
-      <label>
-      <strong class="add_check_input">
-      <input type="radio" name="addr_id" id="addr_id" value="$!addr.id" #if($!velocityCount==1) checked="checked" #end/>
-      </strong>
-      <section class="order_address_box">
-      <ul>
-        <li>地址：$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}</li>
-        <li>收货人：$!{addr.trueName}</li>
-        <li>手机号：$!{addr.telephone}</li>
-      </ul>
-      </section>
-      </label>
-      #end </div>
-     <h4 class="order_dth4"><span>&nbsp;&nbsp;</span><em><b><a href="javascript:void(0);" onClick="addAddress()" class="buy_btn">新增地址</a></b></em></h4>
+    <div id="tran-block">
+	      <div id="tran00-block" style="display:none">
+		    <div class="order_address">
+		      <h3><span>收货信息</span></h3>
+		      #set($addr_id="")
+		      #foreach($addr in $addrs)
+		      #if($!velocityCount==1)              #set($default_address_info="$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}")
+		      #set($addr_id="$!{addr.area.id}")
+		      #set($default_person_info="$!{addr.trueName} $!{addr.mobile}")
+		      #end
+		      <label>
+		      <strong class="add_check_input">
+		      <input type="radio" name="addr_id" id="addr_id" value="$!addr.id" #if($!velocityCount==1) checked="checked" #end/>
+		      </strong>
+		      <section class="order_address_box">
+		      <ul>
+		        <li>地址：$!{addr.area.parent.parent.areaName}$!{addr.area.parent.areaName}$!{addr.area.areaName}$!{addr.area_info}</li>
+		        <li>收货人：$!{addr.trueName}</li>
+		        <li>手机号：$!{addr.telephone}</li>
+		      </ul>
+		      </section>
+		      </label>
+		      #end </div>
+		     <h4 class="order_dth4"><span>&nbsp;&nbsp;</span><em><b><a href="javascript:void(0);" onClick="addAddress()" class="buy_btn">新增地址</a></b></em></h4>
+   
+      	   <div id="tran01-block" style="display:none">
+	      	
+	      </div>
+       </div>  
+      
+      
+      
     <div class="order_details">
       <h3 class="order_dth3"><span>订单详情</span></h3>
     
@@ -267,25 +326,30 @@ function fmoney(s, n) {
         </select>
       </section>
       #end
-      #if($!goods_delivery)
-      <section class="choose_template">
-        <h6>配送方式</h6>
-        <ul>
-          <li> <span style="margin-bottom:5px;">可用配送方式：</span>
-            <select name="ship_price" style="width:110px;" id="ship_price">
-            #set($ship_price=0)
-            #foreach($sm in $transportTools.query_cart_trans($!sc,"$!addr_id"))
-              #if($!velocityCount==1)
-                #set($ship_price=$!sm.value)
-              #end
-              <option value="$!sm.value">$!sm.key</option>
-            #end
-            </select>
-            <input name="transport" type="hidden" id="transport" value="平邮" />
-          </li>
-        </ul>
-      </section>
-      #end
+      
+
+      
+    
+		      #if($!goods_delivery)
+		      <section class="choose_template">
+		        <h6>配送方式</h6>
+		        <ul>
+		          <li> <span style="margin-bottom:5px;">可用配送方式：</span>
+		            <select name="ship_price" style="width:110px;" id="ship_price">
+		            #set($ship_price=0)
+		            #foreach($sm in $transportTools.query_cart_trans($!sc,"$!addr_id"))
+		              #if($!velocityCount==1)
+		                #set($ship_price=$!sm.value)
+		              #end
+		              <option value="$!sm.value">$!sm.key</option>
+		            #end
+		            </select>
+		            <input name="transport" type="hidden" id="transport" value="平邮" />
+		          </li>
+		        </ul>
+		      </section>
+		      #end
+       
       <section class="choose_template">
         <h6>发票信息</h6>
         <span class="template_select">

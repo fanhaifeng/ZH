@@ -155,12 +155,12 @@ var begin_count =12;
 });
 </script>
 </head>
-<body style="padding-bottom: 90px;">
+<body style="padding-bottom: 200px;">
 <hgroup>
   <h3 class="goods_car clearfix">
   <a href="javascript:history.go(-1);" ><em>&lt;</em></a><span><b>店铺列表</b></span></h3>
 </hgroup>
-<div class="">
+<div class="clearfix">
   <!--热门分类start-->
   <div class="Hot_cf">
     
@@ -226,7 +226,7 @@ var begin_count =12;
           </div>
         </div>
       </div>
-      <div class="Hot_cf_main" id="mall_list">
+      <div class="Hot_cf_main clearfix" id="mall_list">
         <!--店铺列表开始-->
         #set($store_list_class_count= 0)
         #foreach($obj in $objs)    
@@ -247,11 +247,11 @@ var begin_count =12;
           <!--左侧 start-->
           <div class="store_list_con container">
             <div class="row">
-              <div class="col-xs-3 col-sm-2"> 
+              <div class="col-xs-4 col-sm-2"> 
               <a href="$!webPath/weixin/index.htm?store_id=$!{obj.id}" target="_blank"><img src="$!store_logo" width="70" height="70" /> </a>
               <br/><span class="text-center">共<strong>$!obj.onSaleAmount</strong>件出售中宝贝</span>
               </div>
-              <div class="col-xs-9 col-sm-4">
+              <div class="col-xs-8 col-sm-4">
                 <h4><a class="hc" href="$!webPath/weixin/index.htm?store_id=$!{obj.id}" target="_blank">$!obj.store_name</a> #set($credit=$!storeViewTools.generic_store_credit("$!obj.id"))
                   #set($img="$!imageWebServer/resources/style/common/images/level_0.gif")
                   #if($credit<10 && $credit>0)
@@ -310,7 +310,8 @@ var begin_count =12;
               </div>
               <div class="col-xs-12 col-sm-3">
               #if(!$!user)
-				<a href="$!webPath/weixin/login.htm" class=" save pull-right">收藏</a>
+				<a class=" save pull-right" href="$!webPath/weixin/login.htm" class=" save pull-right">收藏</a>
+				<a  class="welcome_s pull-right" href="$!webPath/weixin/index.htm?store_id=$!{obj.id}">进入店铺</a>
 			#else
 				#if($!obj.user)
 					#set($obj_user_id=$!obj.user.id)
@@ -318,6 +319,7 @@ var begin_count =12;
 					#set($obj_user_id=-1)
 				#end
                <a class=" save pull-right" href="javascript:void(0);" onclick="addStoreFavorite($!obj_user_id,$!obj.id,$!user.id)">收藏</a>
+               <a class="welcome_s pull-right" href="$!webPath/weixin/index.htm?store_id=$!{obj.id}">进入店铺</a>
                <div class="center_box" id="error_goods_inventory" style="display:none"><span class="count_none"></span></div>
 		    #end
                

@@ -11,8 +11,10 @@
 <link href="$!webPath/resources/style/system/front/default/css/public.css" type="text/css" rel="stylesheet" />
 <link href="$!webPath/resources/style/system/front/default/css/user.css" type="text/css" rel="stylesheet" />
 <link href="$!webPath/resources/style/system/front/default/css/goods.css" type="text/css" rel="stylesheet" />
+<link href="$!webPath/resources/style/system/front/default/css/index.css" type="text/css" rel="stylesheet" />
 <script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
-<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<!-- 样式和index.css冲突
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" /> -->
 <script src="$!webPath/resources/style/weixin/default/js/jquery.lazyload.js"></script>
 <script>
 jQuery(document).ready(function(){
@@ -42,18 +44,6 @@ jQuery("#ship_info_a").click(
 $!httpInclude.include("/top.htm")
 <div class="main"><!--pc端需要改回来的标识#if(false) $!httpInclude.include("/buyer/head.htm") #end-->
   $!httpInclude.include("/head2.htm")
-  <div class="w1000 clearfix">
-      <div class="Steps">
-            <ul>
-                <li>1.查看购物车</li>
-                <li>2.确认订单信息</li>
-                <li class="this">3.付款到卖家</li>
-                <li>4.确认收货</li>
-                <li class="last">5.评价</li>
-            </ul>
-        </div>
-  </div>
-
   <div class="orderdetail w1000">
     <div class="orderdh">
       <h1>订单详情</h1>
@@ -122,7 +112,7 @@ $!httpInclude.include("/top.htm")
             <td width="80" align="right"  class="blue2">电话号码：</td>
             <td width="220" align="left">$!obj.store.store_telephone</td>
             <td width="80" align="right"  class="blue2">所在地区：</td>
-            <td width="220" align="left">$!{obj.area.parent.parent.areaName} $!{obj.area.parent.areaName} $!obj.area.areaName</td>
+            <td width="220" align="left">$!{obj.store.user.area.parent.parent.areaName} $!{obj.store.user.area.parent.areaName} $!obj.store.user.area.areaName</td>
           </tr>
           <tr>
             <td width="80" align="right" class="blue2">MSN：</td>
@@ -135,6 +125,23 @@ $!httpInclude.include("/top.htm")
           <tr>
             <td width="80" align="right" class="blue2">详细地址：</td>
             <td colspan="5" align="left">$!obj.store.store_address</td>
+          </tr>
+        </table>
+      </div>
+      <div class="ordersee2">
+        <h2>收货人及发货信息</h2>
+        <table width="925" border="0" cellspacing="0" cellpadding="0" class="tablesee2">
+          <tr>
+            <td width="80" align="right" class="blue2">收货人姓名：</td>
+            <td width="220" align="left">$!obj.addr.trueName</td>
+            <td width="80" align="right"  class="blue2">所在地区：</td>
+            <td width="220" align="left">$!{obj.addr.area.parent.parent.areaName} $!{obj.addr.area.parent.areaName} $!{obj.addr.area.areaName}</td>
+            <td width="80" align="right"  class="blue2">手机号码：</td>
+            <td width="220" align="left">$!{obj.addr.telephone}</td>
+          </tr>
+          <tr>
+            <td width="80" align="right" class="blue2">详细地址：</td>
+            <td colspan="5" align="left">$!{obj.addr.area_info}</td>
           </tr>
         </table>
       </div>
@@ -177,9 +184,69 @@ $!httpInclude.include("/top.htm")
                     #if($!obj.payment.mark=="paypal")
                      #set($payment="paypal")
                     #end 
-          <div class="orderinfo_r"><span class="frspan">赊销金额：<strong style="color:#F90">¥$!{obj.charge_Num}</strong></span><span class="frspan">赊销期限：$!{obj.charge_Day}</span> </div>
-          <div class="orderinfo_r"><span class="frspan">订单总价：<strong style="color:#F90">¥$!{obj.totalPrice}</strong></span>#if($!{obj.refund})<span class="frspan">订单退款：<strong style="color:#F90">¥$!{obj.refund}</strong></span>#end<span class="frspan">支付方式：$!payment</span><span class="frspan">支付时间：$!CommUtil.formatLongDate($!obj.payTime)</span> </div>
-          <div class="orderinfo_r"><span class="frspan">买家留言：<strong style="color:#F90">$!{obj.msg}</strong></span></div>
+          <style>
+          .orderinfo_td{
+          width: 300px;          
+          }
+          .this_textarea{
+          height: 18px;
+          border-style: none;
+          width: 800px;
+          color:#F90;
+          font-weight:bold;
+          font-size: 14px
+          }
+          </style>
+          <div class="orderinfo_r" style="height: 60px">
+	          <table>
+		          <tr>
+			          <td class="orderinfo_td">
+			          	<span class="frspan">赊销金额：<strong style="color:#F90">¥$!{obj.charge_Num}</strong></span>
+			          </td>
+			          <td class="orderinfo_td">
+			          	<span class="frspan">赊销期限：$!{obj.charge_Day}天</span>
+			          </td>
+		          </tr>
+		          <tr>
+			          <td class="orderinfo_td">
+			          	<span class="frspan">智慧豆：<strong style="color:#F90">$!{obj.integrationPlatform}</strong></span>
+			          </td>
+			          <td class="orderinfo_td">
+			          	<span class="frspan">店铺农豆：<strong style="color:#F90">$!{obj.integrationStore}</strong></span>
+			          </td>
+			          <td class="orderinfo_td">
+			          	<span class="frspan">抵扣金额：<strong style="color:#F90">¥#if($!{obj.integration_price})$!{obj.integration_price} #else 0 #end </strong></span>
+			          </td>
+		          </tr>
+         	 </table>         
+          </div>  
+          <div class="orderinfo_r">
+	          <table>
+		          <tr>
+			          <td class="orderinfo_td">
+			          	<span class="frspan">订单总价：<strong style="color:#F90">¥$!{obj.totalPrice}</strong></span>
+			          </td>
+			          #if($!{obj.refund})
+			          <td class="orderinfo_td">
+			         	 <span class="frspan">订单退款：<strong style="color:#F90">¥$!{obj.refund}</strong></span>
+			          </td>
+			          #end
+			          <td class="orderinfo_td">
+			          	<span class="frspan">支付方式：$!payment</span>
+			          </td>
+			          <td class="orderinfo_td">
+			          	<span class="frspan">支付时间：$!CommUtil.formatLongDate($!obj.payTime)</span>
+			          </td>
+		          </tr>
+         	 </table>         
+          </div>        
+          <div class="orderinfo_r" style="height: 100px">
+          <table>
+          <!-- <tr><td><span class="frspan">买家留言：<strong style="color:#F90">$!{obj.msg}</strong></td></tr> -->
+          <tr><td><span class="frspan">买家留言：<textarea class="this_textarea" rows="3" disabled="disabled">$!{obj.msg}</textarea></span></td></tr>
+          <tr><td><span class="frspan">发票抬头：<strong style="color:#F90">$!{obj.invoice}</strong></span></td></tr>
+          </table>        
+          </div>
           <div class="orderinfo_l">
             <table width="923" border="0" cellspacing="0" cellpadding="0">
               <tr>

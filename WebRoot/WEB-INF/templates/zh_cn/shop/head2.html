@@ -1,4 +1,8 @@
 <script>
+#set($store_second_url="$!webPath")
+#if($!second_domain_view)
+  #set($store_second_url="http://$!{store.store_second_domain}.$!{domainPath}")
+#end
 jQuery(document).ready(function(){
   jQuery(".toph_bgsear li").mouseover(function(){
       jQuery(".toph_bgsear>li").show();

@@ -1,5 +1,13 @@
 <script>
 jQuery(document).ready(function(){
+	if(jQuery.cookie('pc_city_name')!=null){
+		jQuery("#showCity").html(jQuery.cookie('pc_city_name').substring(0,4));
+	}
+    else{
+		#if($!user)
+			jQuery.cookie('pc_city_id',$!user.area.id, {expires: 7, path: "/"});
+		#end
+	}
   jQuery(".toph_bgsear li").mouseover(function(){
       jQuery(".toph_bgsear>li").show();
   }).mouseleave(function(){
@@ -21,7 +29,6 @@ jQuery(document).ready(function(){
   jQuery(".two_code_a").click(function(){
 	  jQuery(this).parent().remove();
 	  });
-	
 });
 function search_form(){
   var keyword=arguments[0];
@@ -38,26 +45,14 @@ function search_form(){
 </script>
 <form action="$!webPath/search.htm" method="post" target="_blank" id="searchForm">
   <input name="type" type="hidden" id="type" value="$!type" />
-  <div class="head main">
+  <div class="head main clearfix">
     <div class="logo">  #if($!config.websiteLogo) <a href="$!webPath/index.htm"> <img src="$!webPath/resources/images/logo.png" border="0" /> </a> #else <a href="$!webPath/index.htm"><img src="$!imageWebServer/resources/style/system/front/default/images/logo.png" border="0" /> </a> #end </div>
     <div class="chose_city fl">
     <span id="showCity">#if($!user)$!CommUtil.substring("$!{user.area.areaName}",4) #else 全国 #end</span> 
     <a href="javascript:void(0);" data-reveal-id="bigpobbox" id="bigpobbox_city_a" >切换至城市</a>
-	
 	<div id="bigpobbox" class="bigpobbox reveal-modal">
 	</div>
-	<script type="text/javascript">
-		if(jQuery.cookie('pc_city_name')!=null){
-			jQuery("#showCity").html(jQuery.cookie('pc_city_name').substring(0,4));
-		}
-		if(jQuery.cookie('pc_city_name') == null){
-			#if($!user)
-				jQuery.cookie('pc_city_id',$!user.area.id, {expires: 7, path: "/"});
-			#end
-		}
-	</script>
     </div>
-    
     <div class="toph_bigsearch">
       <div class="toph_sear">
         <ul class="toph_bgsear">
@@ -156,6 +151,5 @@ function search_form(){
             </div>
           </div>
         </div>
-    
     </div>
 </form>

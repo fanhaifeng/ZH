@@ -18,8 +18,7 @@
 <script>
 //返回当前页面高度
 function order_pay(){	
-	
-	  var chargeNum = jQuery("#chargeNum").val();
+	 /* var chargeNum = jQuery("#chargeNum").val();
 	  var re = new RegExp("^[.0-9]*$");
 	  if(chargeNum<=$!{ret} && re.test(chargeNum) && !(typeof(jQuery("input[name='payType']:checked").val()) == "undefined" && chargeNum<$!{of.totalPrice}) ){
 		  var h=document.body.scrollHeight;
@@ -29,10 +28,8 @@ function order_pay(){
 		  jQuery(".white_content").css("top",top);
 		  jQuery('#pay_overlay').show(); 
 		 
-	  }
+	  }*/
 	  jQuery('#theForm').submit();  
-  
-
 }
 
 window.onscroll=function(){
@@ -43,49 +40,183 @@ window.onscroll=function(){
 }
 
 jQuery(document).ready(function(){
-   jQuery.validator.addMethod("verify",function(value,element){
-	   var re = new RegExp("^[.0-9]*$");
-	   var chargeNum = jQuery("#chargeNum").val();
-       if(re.test(chargeNum)){			
-			return true;
-		}else {
-		    return false;
-		}		  
-   });
-   
-   jQuery.validator.addMethod("verifyNum",function(value,element){
-	   var chargeNum = jQuery("#chargeNum").val();
-       if(chargeNum<=$!{ret}){
-    	    return true;
-		}else {
-		    return false;
-		}		  
-   });
+
+	 jQuery.validator.addMethod("verify",function(value,element){
+		   var re = new RegExp("^[.0-9]*$");
+		   var chargeNum = jQuery("#chargeNum").val();
+	       if(re.test(chargeNum)){			
+				return true;
+			}else {
+			    return false;
+			}		  
+	   });
+	   jQuery.validator.addMethod("verifyNum",function(value,element){
+		   var chargeNum = jQuery("#chargeNum").val();
+	       if(chargeNum<=$!{ret}){
+	    	    return true;
+			}else {
+			    return false;
+			}		  
+	   });
+	   jQuery.validator.addMethod("verifyOrder",function(value,element){
+		   var chargeNum = jQuery("#chargeNum").val();
+		   var integrationPlatform = jQuery("#integrationPlatform").val();
+		   var integrationStore = jQuery("#integrationStore").val();
+		   var integration_to_money=parseFloat($!{integration_to_money});
+		   var integration_to_money_store=parseFloat($!{integration_to_money_store});
+		   var total=0;
+		   if(chargeNum.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(chargeNum);
+			}
+		   if(integrationPlatform.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(integrationPlatform)*integration_to_money;
+			}
+		   if(integrationStore.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(integrationStore)*integration_to_money_store;
+			}
+		   if(typeof(jQuery("input[name='payType']:checked").val()) == "undefined" && total<$!{of.totalPrice}){
+		   		return false;
+		   	}else{
+		   		return true;
+		   	}
+	   });
+	   jQuery.validator.addMethod("verify4Platform",function(value,element){
+		   var re = new RegExp("^[0-9]*$");
+		   var integrationPlatform = jQuery("#integrationPlatform").val();
+	       if(re.test(integrationPlatform)){			
+				return true;
+			}else {
+			    return false;
+			}		  
+	   });
+	   jQuery.validator.addMethod("verify4Store",function(value,element){
+		   var re = new RegExp("^[0-9]*$");
+		   var integrationStore = jQuery("#integrationStore").val();
+	       if(re.test(integrationStore)){			
+				return true;
+			}else {
+			    return false;
+			}		  
+	   });
+	   jQuery.validator.addMethod("verifyNum4Platform",function(value,element){
+		   var integrationPlatform = jQuery("#integrationPlatform").val();
+	       if(integrationPlatform<=$!{integrationPlatform}){
+	    	    return true;
+			}else {
+			    return false;
+			}		  
+	   });
+	   jQuery.validator.addMethod("verifyNum4Store",function(value,element){
+		   var integrationStore = jQuery("#integrationStore").val();
+	       if(integrationStore<=$!{integrationStore}){
+	    	    return true;
+			}else {
+			    return false;
+			}		  
+	   });
+	   jQuery.validator.addMethod("verifyIntegration",function(value,element){
+		   var integrationPlatform = jQuery("#integrationPlatform").val();
+		   var integrationStore = jQuery("#integrationStore").val();
+		   var integration_to_money=parseFloat($!{integration_to_money});
+		   var integration_to_money_store=parseFloat($!{integration_to_money_store});
+		   var total=0;
+		   if(integrationPlatform.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(integrationPlatform)*integration_to_money;
+			}
+		   if(integrationStore.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(integrationStore)*integration_to_money_store;
+			}
+		   if(total>parseFloat($!{integrationTotal})){
+		   		return false;
+		   	}else{
+		   		return true;
+		   	}
+	   });
+	   jQuery.validator.addMethod("verifyMax",function(value,element){
+		   var chargeNum = jQuery("#chargeNum").val();
+		   var integrationPlatform = jQuery("#integrationPlatform").val();
+		   var integrationStore = jQuery("#integrationStore").val();
+		   var integration_to_money=parseFloat($!{integration_to_money});
+		   var integration_to_money_store=parseFloat($!{integration_to_money_store});
+		   var total=0;
+		   if(chargeNum.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(chargeNum);
+			}
+		   if(integrationPlatform.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(integrationPlatform)*integration_to_money;
+			}
+		   if(integrationStore.replace(/\s/g,"")!=""){
+			   total=total+parseFloat(integrationStore)*integration_to_money_store;
+			}
+		   if(total>$!{of.totalPrice}){
+		   		return false;
+		   	}else{
+		   		return true;
+		   	}
+	   });
+	   jQuery.validator.addMethod("verifyArea",function(value,element){
+		   var user_area=$!{of.user.area.id};
+		   var store_area=$!{of.store.area.parent.id};
+		   var integrationPlatform = jQuery("#integrationPlatform").val();
+		   if(integrationPlatform==""){
+			   return true;
+		   }
+		   else{
+			   var int_integrationPlatform=parseInt(integrationPlatform);
+			   if(user_area!=store_area && (int_integrationPlatform!=0)){
+			   		return false;
+			   }else{
+			   		return true;
+			   }
+		   }
+	   });
 	   
-   
-   jQuery.validator.addMethod("verifyOrder",function(value,element){
-	   var chargeNum = jQuery("#chargeNum").val();
-	   if(typeof(jQuery("input[name='payType']:checked").val()) == "undefined" && chargeNum<$!{of.totalPrice}){
-	   		return false;
-	   	}else{
-	   		return true;
-	   	}
-   });
-   
    jQuery("#theForm").validate({				 
 		  ignore:"",
 		  rules:{
-			  chargeNum : {
+			chargeNum : {
 				  verify : true,
 				  verifyNum : true,
-				  verifyOrder :true
+				  verifyOrder :true,
+				  verifyMax:true
+			},
+			integrationPlatform:{
+				verify4Platform : true,
+				verifyNum4Platform : true,
+				verifyOrder :true,
+				verifyIntegration :true,
+				verifyMax:true,
+				verifyArea:true
+			},
+			integrationStore:{
+				verify4Store : true,
+				verifyNum4Store : true,
+				verifyOrder :true,
+				verifyIntegration :true,
+				verifyMax:true
 			}
 		  },
 		  messages:{
 			  chargeNum :{
 				  verify : "请输入0-9之间的数字",
 				  verifyNum : "您可用的赊销金额不足",
-				  verifyOrder : "请选择至少一种支付方式"
+				  verifyOrder : "请选择至少一种支付方式",
+				  verifyMax:"输入金额过多"
+			},
+			integrationPlatform:{
+				verify4Platform : "请输入0-9之间的数字",
+				verifyNum4Platform : "您可用的智慧豆不足",
+				verifyOrder :"请选择至少一种支付方式",
+				verifyIntegration :"智慧豆和店铺农豆总数超过订单使用限额",
+				verifyMax:"输入金额过多",
+				verifyArea:"请在注册地区中的店铺里使用"
+			},
+			integrationStore:{
+				verify4Store : "请输入0-9之间的数字",
+				verifyNum4Store : "您可用的店铺农豆不足",
+				verifyOrder :"请选择至少一种支付方式",
+				verifyIntegration :"智慧豆和店铺农豆总数超过订单使用限额",
+				verifyMax:"输入金额过多"
 			}
 		  }
  });
@@ -198,7 +329,7 @@ $!httpInclude.include("/top.htm")
 								<div class="bankone">
 									<label> <span class="banksp"> <input
 											name="payType" type="radio" value="payafter" />
-									</span> <span class="">货到付款
+									</span> <span class="">现款自提
 											<div class="this_ok" style="display: none"></div>
 									</span>
 									</label>
@@ -209,6 +340,22 @@ $!httpInclude.include("/top.htm")
 								<div class="bankone">
 									<span class="banksp">使用赊销支付 <input id="chargeNum"
 										name="chargeNum" type="text" value="$!of.charge_Num" /> （您当前可用赊销金额为$!{ret}）
+									</span>
+								</div>
+							</li>
+							<li>
+								<h1>智慧豆支付</h1>
+								<div class="bankone">
+									<span class="banksp">使用智慧豆支付 <input id="integrationPlatform"
+										name="integrationPlatform" type="text" value="$!of.integrationPlatform" /> （您当前可用智慧豆为$!{integrationPlatform}）
+									</span>
+								</div>
+							</li>
+							<li>
+								<h1>店铺农豆支付</h1>
+								<div class="bankone">
+									<span class="banksp">使用店铺农豆支付 <input id="integrationStore"
+										name="integrationStore" type="text" value="$!of.integrationStore" /> （您当前可用店铺农豆为$!{integrationStore}）
 									</span>
 								</div>
 							</li>

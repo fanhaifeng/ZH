@@ -1,30 +1,8 @@
-<style>
-.ProTable {
-    border: 1px solid #ddd;
-    margin-top: 10px;
-    width: 788px;
-}
-.tdTitle {
-	border-right: 1px solid #ddd;
-    width: 120px;
-    padding-left: 10px;
-}
-.title{
-background: #ededed none repeat scroll 0 0;
-font: bold 14px/24px "宋体";
-text-align: center;
-Sborder-bottom: 1px solid #ddd;
-border-right: 1px solid #ddd;
-border-collapse: collapse;
-border-spacing: 0;
-color: #333;
-}
-</style> 	
- 	
+<!-- 
  	<div class="pro_parameters">
 		<table class="ProTable" cellspacing="0" cellpadding="0" border="0">
 			<tbody>
-			<tr><th colspan="6" class="title">功能参数</th></tr>
+			<tr><th colspan="6" class="title" style="font-size: ">功能参数</th></tr>
 			#foreach($property in $!propertys)
 				<tr class="tdTitle">
 					#foreach($property_map in $!property)
@@ -36,3 +14,23 @@ color: #333;
 			</tbody>
 		</table>
 	</div>
+-->	
+<div class="okcode" id="strike_tab" style="margin-top:10px;">
+  <ul>
+     <li>
+      <table width="797" border="0" cellspacing="0" cellpadding="0" class="okcodetable">
+        <tr style=" background:#EEEDED; font-weight:bold">
+          <td colspan="6" align="center" style="font-size: 14px">功能参数</td>
+        </tr>
+       	#foreach($property in $!propertys)
+		<tr class="tdTitle">
+		#foreach($property_map in $!property)
+			<td class="tdTitle">$!{property_map.name}</td>
+			<td style="padding-left: 10px;">$!property_map.val</td>
+		#end
+		</tr>
+		#end
+	 </table>
+    </li>
+  </ul>
+</div>

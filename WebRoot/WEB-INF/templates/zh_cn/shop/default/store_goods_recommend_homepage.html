@@ -26,8 +26,10 @@ jQuery(document).ready(function(){
 $!httpInclude.include("/top.htm")
 <div class="main"> $!httpInclude.include("/head.htm?type=$!type")
   $!httpInclude.include("/nav1.htm")
-  <form action="$!webPath/goods_recommend_list_homepage.htm" method="post" id="ListForm">
-		<div class="smallgoods"> #foreach($goods in $objs)
+
+   <form action="$!webPath/goods_recommend_list_homepage.htm" method="post" id="ListForm">
+		<div class="smallgoods clearfix"> 
+		#foreach($goods in $objs)
              #if($!goods.goods_main_photo)
        		 #set($img="$!imageWebServer/$!{goods.goods_main_photo.path}/$!{goods.goods_main_photo.name}_middle.$!{goods.goods_main_photo.ext}")
        		 #else
@@ -39,7 +41,8 @@ $!httpInclude.include("/top.htm")
       					<img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); "/>
      		        </span></a>
      			 </li>
-                <li class="goodslook"><a href="$!webPath/goods_$!{goods.id}.htm" target="_blank" class="look">查看详情</a><strong>¥$!goods.goods_current_price</strong></li>
+               <li class="goodslook"><strong>商城价：<span><i>¥</i>$!{goods.goods_current_price}</span></strong></li>
+                <li class="goodslook"><span class="marketprice">市场价：¥$!{goods.goods_price}</span></li>
                 <li class="goodsnames">
                 <a href="$!webPath/goods_$!{goods.id}.htm" target="_blank">$!CommUtil.substring("$!goods.goods_name",22)</a>
                 </li>
@@ -53,11 +56,15 @@ $!httpInclude.include("/top.htm")
               	-->
               </ul>
               #end </div>
-            <div class="shop_page"><span>
+              <div class="clear"></div>
+            <div class="fenye">
+            <div class="fenyes">
+            <span>
               <input name="currentPage" type="hidden" id="currentPage" value="$!currentPage" />
               <input name="recommend" type="hidden" id="recommend" value="$!recommend" />
               $!gotoPageFormHTML</span> </div>
-        </form>
+              </div>
+              </form>
   $!httpInclude.include("/footer.htm")
 </div>
 </body>

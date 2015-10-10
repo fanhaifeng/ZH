@@ -48,6 +48,7 @@ import com.lakecloud.foundation.service.IStoreService;
 import com.lakecloud.foundation.service.ISysConfigService;
 import com.lakecloud.foundation.service.IThirdBindingService;
 import com.lakecloud.foundation.service.IUserConfigService;
+import com.lakecloud.foundation.service.IPaymentService;
 import com.lakecloud.manage.admin.tools.PaymentTools;
 import com.lakecloud.manage.seller.Tools.TransportTools;
 import com.lakecloud.view.web.tools.GoodsViewTools;
@@ -108,6 +109,8 @@ public class WeixinStoreCartViewAction {
 	private IIntegration_ChildService integrationChildService;
 	@Autowired
 	private IStoreService storeService;
+	@Autowired
+	private IPaymentService paymentService;
 
 	/**
 	 * 根据商品规格加载商品的数量、价格
@@ -329,6 +332,13 @@ public class WeixinStoreCartViewAction {
 			} else {
 				mv.addObject("ret", ret);
 			}
+			int flag_payThird = 0;
+			List<Payment> paymentList = this.paymentService.queryByStore(of
+					.getStore());
+			if (null != paymentList && paymentList.size() > 0) {
+				flag_payThird = 1;
+			}
+			mv.addObject("flag_payThird", flag_payThird);
 			mv = orderFormService.setIntegrationPlatformAndIntegrationStore(of,
 					mv);
 		} else if (of.getOrder_status() < 10) {

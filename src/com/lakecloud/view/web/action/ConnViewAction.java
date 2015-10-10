@@ -1047,9 +1047,9 @@ public class ConnViewAction {
 	 * @param integral 农豆
 	 * @param type 类型（加(add)还是减(min)）
 	 */
-/*	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/getUserIntegrals.htm")
-	public void getUserIntegrals(HttpServletRequest request,HttpServletResponse response,String userName,String integral,String type){
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value="/getUserIntegral.htm")
+	public void getUserIntegral(HttpServletRequest request,HttpServletResponse response,String userName,String integral,String type){
 		JSONObject jsonObj = new JSONObject();
 		if(userName == null || "".equals(userName)){
 			jsonObj.put("resultCode","ERROR");
@@ -1193,9 +1193,9 @@ public class ConnViewAction {
 		}			
 	}
 	
-*/	
+
 	
-	 @RequestMapping({"/getUserIntegral.htm"})
+	 /*@RequestMapping({"/getUserIntegral.htm"})
 	  public void getUserIntegral(HttpServletRequest request, HttpServletResponse response, String userName, String integral, String type)
 	  {
 	    JSONObject jsonObj = new JSONObject();
@@ -1246,7 +1246,7 @@ public class ConnViewAction {
 	      e.printStackTrace();
 	    }
 	  }
-	
+	*/
 	
 	/**
 	 * 初始化农豆主表数据

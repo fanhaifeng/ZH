@@ -356,7 +356,7 @@ $!httpInclude.include("/top.htm")
             <div class="smallgoods" > #foreach($obj in $objs)
               <ul class="">
                 #if($!obj.goods_main_photo)
-                #set($img="$!imageWebServer/$!{obj.goods_main_photo.path}/$!{obj.goods_main_photo.name}")
+                #set($img="$!imageWebServer/$!{obj.goods_main_photo.path}/$!{obj.goods_main_photo.name}_small.$!{obj.goods_main_photo.ext}")
                 #else
                 #set($img="$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}")
                 #end
@@ -365,7 +365,7 @@ $!httpInclude.include("/top.htm")
                 #set($goods_url="http://$!{obj.goods_store.store_second_domain}.$!{domainPath}/goods_$!{obj.id}.htm")
                 #end
                 <li class="goodsimgs"><span class="goods_sp_span">
-                  <p><a href="$!goods_url" target="_blank"><img src="$!imageWebServer/resources/style/common/images/loader.gif" original="$!{img}_small.jpg" onerror="this.src='$!webPath/$!{config.goodsImage.path}/$!{config.goodsImage.name}';" /></a></p>
+                  <p><a class="p_img" href="$!goods_url" target="_blank"><img src="$!imageWebServer/resources/style/common/images/loader.gif" original="$!{img}" onerror="this.src='$!imageWebServer/$!{config.goodsImage.path}/$!{config.goodsImage.name}';" width="100"/></a></p>
                   </span></li>
                 <li class="goodslook"><strong>商城价：<span><i>¥</i>$!{obj.goods_current_price}</span></strong></li>
                 <li class="goodslook"><span class="marketprice">市场价：¥$!{obj.goods_price}</span></li>
@@ -376,7 +376,7 @@ $!httpInclude.include("/top.htm")
                   #if($!obj.delivery_status==2)<span style="color:#F00;">[买就送]</span>#end-->
                   $!CommUtil.substring("$!obj.goods_name",80)</a></li>
                 <li class="recentgoodsok">最近成交<strong>$!{obj.goods_salenum}</strong>笔</li>
-                <li class="goodshidden" style="display:none"> <span class="goods_description">与描述相符: <b style="color:#F00">$!CommUtil.null2Double($!{obj.description_evaluate})</b> 分 </span>
+                <li class="goodshidden" style="display:none"> 
                  <span class="goodshshop_name">店铺名称：<a href="$!webPath/store_$!{obj.goods_store.id}.htm" target="_blank"><i>$!obj.goods_store.store_name</i></a></span> 
                  <span class="goodshshop_name">累计评价：<i>$!{obj.evaluates.size()}</i></span> 
                  <!--  <span class="goods_eva"><i><em>累计评价</em>
@@ -415,7 +415,7 @@ $!httpInclude.include("/top.htm")
               #end </div>-->
             #else
             <div class="starshop_list">
-              <div class="sigh"> <span><img src="$!imageWebServer/resources/style/system/front/default/images/sigh.png" width="120" height="109" /></span> <b>对不起，没有对应的数据!</b> </div>
+              <div class="sigh"> <span><img src="$!imageWebServer/resources/style/system/front/default/images/sigh.png" width="120" height="109" /></span> <b>亲！没有你要找的宝贝呢。</b> </div>
             </div>
             #end </div>
           <div class="fenye">

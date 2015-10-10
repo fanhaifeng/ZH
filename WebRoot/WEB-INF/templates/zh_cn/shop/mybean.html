@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport"content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style"content="black-translucent">
+<title>中化BBC商城-APP - 我的农豆</title>
+<link rel="stylesheet" href="$!webPath/resources/style/weixin/default/css/bootstrap.min.css"> 
+<link href="$!webPath/resources/style/weixin/default/css/phone.css" rel="stylesheet" type="text/css" />
+<link href="$!webPath/resources/style/weixin/default/css/platform.css" rel="stylesheet" type="text/css" />
+<script src="$!webPath/resources/style/weixin/default/js/jquery-1.11.3.min.js"></script>
+<script src="$!webPath/resources/js/jcarousellite_1.0.1.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+	var beginCount = 6;
+	jQuery("#loading_more").click(function() {
+		jQuery.post("$!webPath/weixin/buyer/mybean_ajax.htm", {
+			"beginCount" : beginCount
+		}, function(data) {
+			if (data && jQuery.trim(data) != "") {
+				jQuery("#span_order_list").append(data)
+				beginCount = beginCount + 6;
+			} else {
+				jQuery(".index_load").hide();
+				jQuery("#no_more").show();
+			}
+		}, "text");
+	});
+});
+</script>
+</head>
+<body class="bodybg">
+	<div class="page_bottom">
+		<hgroup>
+			<h3 class="goods_car clearfix"><a href="javascript:history.go(-1);"><em>&lt;</em></a><span><b>我的农豆</b> </span></h3>
+		</hgroup>
+		<hgroup> 
+			<h5 class="hgroup_h5 col-xs-12" style="height:auto">
+				<span>可用农豆：#if($!integration.integrals)  <i class="fxt-02" >$!integration.integrals</i> #else  <i class="fxt-02" >0 </i>#end</span>
+				<span>将过期农豆：#if($!integration.overdue_integrals) <i class="fxt-2" >$!integration.overdue_integrals</i> #else <i class="fxt-2" >0</i> #end </span>
+			</h5>
+		</hgroup>
+		<div id="span_order_list"> 
+		    #foreach($obj in $objs)		    
+				#if($!obj.gettype==0)
+			    	#set($gettype="订单")
+			    #end
+			    #if($!obj.gettype==1)
+			    	#set($gettype="注册")
+			    #end
+			    #if($!obj.gettype==2)
+			    	#set($gettype="推荐用户")
+			    #end
+			    #if($!obj.gettype==-1)
+			    	#set($gettype="农技服务")
+			    #end
+			    <!-- 农豆变化计算 -->
+			    #if($!{obj.integrals})
+			    #set($integrals=$!{obj.integrals})  
+			    #else 
+			    #set($integrals=0)
+			    #end
+			    
+			    #if($!{obj.integrals_store})
+			    #set($integrals_store=$!{obj.integrals_store})  
+			    #else 
+			    #set($integrals_store=0)
+			    #end
+			    
+			    #set($change=$!integrals+$!integrals_store)  
+				<div class="container">
+					<div class="order_totalprice">
+						<span>农豆来源：<i>$!gettype#if($!obj.gettype==0)($!obj.orderForm.order_id)#end</i></span> 
+						<span>农豆变化：<i #if($!obj.type==1) class="fxt-02" >  + #else  class="fxt-2"> - #end $!change</i></span>
+						<span>日期：<i>$!CommUtil.formatLongDate($!obj.addTime)</i></span>
+					</div>
+				</div> 
+			#end 
+		</div>
+		#if($!objs.size()>0)
+			<div class="index_load">
+				<a href="javascript:void(0);" id="loading_more">加载更多</a>
+			</div>
+			<div class="index_load" id="no_more" style="display: none">
+				<a href="javascript:void(0);" style="color:#F00">没有更多数据了</a>
+			</div>
+		#else 
+			<span class="goods_none">
+				<img src="$!webPath/resources/style/weixin/default/images/no_date.png" width="80"  height="62"/>
+				<p>亲！您还没有任何积分记录。</p>
+			</span> 
+		#end
+	</div>
+	$!httpInclude.include("/weixin/platform/nav_bottom.htm?op=account")
+</body>

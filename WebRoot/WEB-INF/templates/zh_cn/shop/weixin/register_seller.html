@@ -199,9 +199,7 @@
 								dataType : "json", //接受数据格式   
 								data : { //要传递的数据
 									"telephone" : function() {
-										return jQuery(
-												"#telephone")
-												.val();
+										return jQuery("#telephone").val();
 									}
 								},
 								success:function(result){
@@ -465,11 +463,12 @@
 					<ul class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 						<li>手机号： <input name="telephone" placeholder="请输入您的手机号码"
 							type="text" id="telephone" class="register_txt" />
-							<label for="telephone" id="remote-tel" generated="true" class="error"></label><a
+							<a
 							href="javascript:void(0);"
 							onclick="generic_mobile_verify_code();"
 							id="mobile_verify_code_generic">获取验证码</a> <span
 							id="time_out_generic"></span>
+							<label for="telephone" id="remote-tel" generated="true" class="error"></label>
 						</li>
 						<li>手机验证码： <input name="mobile_verify_code"
 							placeholder="请输入验证码" type="text" id="mobile_verify_code"
@@ -522,9 +521,10 @@
 						<li>推荐用户手机号： <input id="promote_tel" placeholder="选填"
 							name="promote_tel" type="text" class="register_txt">
 						</li>
-						<li><label> <input name="agree" id="agree"
-								type="checkbox" class="register_check"> 同意，<a
+						<li><label> 同意，<a
 								href="$!webPath/weixin/introduce.htm" class="a_register">用户服务协议</a>
+								<input name="agree" id="agree"
+								type="checkbox" class="register_check"> 
 						</label></li>
 						<li id="a_register" style="display: none">
 

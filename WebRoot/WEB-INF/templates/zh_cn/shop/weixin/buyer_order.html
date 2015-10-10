@@ -156,21 +156,22 @@ function payment(order_id){
   				#set($img="$!webPath/$!{config.goodsImage.path}/$!{config.goodsImage.name}.jpg")
 			#end
 			<section class="waitingpay_list"> 
-				<a href="$!webPath/weixin/buyer/order_view.htm?id=$!{obj.id}">
   					<dl>
     					<dt>
-        					<a  class="p_img" href="$!webPath/weixin/buyer/order_view.htm?id=$!{obj.id}">
+        					<a  class="p_img" href="$!webPath/weixin/goods.htm?goods_id=$!{gc.goods.id}">
 								<img src="$!imageWebServer/resources/style/common/images/loader.gif" data-original="$!img" onerror="$(this).attr('src','$!imageWebServer/resources/style/common/images/loader.gif'); $(this).addClass('errImg'); "  width="100" height="100"/>
 							</a>
     					</dt>
     					<dd>
-      						<div class="p_name">$!{gc.goods.goods_name}     
+      						<div class="p_name">$!{gc.goods.goods_name}   
         					#if($!{gc.goods.group_buy}==2) <strong style="color:#F00">(团购)</strong> #end
         					#if($!{obj.goods.delivery_status}==2) <strong style="color:#F00">[买就送]</strong> #end
         					#if($!{gc.goods.bargain_status}==2) <strong style="color:#F00">(特价)</strong> #end
         					#if($!{gc.cart_type}=="combin") <strong style="color:#F00">【组合商品】</strong> #end
         					</div>
-      						<div style="text-align:right" class=""><span class="p_price">¥$!{gc.price}</span> ×$!{gc.count} 
+        					
+      						<div style="text-align:right" class="">
+      						<span class="p_price">¥$!{gc.price}</span> ×$!{gc.count} 
       							<div>
       								<i class="">订单状态：$!{status}</i></p>
       							</div>
@@ -185,8 +186,11 @@ function payment(order_id){
 			<span>订单号：<i class=" ">$!obj.order_id</i></span>
 			<span>下单时间：<i class=" ">$!CommUtil.formatLongDate($!obj.addTime)</i></span>
 			<span>赊销金额：<i class=" ">$!obj.charge_Num（账期：$!obj.charge_Day天）</i></span>
- 			<span>商城农豆：<i class=" ">$!obj.integrationPlatform</i></span>
- 			<span>店铺农豆：<i class=" ">$!obj.integrationStore</i></span>
+ 			<!-- <span>智慧豆：<i class=" ">$!obj.integrationPlatform</i></span>
+ 			<span>店铺农豆：<i class=" ">$!obj.integrationStore</i></span> -->
+ 			<a href="javascript:void(0)" onclick="window.location.href='$!webPath/weixin/buyer/order_view.htm?id=$!{obj.id}'">
+  				<button class="cmd_login">订单详情</button>
+  			</a>
 			#if($!obj.order_status==10) 
 			<a href="javascript:void(0)" onclick="payment('$!obj.id');return false">
   				<button class="cmd_login">付款</button>

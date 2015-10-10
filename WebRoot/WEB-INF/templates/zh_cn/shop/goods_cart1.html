@@ -17,6 +17,7 @@
 <script src="$!webPath/resources/js/jquery-1.6.2.js"></script>
 <script src="$!webPath/resources/js/jquery-ui-1.8.21.js"></script>
 <script src="$!webPath/resources/js/jquery.shop.common.js"></script>
+<script src="$!webPath/resources/js/jquery.blcokui.js"></script>
 <script>
   function goods_count_adjust(cart_id,store_id,count){
    	  jQuery.post("$!webPath/goods_count_adjust.htm",{"cart_id":cart_id,"store_id":store_id,"count":count},function(data){
@@ -35,9 +36,14 @@
 		   alert("团购库存不足，请重新选择数量！");
 		   jQuery("#goods_count_"+cart_id).val(jQuery("#goods_count_"+cart_id).attr("goods_count"));
 		 }
+		 mark_change=0;
+		 mark_ajax_end=0;
 	   },"json");
   }
-  function confirm_cart(sc_id,sc_id2){
+  function confirm_cart(sc_id,sc_id2,id){
+  var count=jQuery("#goods_count_"+id).attr("value");
+  if(count<1)
+  return;
 	var url="$!webPath/weixin/check_goods.htm";
 	jQuery.ajax( {
 		type : "post",
@@ -88,6 +94,7 @@ jQuery(document).ready(function(){
   });
   
   jQuery("a[id^=count_down]").click(function(){
+    jQuery.blockUI({ message: '<h4>正在加载，请稍等...</h4>' });
 	var cart_id=jQuery(this).attr("cart_id");
 	var count=jQuery("#goods_count_"+cart_id).val();
 	var store_id=jQuery(this).attr("store_id");
@@ -95,19 +102,31 @@ jQuery(document).ready(function(){
 	  count--;
       goods_count_adjust(cart_id,store_id,count)
 	}
+	if(count==0){
+	  count=1;
+      goods_count_adjust(cart_id,store_id,count)
+	}
+	jQuery.unblockUI();
   });
   
   jQuery("a[id^=count_up]").click(function(){
+    jQuery.blockUI({ message: '<h4>正在加载，请稍等...</h4>' });
 	var cart_id=jQuery(this).attr("cart_id");
 	var count=jQuery("#goods_count_"+cart_id).val();
 	var store_id=jQuery(this).attr("store_id");
 	if(count>0){
 	  count++;
 	  goods_count_adjust(cart_id,store_id,count);
-	}									 
+	}		
+	if(count==0){
+	  count=1;
+      goods_count_adjust(cart_id,store_id,count)
+	}				
+	jQuery.unblockUI();			 
   });
   
-  jQuery("input[id^=goods_count_]").keyup(function(){
+/*   jQuery("input[id^=goods_count_]").keyup(function(){
+    jQuery.blockUI({ message: '<h4>正在加载，请稍等...</h4>' });
   	var cart_id=jQuery(this).attr("cart_id");
 	var count=jQuery("#goods_count_"+cart_id).val().replace(/\D/g,'');
 	if(count==""){
@@ -117,8 +136,24 @@ jQuery(document).ready(function(){
 	if(count>0){
 	  goods_count_adjust(cart_id,store_id,count);
 	}	
+  }); */
+    jQuery("input[id^=goods_count_]").blur(function(){
+    jQuery.blockUI({ message: '<h4>正在加载，请稍等...</h4>' });
+  	var cart_id=jQuery(this).attr("cart_id");
+	var count=jQuery("#goods_count_"+cart_id).val().replace(/\D/g,'');
+	if(count==""){
+       count=1;
+	}
+	var store_id=jQuery(this).attr("store_id");
+	if(count>0){
+	  goods_count_adjust(cart_id,store_id,count);
+	}
+	if(count==0){
+		count=1;
+		goods_count_adjust(cart_id,store_id,count);
+	}
+	jQuery.unblockUI();
   });
-  
   
   jQuery(".baby_gp>a").mouseover(function(){
 	jQuery(this).parent().find(".arrow").show();									  
@@ -151,7 +186,7 @@ $!httpInclude.include("/top.htm")
    
     #foreach($sc in $cart)
     <form status="no_submit" method="post" name="cart_$!{sc.store.id}" target="_blank" id="cart_$!{sc.store.id}" action="$!webPath/goods_cart2.htm">
-      <div class="h1"> <span class="h1_l">店铺名称：<a href="$!webPath/store_$!{sc.store.id}.htm" target="_blank">$!sc.store.store_name</a></span> <span class="h1_r">商品总价(不含运费)：<b>¥<span id="top_total_price_$!{sc.store.id}">$!{sc.total_price}</span></b><a href="javascript:void(0);"  onClick="confirm_cart('$!sc.store.id','$!sc.id');">结算</a></span> </div>
+      <div class="h1"> <span class="h1_l">店铺名称：<a href="$!webPath/store_$!{sc.store.id}.htm" target="_blank">$!sc.store.store_name</a></span> <span class="h1_r">商品总价(不含运费)：<b>¥<span id="top_total_price_$!{sc.store.id}">$!{sc.total_price}</span></b><a href="javascript:void(0);"  onClick="confirm_cart('$!sc.store.id','$!sc.id','$obj.id');">结算</a></span> </div>
       <div class="table">
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
             <col width="55%" />

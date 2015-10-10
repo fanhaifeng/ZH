@@ -396,4 +396,7 @@ public interface IOrderFormService {
 
 	ModelAndView setIntegrationPlatformAndIntegrationStore(OrderForm of,
 			ModelAndView mv);
+
+	String order_cofirm_save(HttpServletRequest request,
+			HttpServletResponse response, String id,String currentPage) throws Exception;
 }

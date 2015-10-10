@@ -55,16 +55,34 @@ $("img").lazyload({
     effect      : "fadeIn" //加载图片使用的效果(淡入)
 });
 });
+
+function exportAddress(){
+	var starttime =  jQuery("#beginTime").val();
+	var endtime = jQuery("#endTime").val();
+	var storeid = jQuery("#store_id").val();
+	window.open("$!webPath/seller/exportAddress.htm?"
+    		+ "starttime="+starttime
+    		+ "&endtime="+endtime
+    		+ "&storeid="+storeid);
+
+    //jQuery.post("$!webPath/seller/exportAddress.htm",{
+    //	starttime:starttime,endtime:endtime},
+    //    function(data){
+    //    alert(data.message);
+    // },"json"); 
+	
+}
 </script>
 </head>
 <body>
 $!httpInclude.include("/top.htm")
 <div class="main"> $!httpInclude.include("/seller/nav_head.htm")
   <div class="user_center">
-    <table width="1000" border="0" cellspacing="0" cellpadding="0" class="user_table">
+    <table width="1202" border="0" cellspacing="0" cellpadding="0" class="user_table">
       <tr> $!httpInclude.include("/seller/nav.htm?op=order")
         <td id="centerbg" valign="top"><div class="buyer_position">
             <div class="buyer_p_box"><a href="$!webPath/seller/index.htm">卖家中心</a> > <span>所有订单</span></div>
+           
           </div>
           <div class="productmain">
             <div class="ordernav">
@@ -97,9 +115,11 @@ $!httpInclude.include("/top.htm")
                   <input name="buyer_userName" type="text" id="buyer_userName" value="$!buyer_userName" />
                   </span><span class="orderbtn">
                   <input name="" type="submit" value="搜索" style="cursor:pointer;"/>
+                  <input name="" type="button" value="导出" style="cursor:pointer;" onclick="exportAddress();"/>
                   </span> </div>
-                <div class="myorder"> #foreach($!obj in $!objs)
                   
+                <div class="myorder"> #foreach($!obj in $!objs)
+                <div style="display:none"><input value="$!obj.store.id" id="store_id"/></div>
                   #set($group=false) 
                   #foreach($!gc in $!obj.gcs)
                   #if($!{gc.goods.group}&&$!{gc.goods.group_buy}==2)
@@ -188,7 +208,7 @@ $!httpInclude.include("/top.htm")
                     <div class="Order_box">
                       <div class="line01">
                         <ul>
-                          <li class="li_01">订单号：<span>$!{obj.order_id}</span></li>
+                          <li class="li_01">订单号:<span>$!{obj.order_id}</span></li>
                           <li class="li_02">下单时间：<span>$!CommUtil.formatLongDate($!obj.addTime)</span></li>
                           <li class="li_03"> <a href="$!webPath/seller/order_view.htm?id=$!obj.id" target="_blank">查看订单</a></li>
                           #if($!payment)
@@ -205,7 +225,7 @@ $!httpInclude.include("/top.htm")
                           #if($!obj.order_type=="ios")
                           #set($order_type="IOS订单")
                           #end
-                          <li class="li_02">订单类型：<span>$!order_type</span></li>
+                        <!--   <li class="li_02">订单类型：<span>$!order_type</span></li> -->
                           <li class="li_021"><a href="$!webPath/seller/order_print.htm?id=$!obj.id" target="_blank" title="打印订单"><img src="$!webPath/resources/style/system/front/default/images/usercenter/print_01.png" width="19" height="20" /></a></li>
                         </ul>
                       </div>
@@ -266,7 +286,10 @@ $!httpInclude.include("/top.htm")
                                #if($!{obj.charge_Num}!=0)
                                 <li style="color:#999;">赊销金额:¥$!{obj.charge_Num}</li>
                                 <li style="color:#999;">赊销账期:$!{obj.charge_Day}</li>
-                                #end
+                               #end
+                               #if($!{obj.integration_price}!=0)
+                                <li style="color:#999;">抵扣金额:¥#if($!{obj.integration_price})$!{obj.integration_price} #else 0 #end</li>
+                               #end
                                </ul></td>
                             <td style="border:none"><ul class="ul_04">
                                 #if($!obj.order_status==10)
